@@ -4,3 +4,18 @@ version = "0.0.0"
 edition = "2024"
 
 [dependencies]
+firestore-path = "1"
+google-cloud-auth = "1"
+http = "1"
+serde = { version = "1", features = ["derive"] }
+serde-firestore-value = { git = "https://github.com/bouzuya/serde-firestore-value", branch = "master" }
+thiserror = "2.0.18"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tonic = { version = "0.14", features = [
+    "transport",
+    "tls-ring",
+    "tls-webpki-roots",
+] }
+
+[dev-dependencies]
+anyhow = "1"
