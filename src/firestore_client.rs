@@ -1,10 +1,12 @@
 use std::str::FromStr;
 
+use crate::Error;
+
 use serde_firestore_value::google;
 use serde_firestore_value::google::firestore::v1::ExecutePipelineRequest;
 use serde_firestore_value::google::firestore::v1::ExecutePipelineResponse;
 
-use crate::Error;
+use crate::E;
 
 pub struct FirestoreClient {
     channel: tonic::transport::Channel,
@@ -16,15 +18,18 @@ impl FirestoreClient {
     pub async fn new(database: String) -> Result<Self, Error> {
         let credentials = google_cloud_auth::credentials::Builder::default()
             .with_scopes(["https://www.googleapis.com/auth/datastore"])
-            .build()?;
+            .build()
+            .map_err(E::from)?;
         let channel = tonic::transport::Channel::from_static("https://firestore.googleapis.com")
             .tls_config(
                 tonic::transport::ClientTlsConfig::new()
                     .domain_name("firestore.googleapis.com")
                     .with_webpki_roots(),
-            )?
+            )
+            .map_err(E::from)?
             .connect()
-            .await?;
+            .await
+            .map_err(E::from)?;
         let database_name =
             <firestore_path::DatabaseName as std::str::FromStr>::from_str(&database).unwrap();
         Ok(Self {
@@ -50,7 +55,7 @@ impl FirestoreClient {
             ))
             .unwrap(),
         );
-        let response = client.execute_pipeline(request).await?;
+        let response = client.execute_pipeline(request).await.map_err(E::from)?;
         Ok(response)
     }
 
@@ -63,7 +68,7 @@ impl FirestoreClient {
                 impl FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
             >,
         >,
-        Error,
+        E,
     > {
         let cacheable_headers = self.credentials.headers(http::Extensions::new()).await?;
         let header_map = match cacheable_headers {
