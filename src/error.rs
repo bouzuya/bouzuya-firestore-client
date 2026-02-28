@@ -1,7 +1,11 @@
 #[derive(Debug, thiserror::Error)]
 #[error("firestore error")]
-pub struct Error {
-    _private: (),
+pub struct Error(#[source] Box<dyn std::error::Error + Send + Sync>);
+
+impl Error {
+    pub(crate) fn from_source(source: Box<dyn std::error::Error + Send + Sync>) -> Self {
+        Self(source)
+    }
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -17,7 +21,7 @@ pub(crate) enum E {
 }
 
 impl From<E> for Error {
-    fn from(_e: E) -> Self {
-        Self { _private: () }
+    fn from(e: E) -> Self {
+        Self(Box::new(e))
     }
 }
