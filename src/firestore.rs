@@ -1,9 +1,5 @@
 use crate::Error;
-
-#[derive(Default)]
-pub struct FirestoreOptions {
-    // ...
-}
+use crate::firestore_options::FirestoreOptions;
 
 #[derive(Clone)]
 pub struct Firestore {
