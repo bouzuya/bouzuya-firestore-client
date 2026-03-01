@@ -1,5 +1,7 @@
+use crate::CollectionId;
+use crate::DocumentId;
+use crate::DocumentPath;
 use crate::Error;
-use crate::collection_id::CollectionId;
 
 #[derive(Debug, thiserror::Error)]
 #[error("collection path error: {0}")]
@@ -21,6 +23,12 @@ impl From<CollectionId> for CollectionPath {
 }
 
 impl CollectionPath {
+    pub(crate) fn doc(&self, document_id: DocumentId) -> DocumentPath {
+        use std::str::FromStr as _;
+        DocumentPath::from_str(&format!("{}/{}", self, document_id))
+            .expect("collection path and document id should form a valid document path")
+    }
+
     pub(crate) fn id(&self) -> CollectionId {
         CollectionId::from_collection_id(self.0.collection_id().clone())
     }
@@ -45,6 +53,18 @@ impl std::str::FromStr for CollectionPath {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn test_doc() -> anyhow::Result<()> {
+        use crate::collection_path::CollectionPath;
+        use crate::document_id::DocumentId;
+        use std::str::FromStr as _;
+        let collection_path = CollectionPath::from_str("rooms")?;
+        let document_id = DocumentId::from_str("roomA")?;
+        let document_path = collection_path.doc(document_id);
+        assert_eq!(document_path.to_string(), "rooms/roomA");
+        Ok(())
+    }
+
     #[test]
     fn test_id() -> anyhow::Result<()> {
         use crate::collection_path::CollectionPath;

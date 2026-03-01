@@ -1,5 +1,7 @@
 use crate::CollectionId;
 use crate::CollectionPath;
+use crate::DocumentId;
+use crate::DocumentReference;
 
 pub struct CollectionReference {
     collection_path: CollectionPath,
@@ -12,6 +14,10 @@ impl CollectionReference {
 }
 
 impl CollectionReference {
+    pub fn doc(&self, document_id: impl Into<DocumentId>) -> DocumentReference {
+        DocumentReference::new(self.collection_path.doc(document_id.into()))
+    }
+
     pub fn id(&self) -> CollectionId {
         self.collection_path.id()
     }

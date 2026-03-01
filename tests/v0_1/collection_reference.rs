@@ -5,6 +5,20 @@ fn test_collection_reference_import() {
 }
 
 #[test]
+fn test_collection_reference_doc() -> Result<(), bouzuya_firestore_client::Error> {
+    use bouzuya_firestore_client::CollectionId;
+    use bouzuya_firestore_client::DocumentId;
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    use std::str::FromStr as _;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let collection_ref = firestore.collection(CollectionId::from_str("rooms")?);
+    let document_ref = collection_ref.doc(DocumentId::from_str("roomA")?);
+    assert_eq!(document_ref.id().to_string(), "roomA");
+    Ok(())
+}
+
+#[test]
 fn test_collection_reference_id() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::CollectionId;
     use bouzuya_firestore_client::Firestore;
