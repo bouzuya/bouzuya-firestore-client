@@ -20,6 +20,12 @@ impl From<CollectionId> for CollectionPath {
     }
 }
 
+impl CollectionPath {
+    pub(crate) fn id(&self) -> CollectionId {
+        CollectionId::from_collection_id(self.0.collection_id().clone())
+    }
+}
+
 impl std::fmt::Display for CollectionPath {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)
@@ -34,5 +40,19 @@ impl std::str::FromStr for CollectionPath {
             .map(Self)
             .map_err(E)
             .map_err(Error::from)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_id() -> anyhow::Result<()> {
+        use crate::collection_path::CollectionPath;
+        use std::str::FromStr as _;
+        let collection_path = CollectionPath::from_str("rooms")?;
+        assert_eq!(collection_path.id().to_string(), "rooms");
+        let collection_path = CollectionPath::from_str("rooms/roomA/messages")?;
+        assert_eq!(collection_path.id().to_string(), "messages");
+        Ok(())
     }
 }
