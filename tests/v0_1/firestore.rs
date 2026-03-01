@@ -24,3 +24,16 @@ fn test_firestore_collection() -> Result<(), bouzuya_firestore_client::Error> {
     assert_eq!(collection_ref.id().to_string(), "rooms");
     Ok(())
 }
+
+#[test]
+fn test_firestore_doc() -> Result<(), bouzuya_firestore_client::Error> {
+    use bouzuya_firestore_client::DocumentPath;
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    use std::str::FromStr as _;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let document_path = DocumentPath::from_str("rooms/roomA")?;
+    let document_ref = firestore.doc(document_path);
+    assert_eq!(document_ref.id().to_string(), "roomA");
+    Ok(())
+}
