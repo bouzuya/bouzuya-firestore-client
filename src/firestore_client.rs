@@ -15,6 +15,7 @@ pub struct FirestoreClient {
 }
 
 impl FirestoreClient {
+    // NOTE: No tests are written for this method (requires a real project).
     pub async fn new(database: String) -> Result<Self, Error> {
         let credentials = google_cloud_auth::credentials::Builder::default()
             .with_scopes(["https://www.googleapis.com/auth/datastore"])
@@ -39,6 +40,7 @@ impl FirestoreClient {
         })
     }
 
+    // NOTE: No tests are written for this method (requires a real project).
     pub async fn execute_pipeline(
         &mut self,
         request: ExecutePipelineRequest,
