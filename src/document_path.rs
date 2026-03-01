@@ -1,5 +1,7 @@
+use crate::CollectionId;
+use crate::CollectionPath;
+use crate::DocumentId;
 use crate::Error;
-use crate::document_id::DocumentId;
 
 #[derive(Debug, thiserror::Error)]
 #[error("document path error: {0}")]
@@ -14,6 +16,12 @@ impl From<E> for Error {
 pub struct DocumentPath(firestore_path::DocumentPath);
 
 impl DocumentPath {
+    pub(crate) fn collection(&self, collection_id: CollectionId) -> CollectionPath {
+        use std::str::FromStr as _;
+        CollectionPath::from_str(&format!("{}/{}", self, collection_id))
+            .expect("document path and collection id should form a valid collection path")
+    }
+
     pub(crate) fn id(&self) -> DocumentId {
         DocumentId::from_document_id(self.0.document_id().clone())
     }
@@ -38,6 +46,18 @@ impl std::str::FromStr for DocumentPath {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn test_collection() -> anyhow::Result<()> {
+        use crate::collection_id::CollectionId;
+        use crate::document_path::DocumentPath;
+        use std::str::FromStr as _;
+        let document_path = DocumentPath::from_str("rooms/roomA")?;
+        let collection_id = CollectionId::from_str("messages")?;
+        let collection_path = document_path.collection(collection_id);
+        assert_eq!(collection_path.to_string(), "rooms/roomA/messages");
+        Ok(())
+    }
+
     #[test]
     fn test_id() -> anyhow::Result<()> {
         use crate::document_path::DocumentPath;
