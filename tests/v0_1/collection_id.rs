@@ -19,9 +19,10 @@ fn test_collection_id_from_str_error() {
 }
 
 #[test]
-fn test_collection_id_display() {
+fn test_collection_id_display() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::CollectionId;
     use std::str::FromStr as _;
-    let collection_id = CollectionId::from_str("chatrooms").unwrap();
+    let collection_id = CollectionId::from_str("chatrooms")?;
     assert_eq!(collection_id.to_string(), "chatrooms");
+    Ok(())
 }

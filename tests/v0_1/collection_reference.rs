@@ -5,10 +5,11 @@ fn test_collection_reference_import() {
 }
 
 #[test]
-fn test_collection_reference_id() {
+fn test_collection_reference_id() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
-    let firestore = Firestore::new(FirestoreOptions::default()).unwrap();
+    let firestore = Firestore::new(FirestoreOptions::default())?;
     let collection_ref = firestore.collection("collection");
     assert_eq!(collection_ref.id(), "collection");
+    Ok(())
 }
