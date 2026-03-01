@@ -25,3 +25,16 @@ impl From<E> for Error {
         Self(Box::new(e))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_from_source() {
+        use crate::error::Error;
+        #[derive(Debug, thiserror::Error)]
+        #[error("test error")]
+        struct TestError;
+        let error = Error::from_source(Box::new(TestError));
+        assert_eq!(error.to_string(), "firestore error");
+    }
+}
