@@ -1,3 +1,4 @@
+use crate::CollectionPath;
 use crate::CollectionReference;
 use crate::Error;
 use crate::FirestoreOptions;
@@ -14,9 +15,7 @@ impl Firestore {
 }
 
 impl Firestore {
-    // FIXME: collection_id should be validated
-    // FIXME: collection_path support
-    pub fn collection(&self, collection_id: &str) -> CollectionReference {
-        CollectionReference::new(collection_id.to_string())
+    pub fn collection(&self, collection_path: impl Into<CollectionPath>) -> CollectionReference {
+        CollectionReference::new(collection_path.into())
     }
 }
