@@ -21,6 +21,10 @@ impl CollectionReference {
     pub fn id(&self) -> CollectionId {
         self.collection_path.id()
     }
+
+    pub fn parent(&self) -> Option<DocumentReference> {
+        self.collection_path.parent().map(DocumentReference::new)
+    }
 }
 
 #[cfg(test)]

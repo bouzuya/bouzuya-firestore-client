@@ -15,13 +15,6 @@ impl From<E> for Error {
 
 pub struct CollectionPath(firestore_path::CollectionPath);
 
-impl From<CollectionId> for CollectionPath {
-    fn from(collection_id: CollectionId) -> Self {
-        <Self as std::str::FromStr>::from_str(&collection_id.to_string())
-            .expect("collection id should be valid collection path")
-    }
-}
-
 impl CollectionPath {
     pub(crate) fn doc(&self, document_id: DocumentId) -> DocumentPath {
         use std::str::FromStr as _;
@@ -31,6 +24,21 @@ impl CollectionPath {
 
     pub(crate) fn id(&self) -> CollectionId {
         CollectionId::from_collection_id(self.0.collection_id().clone())
+    }
+
+    pub(crate) fn parent(&self) -> Option<DocumentPath> {
+        self.0.parent().map(|parent| {
+            use std::str::FromStr as _;
+            DocumentPath::from_str(&parent.to_string())
+                .expect("collection path's parent should be a valid document path")
+        })
+    }
+}
+
+impl From<CollectionId> for CollectionPath {
+    fn from(collection_id: CollectionId) -> Self {
+        <Self as std::str::FromStr>::from_str(&collection_id.to_string())
+            .expect("collection id should be valid collection path")
     }
 }
 
@@ -73,6 +81,21 @@ mod tests {
         assert_eq!(collection_path.id().to_string(), "rooms");
         let collection_path = CollectionPath::from_str("rooms/roomA/messages")?;
         assert_eq!(collection_path.id().to_string(), "messages");
+        Ok(())
+    }
+
+    #[test]
+    fn test_parent() -> anyhow::Result<()> {
+        use crate::collection_path::CollectionPath;
+        use anyhow::Context as _;
+        use std::str::FromStr as _;
+        let collection_path = CollectionPath::from_str("rooms/roomA/messages")?;
+        let parent = collection_path
+            .parent()
+            .context("collection path should have a parent")?;
+        assert_eq!(parent.to_string(), "rooms/roomA");
+        let collection_path = CollectionPath::from_str("rooms")?;
+        assert!(collection_path.parent().is_none());
         Ok(())
     }
 }
