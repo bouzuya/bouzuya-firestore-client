@@ -14,7 +14,7 @@ fn test_document_reference_collection() -> Result<(), bouzuya_firestore_client::
     let firestore = Firestore::new(FirestoreOptions::default())?;
     let document_ref = firestore.doc(DocumentPath::from_str("rooms/roomA")?);
     let collection_ref = document_ref.collection(CollectionId::from_str("messages")?);
-    assert_eq!(collection_ref.id().to_string(), "messages");
+    assert_eq!(collection_ref.path().to_string(), "rooms/roomA/messages");
     Ok(())
 }
 
@@ -27,6 +27,7 @@ fn test_document_reference_id() -> Result<(), bouzuya_firestore_client::Error> {
     let firestore = Firestore::new(FirestoreOptions::default())?;
     let document_path = DocumentPath::from_str("rooms/roomA")?;
     let document_ref = firestore.doc(document_path);
-    assert_eq!(document_ref.id().to_string(), "roomA");
+    let document_id = document_ref.id();
+    assert_eq!(document_id.to_string(), "roomA");
     Ok(())
 }

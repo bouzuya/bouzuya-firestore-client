@@ -49,3 +49,20 @@ fn test_collection_reference_parent() -> Result<(), bouzuya_firestore_client::Er
     assert_eq!(parent.id().to_string(), "roomA");
     Ok(())
 }
+
+#[test]
+fn test_collection_reference_path() -> Result<(), bouzuya_firestore_client::Error> {
+    use bouzuya_firestore_client::CollectionId;
+    use bouzuya_firestore_client::CollectionPath;
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    use std::str::FromStr as _;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let collection_ref = firestore.collection(CollectionId::from_str("rooms")?);
+    let path = collection_ref.path();
+    assert_eq!(path.to_string(), "rooms");
+    let collection_ref = firestore.collection(CollectionPath::from_str("rooms/roomA/messages")?);
+    let path = collection_ref.path();
+    assert_eq!(path.to_string(), "rooms/roomA/messages");
+    Ok(())
+}

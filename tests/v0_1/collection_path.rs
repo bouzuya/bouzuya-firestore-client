@@ -32,6 +32,16 @@ fn test_collection_path_from_str_error() {
 }
 
 #[test]
+fn test_collection_path_clone() -> Result<(), bouzuya_firestore_client::Error> {
+    use bouzuya_firestore_client::CollectionPath;
+    use std::str::FromStr as _;
+    let collection_path = CollectionPath::from_str("rooms/roomA/messages")?;
+    let cloned = collection_path.clone();
+    assert_eq!(cloned.to_string(), "rooms/roomA/messages");
+    Ok(())
+}
+
+#[test]
 fn test_collection_path_display() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::CollectionPath;
     use std::str::FromStr as _;
