@@ -17,6 +17,12 @@ impl From<E> for Error {
 pub struct CollectionPath(firestore_path::CollectionPath);
 
 impl CollectionPath {
+    pub(crate) fn from_collection_path(collection_path: firestore_path::CollectionPath) -> Self {
+        Self(collection_path)
+    }
+}
+
+impl CollectionPath {
     pub(crate) fn doc(&self, document_id: DocumentId) -> DocumentPath {
         use std::str::FromStr as _;
         DocumentPath::from_str(&format!("{}/{}", self, document_id))
@@ -62,6 +68,17 @@ impl std::str::FromStr for CollectionPath {
 
 #[cfg(test)]
 mod tests {
+
+    #[test]
+    fn test_from_collection_path() -> anyhow::Result<()> {
+        use crate::collection_path::CollectionPath;
+        use std::str::FromStr as _;
+        let inner = firestore_path::CollectionPath::from_str("rooms")?;
+        let collection_path = CollectionPath::from_collection_path(inner);
+        assert_eq!(collection_path.to_string(), "rooms");
+        Ok(())
+    }
+
     #[test]
     fn test_doc() -> anyhow::Result<()> {
         use crate::collection_path::CollectionPath;
