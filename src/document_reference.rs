@@ -21,6 +21,10 @@ impl DocumentReference {
     pub fn id(&self) -> DocumentId {
         self.document_path.id()
     }
+
+    pub fn parent(&self) -> CollectionReference {
+        CollectionReference::new(self.document_path.parent())
+    }
 }
 
 #[cfg(test)]
