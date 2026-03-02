@@ -20,6 +20,16 @@ fn test_document_path_from_str_error() {
 }
 
 #[test]
+fn test_document_path_clone() -> Result<(), bouzuya_firestore_client::Error> {
+    use bouzuya_firestore_client::DocumentPath;
+    use std::str::FromStr as _;
+    let document_path = DocumentPath::from_str("rooms/roomA")?;
+    let cloned = document_path.clone();
+    assert_eq!(cloned.to_string(), "rooms/roomA");
+    Ok(())
+}
+
+#[test]
 fn test_document_path_display() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::DocumentPath;
     use std::str::FromStr as _;

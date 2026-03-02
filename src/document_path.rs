@@ -13,6 +13,7 @@ impl From<E> for Error {
     }
 }
 
+#[derive(Clone)]
 pub struct DocumentPath(firestore_path::DocumentPath);
 
 impl DocumentPath {
