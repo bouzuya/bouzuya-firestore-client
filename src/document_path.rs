@@ -25,6 +25,10 @@ impl DocumentPath {
     pub(crate) fn id(&self) -> DocumentId {
         DocumentId::from_document_id(self.0.document_id().clone())
     }
+
+    pub(crate) fn parent(&self) -> CollectionPath {
+        CollectionPath::from_collection_path(self.0.parent().clone())
+    }
 }
 
 impl std::fmt::Display for DocumentPath {
@@ -66,6 +70,19 @@ mod tests {
         assert_eq!(document_path.id().to_string(), "roomA");
         let document_path = DocumentPath::from_str("rooms/roomA/messages/message1")?;
         assert_eq!(document_path.id().to_string(), "message1");
+        Ok(())
+    }
+
+    #[test]
+    fn test_parent() -> anyhow::Result<()> {
+        use crate::document_path::DocumentPath;
+        use std::str::FromStr as _;
+        let document_path = DocumentPath::from_str("rooms/roomA")?;
+        let parent = document_path.parent();
+        assert_eq!(parent.to_string(), "rooms");
+        let document_path = DocumentPath::from_str("rooms/roomA/messages/message1")?;
+        let parent = document_path.parent();
+        assert_eq!(parent.to_string(), "rooms/roomA/messages");
         Ok(())
     }
 }
