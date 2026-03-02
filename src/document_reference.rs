@@ -25,6 +25,10 @@ impl DocumentReference {
     pub fn parent(&self) -> CollectionReference {
         CollectionReference::new(self.document_path.parent())
     }
+
+    pub fn path(&self) -> DocumentPath {
+        self.document_path.clone()
+    }
 }
 
 #[cfg(test)]

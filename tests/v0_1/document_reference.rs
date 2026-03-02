@@ -49,3 +49,21 @@ fn test_document_reference_parent() -> Result<(), bouzuya_firestore_client::Erro
     assert_eq!(parent.path().to_string(), "rooms/roomA/messages");
     Ok(())
 }
+
+#[test]
+fn test_document_reference_path() -> Result<(), bouzuya_firestore_client::Error> {
+    use bouzuya_firestore_client::DocumentPath;
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    use std::str::FromStr as _;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let document_path = DocumentPath::from_str("rooms/roomA")?;
+    let document_ref = firestore.doc(document_path);
+    let path = document_ref.path();
+    assert_eq!(path.to_string(), "rooms/roomA");
+    let document_path = DocumentPath::from_str("rooms/roomA/messages/message1")?;
+    let document_ref = firestore.doc(document_path);
+    let path = document_ref.path();
+    assert_eq!(path.to_string(), "rooms/roomA/messages/message1");
+    Ok(())
+}
