@@ -18,10 +18,10 @@ impl Firestore {
 
 impl Firestore {
     pub fn collection(&self, collection_path: impl Into<CollectionPath>) -> CollectionReference {
-        CollectionReference::new(collection_path.into())
+        CollectionReference::new(collection_path.into(), self.clone())
     }
 
     pub fn doc(&self, document_path: impl Into<DocumentPath>) -> DocumentReference {
-        DocumentReference::new(document_path.into())
+        DocumentReference::new(document_path.into(), self.clone())
     }
 }

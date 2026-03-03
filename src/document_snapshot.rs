@@ -81,12 +81,15 @@ impl DocumentSnapshot {
 mod tests {
     #[test]
     fn test_new() -> anyhow::Result<()> {
-        use crate::document_path::DocumentPath;
-        use crate::document_reference::DocumentReference;
-        use crate::document_snapshot::DocumentSnapshot;
+        use crate::DocumentPath;
+        use crate::DocumentReference;
+        use crate::DocumentSnapshot;
+        use crate::Firestore;
+        use crate::FirestoreOptions;
         use std::str::FromStr as _;
         let document_path = DocumentPath::from_str("rooms/roomA")?;
-        let document_ref = DocumentReference::new(document_path);
+        let firestore = Firestore::new(FirestoreOptions::default())?;
+        let document_ref = DocumentReference::new(document_path, firestore);
         let snapshot = DocumentSnapshot::new(None, document_ref);
         assert!(!snapshot.exists());
         assert_eq!(snapshot.id().to_string(), "roomA");

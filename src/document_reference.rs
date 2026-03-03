@@ -4,21 +4,29 @@ use crate::DocumentId;
 use crate::DocumentPath;
 use crate::DocumentSnapshot;
 use crate::Error;
+use crate::Firestore;
 
 #[derive(Clone)]
 pub struct DocumentReference {
     document_path: DocumentPath,
+    firestore: Firestore,
 }
 
 impl DocumentReference {
-    pub(crate) fn new(document_path: DocumentPath) -> Self {
-        Self { document_path }
+    pub(crate) fn new(document_path: DocumentPath, firestore: Firestore) -> Self {
+        Self {
+            document_path,
+            firestore,
+        }
     }
 }
 
 impl DocumentReference {
     pub fn collection(&self, collection_id: impl Into<CollectionId>) -> CollectionReference {
-        CollectionReference::new(self.document_path.collection(collection_id.into()))
+        CollectionReference::new(
+            self.document_path.collection(collection_id.into()),
+            self.firestore.clone(),
+        )
     }
 
     pub async fn get(&self) -> Result<DocumentSnapshot, Error> {
@@ -31,7 +39,7 @@ impl DocumentReference {
     }
 
     pub fn parent(&self) -> CollectionReference {
-        CollectionReference::new(self.document_path.parent())
+        CollectionReference::new(self.document_path.parent(), self.firestore.clone())
     }
 
     pub fn path(&self) -> DocumentPath {
@@ -43,11 +51,14 @@ impl DocumentReference {
 mod tests {
     #[test]
     fn test_new() -> anyhow::Result<()> {
-        use crate::document_path::DocumentPath;
-        use crate::document_reference::DocumentReference;
+        use crate::DocumentPath;
+        use crate::DocumentReference;
+        use crate::Firestore;
+        use crate::FirestoreOptions;
         use std::str::FromStr as _;
+        let firestore = Firestore::new(FirestoreOptions::default())?;
         let document_path = DocumentPath::from_str("rooms/roomA")?;
-        let document_ref = DocumentReference::new(document_path);
+        let document_ref = DocumentReference::new(document_path, firestore);
         assert_eq!(document_ref.id().to_string(), "roomA");
         Ok(())
     }
