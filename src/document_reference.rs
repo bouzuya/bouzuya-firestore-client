@@ -2,6 +2,8 @@ use crate::CollectionId;
 use crate::CollectionReference;
 use crate::DocumentId;
 use crate::DocumentPath;
+use crate::DocumentSnapshot;
+use crate::Error;
 
 #[derive(Clone)]
 pub struct DocumentReference {
@@ -17,6 +19,11 @@ impl DocumentReference {
 impl DocumentReference {
     pub fn collection(&self, collection_id: impl Into<CollectionId>) -> CollectionReference {
         CollectionReference::new(self.document_path.collection(collection_id.into()))
+    }
+
+    pub async fn get(&self) -> Result<DocumentSnapshot, Error> {
+        // FIXME: call GetDocument RPC API
+        Ok(DocumentSnapshot::new(None, self.clone()))
     }
 
     pub fn id(&self) -> DocumentId {
