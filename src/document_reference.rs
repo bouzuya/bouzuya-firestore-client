@@ -30,8 +30,12 @@ impl DocumentReference {
     }
 
     pub async fn get(&self) -> Result<DocumentSnapshot, Error> {
-        // FIXME: call GetDocument RPC API
-        Ok(DocumentSnapshot::new(None, self.clone()))
+        let document = self
+            .firestore
+            .firestore_client()
+            .get_document(&self.document_path)
+            .await?;
+        Ok(DocumentSnapshot::new(document, self.clone()))
     }
 
     pub fn id(&self) -> DocumentId {

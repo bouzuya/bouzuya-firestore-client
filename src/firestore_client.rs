@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use crate::DocumentPath;
 use crate::Error;
 
 use serde_firestore_value::google;
@@ -8,7 +9,8 @@ use serde_firestore_value::google::firestore::v1::ExecutePipelineResponse;
 
 use crate::E;
 
-pub struct FirestoreClient {
+#[derive(Clone)]
+pub(crate) struct FirestoreClient {
     channel: tonic::transport::Channel,
     credentials: google_cloud_auth::credentials::Credentials,
     database_name: firestore_path::DatabaseName,
@@ -16,7 +18,7 @@ pub struct FirestoreClient {
 
 impl FirestoreClient {
     // NOTE: No tests are written for this method (requires a real project).
-    pub async fn new(database: String) -> Result<Self, Error> {
+    pub(crate) fn new(database: String) -> Result<Self, Error> {
         let credentials = google_cloud_auth::credentials::Builder::default()
             .with_scopes(["https://www.googleapis.com/auth/datastore"])
             .build()
@@ -28,9 +30,7 @@ impl FirestoreClient {
                     .with_webpki_roots(),
             )
             .map_err(E::from)?
-            .connect()
-            .await
-            .map_err(E::from)?;
+            .connect_lazy();
         let database_name =
             <firestore_path::DatabaseName as std::str::FromStr>::from_str(&database).unwrap();
         Ok(Self {
@@ -41,7 +41,7 @@ impl FirestoreClient {
     }
 
     // NOTE: No tests are written for this method (requires a real project).
-    pub async fn execute_pipeline(
+    pub(crate) async fn execute_pipeline(
         &mut self,
         request: ExecutePipelineRequest,
     ) -> Result<tonic::Response<tonic::codec::Streaming<ExecutePipelineResponse>>, Error> {
@@ -59,6 +59,30 @@ impl FirestoreClient {
         );
         let response = client.execute_pipeline(request).await.map_err(E::from)?;
         Ok(response)
+    }
+
+    pub(crate) async fn get_document(
+        &self,
+        document_path: &DocumentPath,
+    ) -> Result<Option<google::firestore::v1::Document>, Error> {
+        let mut client = self.client().await?;
+        let request = google::firestore::v1::GetDocumentRequest {
+            name: self
+                .database_name
+                .doc(document_path.to_string())
+                .expect("invalid document path")
+                .to_string(),
+            mask: None,
+            consistency_selector: None,
+        };
+        let result = client.get_document(request).await;
+        match result {
+            Ok(response) => Ok(Some(response.into_inner())),
+            Err(status) => match status.code() {
+                tonic::Code::NotFound => Ok(None),
+                _ => Err(Error::from(E::from(status))),
+            },
+        }
     }
 
     async fn client(
@@ -117,7 +141,7 @@ mod tests {
             firestore_path::ProjectId::from_str(&project_id)?,
             firestore_path::DatabaseId::from_str(&database_id)?,
         );
-        let mut client = FirestoreClient::new(database_name.to_string()).await?;
+        let mut client = FirestoreClient::new(database_name.to_string())?;
         let request = google::firestore::v1::ExecutePipelineRequest {
             database: database_name.to_string(),
             pipeline_type: Some(
@@ -159,7 +183,7 @@ mod tests {
             firestore_path::ProjectId::from_str(&project_id)?,
             firestore_path::DatabaseId::from_str(&database_id)?,
         );
-        let mut client = FirestoreClient::new(database_name.to_string()).await?;
+        let mut client = FirestoreClient::new(database_name.to_string())?;
         let request = google::firestore::v1::ExecutePipelineRequest {
             database: database_name.to_string(),
             pipeline_type: Some(

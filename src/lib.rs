@@ -20,5 +20,5 @@ pub use self::document_snapshot::DocumentSnapshot;
 pub(crate) use self::error::E;
 pub use self::error::Error;
 pub use self::firestore::Firestore;
-pub use self::firestore_client::FirestoreClient;
+pub(crate) use self::firestore_client::FirestoreClient;
 pub use self::firestore_options::FirestoreOptions;

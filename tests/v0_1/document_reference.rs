@@ -16,6 +16,12 @@ fn test_document_reference_clone() -> Result<(), bouzuya_firestore_client::Error
     Ok(())
 }
 
+#[tokio::test]
+async fn test_document_reference_get() -> Result<(), bouzuya_firestore_client::Error> {
+    // FIXME: add tests when the document exists and does not exist
+    Ok(())
+}
+
 #[test]
 fn test_document_reference_import() {
     use bouzuya_firestore_client::DocumentReference;
