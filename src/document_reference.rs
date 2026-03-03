@@ -3,6 +3,7 @@ use crate::CollectionReference;
 use crate::DocumentId;
 use crate::DocumentPath;
 
+#[derive(Clone)]
 pub struct DocumentReference {
     document_path: DocumentPath,
 }

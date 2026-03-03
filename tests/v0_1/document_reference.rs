@@ -1,4 +1,22 @@
 #[test]
+fn test_document_reference_clone() -> Result<(), bouzuya_firestore_client::Error> {
+    use bouzuya_firestore_client::DocumentPath;
+    use bouzuya_firestore_client::DocumentReference;
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    use std::str::FromStr as _;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let document_path = DocumentPath::from_str("rooms/roomA")?;
+    let document_ref = firestore.doc(document_path);
+    let cloned = document_ref.clone();
+    assert_eq!(cloned.id().to_string(), "roomA");
+
+    fn assert_fn<T: Clone>() {}
+    assert_fn::<DocumentReference>();
+    Ok(())
+}
+
+#[test]
 fn test_document_reference_import() {
     use bouzuya_firestore_client::DocumentReference;
     let _: Option<DocumentReference> = None;
