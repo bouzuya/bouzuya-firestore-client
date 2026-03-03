@@ -1,6 +1,15 @@
 services:
+  firebase:
+    build: ./firebase
+    ports:
+      - "4000:4000"
+      - "8080:8080"
+    volumes:
+      - ./firebase:/firebase
   workspace:
     command: sleep infinity
+    environment:
+      - FIRESTORE_EMULATOR_HOST=firebase:8080
     image: debian:trixie
     volumes:
       - .:/workspaces/bouzuya-firestore-client:cached
