@@ -1,12 +1,10 @@
 #[tokio::test]
 async fn test_document_snapshot_data() -> Result<(), bouzuya_firestore_client::Error> {
-    use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
     use std::collections::HashMap;
-    use std::str::FromStr as _;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_ref = firestore.doc(DocumentPath::from_str("rooms/roomA")?);
+    let document_ref = firestore.doc("rooms/roomA")?;
     let snapshot = document_ref.get().await?;
     let data: Option<Result<HashMap<String, String>, _>> = snapshot.data();
     assert!(data.is_none());
@@ -17,12 +15,10 @@ async fn test_document_snapshot_data() -> Result<(), bouzuya_firestore_client::E
 
 #[tokio::test]
 async fn test_document_snapshot_exists() -> Result<(), bouzuya_firestore_client::Error> {
-    use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
-    use std::str::FromStr as _;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_ref = firestore.doc(DocumentPath::from_str("rooms/roomA")?);
+    let document_ref = firestore.doc("rooms/roomA")?;
     let snapshot = document_ref.get().await?;
     assert!(!snapshot.exists());
 
@@ -32,12 +28,10 @@ async fn test_document_snapshot_exists() -> Result<(), bouzuya_firestore_client:
 
 #[tokio::test]
 async fn test_document_snapshot_id() -> Result<(), bouzuya_firestore_client::Error> {
-    use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
-    use std::str::FromStr as _;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_ref = firestore.doc(DocumentPath::from_str("rooms/roomA")?);
+    let document_ref = firestore.doc("rooms/roomA")?;
     let snapshot = document_ref.get().await?;
     assert_eq!(snapshot.id().to_string(), "roomA");
     Ok(())
@@ -45,12 +39,10 @@ async fn test_document_snapshot_id() -> Result<(), bouzuya_firestore_client::Err
 
 #[tokio::test]
 async fn test_document_snapshot_ref() -> Result<(), bouzuya_firestore_client::Error> {
-    use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
-    use std::str::FromStr as _;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_ref = firestore.doc(DocumentPath::from_str("rooms/roomA")?);
+    let document_ref = firestore.doc("rooms/roomA")?;
     let snapshot = document_ref.get().await?;
     assert_eq!(snapshot.r#ref().path().to_string(), "rooms/roomA");
     Ok(())

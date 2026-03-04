@@ -1,13 +1,10 @@
 #[tokio::test]
 async fn test_document_reference_clone() -> Result<(), bouzuya_firestore_client::Error> {
-    use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::DocumentReference;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
-    use std::str::FromStr as _;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_path = DocumentPath::from_str("rooms/roomA")?;
-    let document_ref = firestore.doc(document_path);
+    let document_ref = firestore.doc("rooms/roomA")?;
     let cloned = document_ref.clone();
     assert_eq!(cloned.id().to_string(), "roomA");
 
@@ -31,12 +28,11 @@ fn test_document_reference_import() {
 #[tokio::test]
 async fn test_document_reference_collection() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::CollectionId;
-    use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
     use std::str::FromStr as _;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_ref = firestore.doc(DocumentPath::from_str("rooms/roomA")?);
+    let document_ref = firestore.doc("rooms/roomA")?;
     let collection_ref = document_ref.collection(CollectionId::from_str("messages")?);
     assert_eq!(collection_ref.path().to_string(), "rooms/roomA/messages");
     Ok(())
@@ -44,13 +40,10 @@ async fn test_document_reference_collection() -> Result<(), bouzuya_firestore_cl
 
 #[tokio::test]
 async fn test_document_reference_id() -> Result<(), bouzuya_firestore_client::Error> {
-    use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
-    use std::str::FromStr as _;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_path = DocumentPath::from_str("rooms/roomA")?;
-    let document_ref = firestore.doc(document_path);
+    let document_ref = firestore.doc("rooms/roomA")?;
     let document_id = document_ref.id();
     assert_eq!(document_id.to_string(), "roomA");
     Ok(())
@@ -58,17 +51,13 @@ async fn test_document_reference_id() -> Result<(), bouzuya_firestore_client::Er
 
 #[tokio::test]
 async fn test_document_reference_parent() -> Result<(), bouzuya_firestore_client::Error> {
-    use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
-    use std::str::FromStr as _;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_path = DocumentPath::from_str("rooms/roomA")?;
-    let document_ref = firestore.doc(document_path);
+    let document_ref = firestore.doc("rooms/roomA")?;
     let parent = document_ref.parent();
     assert_eq!(parent.path().to_string(), "rooms");
-    let document_path = DocumentPath::from_str("rooms/roomA/messages/message1")?;
-    let document_ref = firestore.doc(document_path);
+    let document_ref = firestore.doc("rooms/roomA/messages/message1")?;
     let parent = document_ref.parent();
     assert_eq!(parent.path().to_string(), "rooms/roomA/messages");
     Ok(())
@@ -76,17 +65,13 @@ async fn test_document_reference_parent() -> Result<(), bouzuya_firestore_client
 
 #[tokio::test]
 async fn test_document_reference_path() -> Result<(), bouzuya_firestore_client::Error> {
-    use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
-    use std::str::FromStr as _;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_path = DocumentPath::from_str("rooms/roomA")?;
-    let document_ref = firestore.doc(document_path);
+    let document_ref = firestore.doc("rooms/roomA")?;
     let path = document_ref.path();
     assert_eq!(path.to_string(), "rooms/roomA");
-    let document_path = DocumentPath::from_str("rooms/roomA/messages/message1")?;
-    let document_ref = firestore.doc(document_path);
+    let document_ref = firestore.doc("rooms/roomA/messages/message1")?;
     let path = document_ref.path();
     assert_eq!(path.to_string(), "rooms/roomA/messages/message1");
     Ok(())

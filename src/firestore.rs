@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::CollectionPath;
 use crate::CollectionReference;
 use crate::DocumentPath;
@@ -36,8 +38,11 @@ impl Firestore {
         CollectionReference::new(collection_path.into(), self.clone())
     }
 
-    pub fn doc(&self, document_path: impl Into<DocumentPath>) -> DocumentReference {
-        DocumentReference::new(document_path.into(), self.clone())
+    pub fn doc(&self, document_path: impl Into<String>) -> Result<DocumentReference, Error> {
+        let s: String = document_path.into();
+        let document_path =
+            DocumentPath::from_str(&s).map_err(|e| Error::from_source(Box::new(e)))?;
+        Ok(DocumentReference::new(document_path, self.clone()))
     }
 
     pub(crate) fn firestore_client(&self) -> FirestoreClient {
