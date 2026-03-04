@@ -34,14 +34,18 @@ impl Firestore {
 }
 
 impl Firestore {
-    pub fn collection(&self, collection_path: impl Into<CollectionPath>) -> CollectionReference {
-        CollectionReference::new(collection_path.into(), self.clone())
+    pub fn collection(
+        &self,
+        collection_path: impl Into<String>,
+    ) -> Result<CollectionReference, Error> {
+        let s: String = collection_path.into();
+        let collection_path = CollectionPath::from_str(&s)?;
+        Ok(CollectionReference::new(collection_path, self.clone()))
     }
 
     pub fn doc(&self, document_path: impl Into<String>) -> Result<DocumentReference, Error> {
         let s: String = document_path.into();
-        let document_path =
-            DocumentPath::from_str(&s).map_err(|e| Error::from_source(Box::new(e)))?;
+        let document_path = DocumentPath::from_str(&s)?;
         Ok(DocumentReference::new(document_path, self.clone()))
     }
 
