@@ -2,6 +2,7 @@ use crate::CollectionId;
 use crate::CollectionPath;
 use crate::DocumentId;
 use crate::DocumentReference;
+use crate::Error;
 use crate::Firestore;
 
 pub struct CollectionReference {
@@ -19,11 +20,14 @@ impl CollectionReference {
 }
 
 impl CollectionReference {
-    pub fn doc(&self, document_id: impl Into<DocumentId>) -> DocumentReference {
-        DocumentReference::new(
-            self.collection_path.doc(document_id.into()),
+    pub fn doc(&self, document_id: impl Into<String>) -> Result<DocumentReference, Error> {
+        use std::str::FromStr as _;
+        let s: String = document_id.into();
+        let document_id = DocumentId::from_str(&s)?;
+        Ok(DocumentReference::new(
+            self.collection_path.doc(document_id),
             self.firestore.clone(),
-        )
+        ))
     }
 
     pub fn id(&self) -> CollectionId {
