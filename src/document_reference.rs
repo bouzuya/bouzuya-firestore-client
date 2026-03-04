@@ -1,6 +1,5 @@
 use crate::CollectionId;
 use crate::CollectionReference;
-use crate::DocumentId;
 use crate::DocumentPath;
 use crate::DocumentSnapshot;
 use crate::Error;
@@ -44,16 +43,16 @@ impl DocumentReference {
         Ok(DocumentSnapshot::new(document, self.clone()))
     }
 
-    pub fn id(&self) -> DocumentId {
-        self.document_path.id()
+    pub fn id(&self) -> String {
+        self.document_path.id().to_string()
     }
 
     pub fn parent(&self) -> CollectionReference {
         CollectionReference::new(self.document_path.parent(), self.firestore.clone())
     }
 
-    pub fn path(&self) -> DocumentPath {
-        self.document_path.clone()
+    pub fn path(&self) -> String {
+        self.document_path.to_string()
     }
 }
 

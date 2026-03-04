@@ -10,11 +10,11 @@ mod firestore;
 mod firestore_client;
 mod firestore_options;
 
-pub use self::collection_id::CollectionId;
-pub use self::collection_path::CollectionPath;
+pub(crate) use self::collection_id::CollectionId;
+pub(crate) use self::collection_path::CollectionPath;
 pub use self::collection_reference::CollectionReference;
-pub use self::document_id::DocumentId;
-pub use self::document_path::DocumentPath;
+pub(crate) use self::document_id::DocumentId;
+pub(crate) use self::document_path::DocumentPath;
 pub use self::document_reference::DocumentReference;
 pub use self::document_snapshot::DocumentSnapshot;
 pub use self::error::Error;

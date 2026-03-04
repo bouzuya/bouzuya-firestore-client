@@ -14,7 +14,7 @@ impl From<E> for Error {
 }
 
 #[derive(Clone)]
-pub struct CollectionPath(firestore_path::CollectionPath);
+pub(crate) struct CollectionPath(firestore_path::CollectionPath);
 
 impl CollectionPath {
     pub(crate) fn from_collection_path(collection_path: firestore_path::CollectionPath) -> Self {
@@ -68,14 +68,22 @@ impl std::str::FromStr for CollectionPath {
 
 #[cfg(test)]
 mod tests {
-
     #[test]
-    fn test_from_collection_path() -> anyhow::Result<()> {
+    fn test_clone() -> anyhow::Result<()> {
         use crate::collection_path::CollectionPath;
         use std::str::FromStr as _;
-        let inner = firestore_path::CollectionPath::from_str("rooms")?;
-        let collection_path = CollectionPath::from_collection_path(inner);
-        assert_eq!(collection_path.to_string(), "rooms");
+        let collection_path = CollectionPath::from_str("rooms/roomA/messages")?;
+        let cloned = collection_path.clone();
+        assert_eq!(cloned.to_string(), "rooms/roomA/messages");
+        Ok(())
+    }
+
+    #[test]
+    fn test_display() -> anyhow::Result<()> {
+        use crate::collection_path::CollectionPath;
+        use std::str::FromStr as _;
+        let collection_path = CollectionPath::from_str("rooms/roomA/messages")?;
+        assert_eq!(collection_path.to_string(), "rooms/roomA/messages");
         Ok(())
     }
 
@@ -89,6 +97,43 @@ mod tests {
         let document_path = collection_path.doc(document_id);
         assert_eq!(document_path.to_string(), "rooms/roomA");
         Ok(())
+    }
+
+    #[test]
+    fn test_from_collection_id() -> anyhow::Result<()> {
+        use crate::collection_id::CollectionId;
+        use crate::collection_path::CollectionPath;
+        use std::str::FromStr as _;
+        let collection_id = CollectionId::from_str("rooms")?;
+        let collection_path = CollectionPath::from(collection_id);
+        assert_eq!(collection_path.to_string(), "rooms");
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_collection_path() -> anyhow::Result<()> {
+        use crate::collection_path::CollectionPath;
+        use std::str::FromStr as _;
+        let inner = firestore_path::CollectionPath::from_str("rooms")?;
+        let collection_path = CollectionPath::from_collection_path(inner);
+        assert_eq!(collection_path.to_string(), "rooms");
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_str() -> anyhow::Result<()> {
+        use crate::collection_path::CollectionPath;
+        use std::str::FromStr as _;
+        let collection_path = CollectionPath::from_str("rooms/roomA/messages")?;
+        assert_eq!(collection_path.to_string(), "rooms/roomA/messages");
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_str_error() {
+        use crate::collection_path::CollectionPath;
+        use std::str::FromStr as _;
+        assert!(CollectionPath::from_str("").is_err());
     }
 
     #[test]

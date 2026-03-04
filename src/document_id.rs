@@ -10,7 +10,7 @@ impl From<E> for Error {
     }
 }
 
-pub struct DocumentId(firestore_path::DocumentId);
+pub(crate) struct DocumentId(firestore_path::DocumentId);
 
 impl DocumentId {
     pub(crate) fn from_document_id(document_id: firestore_path::DocumentId) -> Self {
@@ -38,6 +38,15 @@ impl std::str::FromStr for DocumentId {
 #[cfg(test)]
 mod tests {
     #[test]
+    fn test_display() -> anyhow::Result<()> {
+        use crate::document_id::DocumentId;
+        use std::str::FromStr as _;
+        let document_id = DocumentId::from_str("roomA")?;
+        assert_eq!(document_id.to_string(), "roomA");
+        Ok(())
+    }
+
+    #[test]
     fn test_from_document_id() -> anyhow::Result<()> {
         use crate::document_id::DocumentId;
         use std::str::FromStr as _;
@@ -45,5 +54,20 @@ mod tests {
         let document_id = DocumentId::from_document_id(inner);
         assert_eq!(document_id.to_string(), "roomA");
         Ok(())
+    }
+
+    #[test]
+    fn test_from_str() -> anyhow::Result<()> {
+        use crate::document_id::DocumentId;
+        use std::str::FromStr as _;
+        assert!(DocumentId::from_str("roomA").is_ok());
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_str_error() {
+        use crate::document_id::DocumentId;
+        use std::str::FromStr as _;
+        assert!(DocumentId::from_str("").is_err());
     }
 }

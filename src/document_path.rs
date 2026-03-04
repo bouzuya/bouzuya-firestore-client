@@ -14,7 +14,7 @@ impl From<E> for Error {
 }
 
 #[derive(Clone)]
-pub struct DocumentPath(firestore_path::DocumentPath);
+pub(crate) struct DocumentPath(firestore_path::DocumentPath);
 
 impl DocumentPath {
     pub(crate) fn collection(&self, collection_id: CollectionId) -> CollectionPath {
@@ -52,6 +52,16 @@ impl std::str::FromStr for DocumentPath {
 #[cfg(test)]
 mod tests {
     #[test]
+    fn test_clone() -> anyhow::Result<()> {
+        use crate::document_path::DocumentPath;
+        use std::str::FromStr as _;
+        let document_path = DocumentPath::from_str("rooms/roomA")?;
+        let cloned = document_path.clone();
+        assert_eq!(cloned.to_string(), "rooms/roomA");
+        Ok(())
+    }
+
+    #[test]
     fn test_collection() -> anyhow::Result<()> {
         use crate::collection_id::CollectionId;
         use crate::document_path::DocumentPath;
@@ -61,6 +71,30 @@ mod tests {
         let collection_path = document_path.collection(collection_id);
         assert_eq!(collection_path.to_string(), "rooms/roomA/messages");
         Ok(())
+    }
+
+    #[test]
+    fn test_display() -> anyhow::Result<()> {
+        use crate::document_path::DocumentPath;
+        use std::str::FromStr as _;
+        let document_path = DocumentPath::from_str("rooms/roomA")?;
+        assert_eq!(document_path.to_string(), "rooms/roomA");
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_str() -> anyhow::Result<()> {
+        use crate::document_path::DocumentPath;
+        use std::str::FromStr as _;
+        assert!(DocumentPath::from_str("rooms/roomA").is_ok());
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_str_error() {
+        use crate::document_path::DocumentPath;
+        use std::str::FromStr as _;
+        assert!(DocumentPath::from_str("").is_err());
     }
 
     #[test]

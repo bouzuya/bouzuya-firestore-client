@@ -1,4 +1,3 @@
-use crate::CollectionId;
 use crate::CollectionPath;
 use crate::DocumentId;
 use crate::DocumentReference;
@@ -30,8 +29,8 @@ impl CollectionReference {
         ))
     }
 
-    pub fn id(&self) -> CollectionId {
-        self.collection_path.id()
+    pub fn id(&self) -> String {
+        self.collection_path.id().to_string()
     }
 
     pub fn parent(&self) -> Option<DocumentReference> {
@@ -40,8 +39,8 @@ impl CollectionReference {
         })
     }
 
-    pub fn path(&self) -> CollectionPath {
-        self.collection_path.clone()
+    pub fn path(&self) -> String {
+        self.collection_path.to_string()
     }
 }
 

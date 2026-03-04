@@ -1,4 +1,3 @@
-use crate::DocumentId;
 use crate::DocumentReference;
 use crate::Error;
 
@@ -60,7 +59,7 @@ impl DocumentSnapshot {
     //     todo!()
     // }
 
-    pub fn id(&self) -> DocumentId {
+    pub fn id(&self) -> String {
         self.document_reference.id()
     }
 
