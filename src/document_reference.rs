@@ -22,11 +22,17 @@ impl DocumentReference {
 }
 
 impl DocumentReference {
-    pub fn collection(&self, collection_id: impl Into<CollectionId>) -> CollectionReference {
-        CollectionReference::new(
-            self.document_path.collection(collection_id.into()),
+    pub fn collection(
+        &self,
+        collection_id: impl Into<String>,
+    ) -> Result<CollectionReference, Error> {
+        use std::str::FromStr as _;
+        let s: String = collection_id.into();
+        let collection_id = CollectionId::from_str(&s)?;
+        Ok(CollectionReference::new(
+            self.document_path.collection(collection_id),
             self.firestore.clone(),
-        )
+        ))
     }
 
     pub async fn get(&self) -> Result<DocumentSnapshot, Error> {
