@@ -43,8 +43,8 @@ impl CollectionReference {
 
 #[cfg(test)]
 mod tests {
-    #[test]
-    fn test_new() -> anyhow::Result<()> {
+    #[tokio::test]
+    async fn test_new() -> anyhow::Result<()> {
         use crate::CollectionPath;
         use crate::CollectionReference;
         use crate::Firestore;

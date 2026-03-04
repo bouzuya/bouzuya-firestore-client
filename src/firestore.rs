@@ -13,8 +13,20 @@ pub struct Firestore {
 
 impl Firestore {
     pub fn new(_options: FirestoreOptions) -> Result<Self, Error> {
+        let emulator_host = match std::env::var("FIRESTORE_EMULATOR_HOST") {
+            Ok(firestore_emulator_host) => Some(firestore_emulator_host),
+            Err(e) => match e {
+                std::env::VarError::NotPresent => None,
+                std::env::VarError::NotUnicode(_) => {
+                    return Err(Error::from_source("FIRESTORE_EMULATOR_HOST environment variable is not a valid unicode string".into()));
+                }
+            },
+        };
         // FIXME: Use options
-        let firestore_client = FirestoreClient::new("(default)".to_owned())?;
+        let firestore_client = FirestoreClient::new(
+            "projects/demo-project/databases/(default)".to_owned(),
+            emulator_host,
+        )?;
         Ok(Self { firestore_client })
     }
 }
@@ -35,12 +47,17 @@ impl Firestore {
 
 #[cfg(test)]
 mod tests {
-    #[test]
-    fn test_firestore_client() -> anyhow::Result<()> {
+    #[tokio::test]
+    async fn test_firestore_client() -> anyhow::Result<()> {
+        use crate::DocumentPath;
         use crate::Firestore;
         use crate::FirestoreOptions;
+        use std::str::FromStr as _;
         let firestore = Firestore::new(FirestoreOptions::default())?;
-        let _firestore_client = firestore.firestore_client();
+        let firestore_client = firestore.firestore_client();
+        firestore_client
+            .get_document(&DocumentPath::from_str("test-collection/test-document")?)
+            .await?;
         Ok(())
     }
 }

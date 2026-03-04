@@ -4,8 +4,8 @@ fn test_collection_reference_import() {
     let _: Option<CollectionReference> = None;
 }
 
-#[test]
-fn test_collection_reference_doc() -> Result<(), bouzuya_firestore_client::Error> {
+#[tokio::test]
+async fn test_collection_reference_doc() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::CollectionId;
     use bouzuya_firestore_client::DocumentId;
     use bouzuya_firestore_client::Firestore;
@@ -18,8 +18,8 @@ fn test_collection_reference_doc() -> Result<(), bouzuya_firestore_client::Error
     Ok(())
 }
 
-#[test]
-fn test_collection_reference_id() -> Result<(), bouzuya_firestore_client::Error> {
+#[tokio::test]
+async fn test_collection_reference_id() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::CollectionId;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
@@ -31,8 +31,8 @@ fn test_collection_reference_id() -> Result<(), bouzuya_firestore_client::Error>
     Ok(())
 }
 
-#[test]
-fn test_collection_reference_parent() -> Result<(), bouzuya_firestore_client::Error> {
+#[tokio::test]
+async fn test_collection_reference_parent() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::CollectionId;
     use bouzuya_firestore_client::CollectionPath;
     use bouzuya_firestore_client::Firestore;
@@ -50,8 +50,8 @@ fn test_collection_reference_parent() -> Result<(), bouzuya_firestore_client::Er
     Ok(())
 }
 
-#[test]
-fn test_collection_reference_path() -> Result<(), bouzuya_firestore_client::Error> {
+#[tokio::test]
+async fn test_collection_reference_path() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::CollectionId;
     use bouzuya_firestore_client::CollectionPath;
     use bouzuya_firestore_client::Firestore;

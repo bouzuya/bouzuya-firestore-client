@@ -1,5 +1,5 @@
-#[test]
-fn test_document_reference_clone() -> Result<(), bouzuya_firestore_client::Error> {
+#[tokio::test]
+async fn test_document_reference_clone() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::DocumentReference;
     use bouzuya_firestore_client::Firestore;
@@ -28,8 +28,8 @@ fn test_document_reference_import() {
     let _: Option<DocumentReference> = None;
 }
 
-#[test]
-fn test_document_reference_collection() -> Result<(), bouzuya_firestore_client::Error> {
+#[tokio::test]
+async fn test_document_reference_collection() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::CollectionId;
     use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
@@ -42,8 +42,8 @@ fn test_document_reference_collection() -> Result<(), bouzuya_firestore_client::
     Ok(())
 }
 
-#[test]
-fn test_document_reference_id() -> Result<(), bouzuya_firestore_client::Error> {
+#[tokio::test]
+async fn test_document_reference_id() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
@@ -56,8 +56,8 @@ fn test_document_reference_id() -> Result<(), bouzuya_firestore_client::Error> {
     Ok(())
 }
 
-#[test]
-fn test_document_reference_parent() -> Result<(), bouzuya_firestore_client::Error> {
+#[tokio::test]
+async fn test_document_reference_parent() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
@@ -74,8 +74,8 @@ fn test_document_reference_parent() -> Result<(), bouzuya_firestore_client::Erro
     Ok(())
 }
 
-#[test]
-fn test_document_reference_path() -> Result<(), bouzuya_firestore_client::Error> {
+#[tokio::test]
+async fn test_document_reference_path() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::DocumentPath;
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;

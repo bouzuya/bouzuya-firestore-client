@@ -53,8 +53,8 @@ impl DocumentReference {
 
 #[cfg(test)]
 mod tests {
-    #[test]
-    fn test_new() -> anyhow::Result<()> {
+    #[tokio::test]
+    async fn test_new() -> anyhow::Result<()> {
         use crate::DocumentPath;
         use crate::DocumentReference;
         use crate::Firestore;

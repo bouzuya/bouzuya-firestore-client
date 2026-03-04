@@ -17,7 +17,6 @@ pub use self::document_id::DocumentId;
 pub use self::document_path::DocumentPath;
 pub use self::document_reference::DocumentReference;
 pub use self::document_snapshot::DocumentSnapshot;
-pub(crate) use self::error::E;
 pub use self::error::Error;
 pub use self::firestore::Firestore;
 pub(crate) use self::firestore_client::FirestoreClient;

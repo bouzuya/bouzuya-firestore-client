@@ -7,30 +7,60 @@ use serde_firestore_value::google;
 use serde_firestore_value::google::firestore::v1::ExecutePipelineRequest;
 use serde_firestore_value::google::firestore::v1::ExecutePipelineResponse;
 
-use crate::E;
+#[derive(Debug, thiserror::Error)]
+enum E {
+    #[error("auth error: {0}")]
+    Auth(#[from] google_cloud_auth::errors::CredentialsError),
+    #[error("build auth error: {0}")]
+    BuildAuth(#[from] google_cloud_auth::build_errors::Error),
+    #[error("invalid url")]
+    InvalidUrl(#[source] Box<dyn std::error::Error + Send + Sync>),
+    #[error("transport error: {0}")]
+    Transport(#[from] tonic::transport::Error),
+    #[error("status error: {0}")]
+    Status(#[from] tonic::Status),
+}
+
+impl From<E> for Error {
+    fn from(e: E) -> Self {
+        Self::from_source(Box::new(e))
+    }
+}
 
 #[derive(Clone)]
 pub(crate) struct FirestoreClient {
     channel: tonic::transport::Channel,
-    credentials: google_cloud_auth::credentials::Credentials,
+    credentials: Option<google_cloud_auth::credentials::Credentials>,
     database_name: firestore_path::DatabaseName,
 }
 
 impl FirestoreClient {
     // NOTE: No tests are written for this method (requires a real project).
-    pub(crate) fn new(database: String) -> Result<Self, Error> {
-        let credentials = google_cloud_auth::credentials::Builder::default()
-            .with_scopes(["https://www.googleapis.com/auth/datastore"])
-            .build()
-            .map_err(E::from)?;
-        let channel = tonic::transport::Channel::from_static("https://firestore.googleapis.com")
-            .tls_config(
-                tonic::transport::ClientTlsConfig::new()
-                    .domain_name("firestore.googleapis.com")
-                    .with_webpki_roots(),
-            )
-            .map_err(E::from)?
-            .connect_lazy();
+    pub(crate) fn new(database: String, emulator_host: Option<String>) -> Result<Self, Error> {
+        let (channel, credentials) = match emulator_host {
+            Some(host) => (
+                tonic::transport::Channel::from_shared(format!("http://{}", host))
+                    .map_err(|e| E::InvalidUrl(Box::new(e)))?
+                    .connect_lazy(),
+                None,
+            ),
+            None => (
+                tonic::transport::Channel::from_static("https://firestore.googleapis.com")
+                    .tls_config(
+                        tonic::transport::ClientTlsConfig::new()
+                            .domain_name("firestore.googleapis.com")
+                            .with_webpki_roots(),
+                    )
+                    .map_err(E::from)?
+                    .connect_lazy(),
+                Some(
+                    google_cloud_auth::credentials::Builder::default()
+                        .with_scopes(["https://www.googleapis.com/auth/datastore"])
+                        .build()
+                        .map_err(E::from)?,
+                ),
+            ),
+        };
         let database_name =
             <firestore_path::DatabaseName as std::str::FromStr>::from_str(&database).unwrap();
         Ok(Self {
@@ -96,11 +126,17 @@ impl FirestoreClient {
         >,
         E,
     > {
-        let cacheable_headers = self.credentials.headers(http::Extensions::new()).await?;
-        let header_map = match cacheable_headers {
-            google_cloud_auth::credentials::CacheableResource::New { data, .. } => data,
-            google_cloud_auth::credentials::CacheableResource::NotModified => {
-                todo!()
+        let header_map = match self.credentials {
+            None => http::HeaderMap::new(),
+            Some(ref credentials) => {
+                let cacheable_headers = credentials.headers(http::Extensions::new()).await?;
+                let header_map = match cacheable_headers {
+                    google_cloud_auth::credentials::CacheableResource::New { data, .. } => data,
+                    google_cloud_auth::credentials::CacheableResource::NotModified => {
+                        todo!()
+                    }
+                };
+                header_map
             }
         };
         let metadata = tonic::metadata::MetadataMap::from_headers(header_map);
@@ -141,7 +177,7 @@ mod tests {
             firestore_path::ProjectId::from_str(&project_id)?,
             firestore_path::DatabaseId::from_str(&database_id)?,
         );
-        let mut client = FirestoreClient::new(database_name.to_string())?;
+        let mut client = FirestoreClient::new(database_name.to_string(), None)?;
         let request = google::firestore::v1::ExecutePipelineRequest {
             database: database_name.to_string(),
             pipeline_type: Some(
@@ -183,7 +219,7 @@ mod tests {
             firestore_path::ProjectId::from_str(&project_id)?,
             firestore_path::DatabaseId::from_str(&database_id)?,
         );
-        let mut client = FirestoreClient::new(database_name.to_string())?;
+        let mut client = FirestoreClient::new(database_name.to_string(), None)?;
         let request = google::firestore::v1::ExecutePipelineRequest {
             database: database_name.to_string(),
             pipeline_type: Some(
