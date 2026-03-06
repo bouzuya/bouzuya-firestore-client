@@ -1,4 +1,4 @@
-#[derive(Clone)]
+#[derive(Clone, Copy, Eq, Hash, PartialEq)]
 pub struct Timestamp(prost_types::Timestamp);
 
 impl Timestamp {
@@ -8,6 +8,21 @@ impl Timestamp {
 
     pub(crate) fn into_prost_timestamp(self) -> prost_types::Timestamp {
         self.0
+    }
+}
+
+impl Ord for Timestamp {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.0
+            .seconds
+            .cmp(&other.0.seconds)
+            .then_with(|| self.0.nanos.cmp(&other.0.nanos))
+    }
+}
+
+impl PartialOrd for Timestamp {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 
