@@ -4,6 +4,7 @@ use crate::DocumentPath;
 use crate::DocumentSnapshot;
 use crate::Error;
 use crate::Firestore;
+use crate::WriteResult;
 
 #[derive(Clone)]
 pub struct DocumentReference {
@@ -32,6 +33,19 @@ impl DocumentReference {
             self.document_path.collection(collection_id),
             self.firestore.clone(),
         ))
+    }
+
+    pub async fn create(&self, data: impl serde::ser::Serialize) -> Result<WriteResult, Error> {
+        let value =
+            serde_firestore_value::to_value(&data).map_err(|e| Error::from_source(Box::new(e)))?;
+        let write_time = self
+            .firestore
+            .firestore_client()
+            .create_document(&self.document_path, value)
+            .await?;
+        Ok(WriteResult::new(crate::Timestamp::from_prost_timestamp(
+            write_time,
+        )))
     }
 
     pub async fn get(&self) -> Result<DocumentSnapshot, Error> {

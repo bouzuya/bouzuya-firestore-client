@@ -14,6 +14,23 @@ async fn test_document_reference_clone() -> Result<(), bouzuya_firestore_client:
 }
 
 #[tokio::test]
+async fn test_document_reference_create() -> anyhow::Result<()> {
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    use bouzuya_firestore_client::WriteResult;
+    use std::collections::HashMap;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let id = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)?
+        .as_millis()
+        .to_string();
+    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let data: HashMap<String, String> = HashMap::new();
+    let _: WriteResult = document_ref.create(data).await?;
+    Ok(())
+}
+
+#[tokio::test]
 async fn test_document_reference_get() -> Result<(), bouzuya_firestore_client::Error> {
     // FIXME: add tests when the document exists and does not exist
     Ok(())
