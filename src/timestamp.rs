@@ -11,6 +11,15 @@ impl Timestamp {
     }
 }
 
+impl std::fmt::Debug for Timestamp {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Timestamp")
+            .field("seconds", &self.0.seconds)
+            .field("nanos", &self.0.nanos)
+            .finish()
+    }
+}
+
 impl Ord for Timestamp {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.0

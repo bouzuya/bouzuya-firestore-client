@@ -1,4 +1,10 @@
 #[test]
+fn test_timestamp_debug() {
+    fn assert_fn<T: std::fmt::Debug>() {}
+    assert_fn::<bouzuya_firestore_client::Timestamp>();
+}
+
+#[test]
 fn test_timestamp_clone() {
     fn assert_fn<T: Clone>() {}
     assert_fn::<bouzuya_firestore_client::Timestamp>();
