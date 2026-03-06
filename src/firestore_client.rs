@@ -72,6 +72,7 @@ impl FirestoreClient {
     }
 
     // NOTE: No tests are written for this method (requires a real project).
+    #[allow(dead_code)]
     pub(crate) async fn execute_pipeline(
         &mut self,
         request: ExecutePipelineRequest,
@@ -244,13 +245,12 @@ impl FirestoreClient {
             None => http::HeaderMap::new(),
             Some(ref credentials) => {
                 let cacheable_headers = credentials.headers(http::Extensions::new()).await?;
-                let header_map = match cacheable_headers {
+                match cacheable_headers {
                     google_cloud_auth::credentials::CacheableResource::New { data, .. } => data,
                     google_cloud_auth::credentials::CacheableResource::NotModified => {
                         todo!()
                     }
-                };
-                header_map
+                }
             }
         };
         let metadata = tonic::metadata::MetadataMap::from_headers(header_map);
