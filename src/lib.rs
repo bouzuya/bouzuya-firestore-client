@@ -9,6 +9,7 @@ mod error;
 mod firestore;
 mod firestore_client;
 mod firestore_options;
+mod timestamp;
 mod write_result;
 
 pub(crate) use self::collection_id::CollectionId;
@@ -22,4 +23,5 @@ pub use self::error::Error;
 pub use self::firestore::Firestore;
 pub(crate) use self::firestore_client::FirestoreClient;
 pub use self::firestore_options::FirestoreOptions;
+pub use self::timestamp::Timestamp;
 pub use self::write_result::WriteResult;

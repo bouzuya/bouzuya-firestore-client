@@ -126,6 +126,7 @@ dependencies = [
  "firestore-path",
  "google-cloud-auth",
  "http",
+ "prost-types",
  "serde",
  "serde-firestore-value",
  "thiserror 2.0.18",

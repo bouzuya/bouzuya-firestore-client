@@ -7,6 +7,7 @@ edition = "2024"
 firestore-path = "1"
 google-cloud-auth = "1"
 http = "1"
+prost-types = "0.14.3"
 serde = { version = "1", features = ["derive"] }
 serde-firestore-value = { git = "https://github.com/bouzuya/serde-firestore-value", branch = "master" }
 thiserror = "2.0.18"
