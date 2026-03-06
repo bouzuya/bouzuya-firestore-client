@@ -13,7 +13,7 @@ async fn test_write_result_write_time() -> anyhow::Result<()> {
     let firestore = Firestore::new(FirestoreOptions::default())?;
     let id = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)?
-        .as_millis()
+        .as_nanos()
         .to_string();
     let document_ref = firestore.doc(format!("rooms/{}", id))?;
     let data: HashMap<String, String> = HashMap::new();

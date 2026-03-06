@@ -4,6 +4,7 @@ use crate::DocumentPath;
 use crate::DocumentSnapshot;
 use crate::Error;
 use crate::Firestore;
+use crate::Precondition;
 use crate::WriteResult;
 
 #[derive(Clone)]
@@ -42,6 +43,17 @@ impl DocumentReference {
             .firestore
             .firestore_client()
             .create_document(&self.document_path, value)
+            .await?;
+        Ok(WriteResult::new(crate::Timestamp::from_prost_timestamp(
+            write_time,
+        )))
+    }
+
+    pub async fn delete(&self, precondition: Precondition) -> Result<WriteResult, Error> {
+        let write_time = self
+            .firestore
+            .firestore_client()
+            .delete_document(&self.document_path, precondition)
             .await?;
         Ok(WriteResult::new(crate::Timestamp::from_prost_timestamp(
             write_time,

@@ -1,3 +1,6 @@
+use crate::Timestamp;
+
 pub struct Precondition {
-    _private: (),
+    pub exists: Option<bool>,
+    pub last_update_time: Option<Timestamp>,
 }

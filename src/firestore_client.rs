@@ -2,6 +2,7 @@ use std::str::FromStr;
 
 use crate::DocumentPath;
 use crate::Error;
+use crate::Precondition;
 
 use serde_firestore_value::google;
 use serde_firestore_value::google::firestore::v1::ExecutePipelineRequest;
@@ -131,6 +132,66 @@ impl FirestoreClient {
             }],
             transaction: vec![],
         };
+        let response = client
+            .commit(request)
+            .await
+            .map_err(|e| Error::from_source(Box::new(e)))?;
+        let commit_response = response.into_inner();
+        let write_result = commit_response.write_results.into_iter().next().unwrap();
+        Ok(write_result.update_time.unwrap_or_else(|| {
+            commit_response
+                .commit_time
+                .expect("commit_time should be set")
+        }))
+    }
+
+    pub(crate) async fn delete_document(
+        &self,
+        document_path: &DocumentPath,
+        precondition: Precondition,
+    ) -> Result<::prost_types::Timestamp, Error> {
+        let mut client = self.client().await?;
+        let request =
+            google::firestore::v1::CommitRequest {
+                database: self.database_name.to_string(),
+                writes: vec![google::firestore::v1::Write {
+                    update_mask: None,
+                    update_transforms: vec![],
+                    current_document: {
+                        let Precondition {
+                            exists,
+                            last_update_time,
+                        } = precondition;
+                        match (exists, last_update_time) {
+                        (None, None) => None,
+                        (Some(exists), None) => Some(google::firestore::v1::Precondition {
+                            condition_type: Some(
+                                google::firestore::v1::precondition::ConditionType::Exists(exists),
+                            ),
+                        }),
+                        (None, Some(last_update_time)) => Some(google::firestore::v1::Precondition {
+                            condition_type: Some(
+                                google::firestore::v1::precondition::ConditionType::UpdateTime(
+                                    last_update_time.into_prost_timestamp(),
+                                ),
+                            ),
+                        }),
+                        (Some(_), Some(_)) => {
+                            return Err(Error::from_source(
+                                "both exists and last_update_time are set".into(),
+                            ));
+                        }
+                    }
+                    },
+                    operation: Some(google::firestore::v1::write::Operation::Delete(
+                        self.database_name
+                            .doc(document_path.to_string())
+                            .expect("invalid document path")
+                            .to_string(),
+                    )),
+                }],
+                transaction: vec![],
+            };
         let response = client
             .commit(request)
             .await
