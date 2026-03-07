@@ -1,9 +1,9 @@
 services:
   firebase:
     build: ./firebase
-    ports:
-      - "4000:4000"
-      - "8080:8080"
+    # If you want to access the emulator ui from outside of Docker, you can uncomment the following lines to expose the ports.
+    # ports:
+    #   - "4000:4000"
     volumes:
       - ./firebase:/firebase
   workspace:
