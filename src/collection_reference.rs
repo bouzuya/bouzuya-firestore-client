@@ -19,6 +19,13 @@ impl CollectionReference {
 }
 
 impl CollectionReference {
+    pub async fn add(&self, data: impl serde::ser::Serialize) -> Result<DocumentReference, Error> {
+        let document_path = self.collection_path.doc(DocumentId::generate());
+        let document_ref = DocumentReference::new(document_path, self.firestore.clone());
+        let _write_result = document_ref.create(&data).await?;
+        Ok(document_ref)
+    }
+
     pub fn doc(&self, document_id: impl Into<String>) -> Result<DocumentReference, Error> {
         use std::str::FromStr as _;
         let s: String = document_id.into();

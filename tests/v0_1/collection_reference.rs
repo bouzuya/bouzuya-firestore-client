@@ -1,3 +1,17 @@
+#[tokio::test]
+async fn test_collection_reference_add() -> anyhow::Result<()> {
+    use bouzuya_firestore_client::DocumentReference;
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    use std::collections::HashMap;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let collection_ref = firestore.collection("rooms")?;
+    let document_ref: DocumentReference =
+        collection_ref.add(HashMap::<String, String>::new()).await?;
+    assert!(document_ref.path().starts_with("rooms/"));
+    Ok(())
+}
+
 #[test]
 fn test_collection_reference_import() {
     use bouzuya_firestore_client::CollectionReference;
