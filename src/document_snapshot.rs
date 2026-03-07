@@ -1,5 +1,6 @@
 use crate::DocumentReference;
 use crate::Error;
+use crate::Timestamp;
 
 #[derive(Debug, thiserror::Error)]
 enum E {
@@ -29,11 +30,11 @@ impl DocumentSnapshot {
         }
     }
 
-    pub fn create_time(&self) -> Option<crate::Timestamp> {
+    pub fn create_time(&self) -> Option<Timestamp> {
         self.document
             .as_ref()
             .and_then(|doc| doc.create_time)
-            .map(crate::Timestamp::from_prost_timestamp)
+            .map(Timestamp::from_prost_timestamp)
     }
 
     pub fn data<T: serde::de::DeserializeOwned>(&self) -> Option<Result<T, Error>> {
@@ -74,9 +75,12 @@ impl DocumentSnapshot {
         self.document_reference.clone()
     }
 
-    // pub fn update_time(&self) -> Option<DateTime> {
-    //     todo!()
-    // }
+    pub fn update_time(&self) -> Option<Timestamp> {
+        self.document
+            .as_ref()
+            .and_then(|doc| doc.update_time)
+            .map(Timestamp::from_prost_timestamp)
+    }
 }
 
 #[cfg(test)]
