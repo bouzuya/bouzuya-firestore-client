@@ -54,7 +54,7 @@
   - [x] id
   - [x] parent
   - [x] path
-  - [ ] add
+  - [x] add
   - [x] doc
   - <del>[ ] isEqual</del>
   - [ ] listDocuments
@@ -81,12 +81,12 @@
   - [ ] update
   - [ ] withConverter
 - [x] DocumentSnapshot
-  - [ ] createTime
+  - [x] createTime
   - [x] exists
   - [x] id
   - [ ] readTime
   - [x] ref
-  - [ ] updateTime
+  - [x] updateTime
   - [x] data
   - [ ] get
   - <del>[ ] isEqual</del>
