@@ -1,0 +1,222 @@
+# bouzuya-firestore-client
+
+- <https://googleapis.dev/nodejs/firestore/latest/CollectionReference.html>
+- <https://googleapis.dev/nodejs/firestore/latest/Firestore.html>
+- <https://docs.cloud.google.com/firestore/native/docs/data-model>
+- <https://docs.cloud.google.com/nodejs/docs/reference/firestore/latest/overview>
+
+## TODOs
+
+- [ ] Aggregate
+  - [ ] aggregateType
+  - [ ] alias
+  - [ ] fieldPath
+- [ ] AggregateField
+  - [ ] aggregateType
+  - [ ] type
+  - [ ] average
+  - [ ] count
+  - <del>[ ] isEqual</del>
+  - [ ] sum
+- [ ] AggregateQuery
+  - [ ] query
+  - [ ] explain
+  - [ ] get
+  - <del>[ ] isEqual</del>
+- [ ] AggregateQuerySnapshot
+  - [ ] query
+  - [ ] readTime
+  - [ ] data
+  - <del>[ ] isEqual</del>
+- [ ] BulkWriter
+  - [ ] close
+  - [ ] create
+  - [ ] delete
+  - [ ] flush
+  - [ ] onWriteError
+  - [ ] onWriteResult
+  - [ ] set
+  - [ ] update
+- [ ] BulkWriterError
+  - [ ] code
+  - [ ] documentRef
+  - [ ] failedAttempts
+  - [ ] message
+  - [ ] operationType
+- [ ] BundleBuilder
+  - [ ] bundleId
+  - [ ] add
+  - [ ] build
+- [ ] CollectionGroup
+  - [ ] getPartitions
+  - [ ] withConverter
+- [x] CollectionReference
+  - [x] id
+  - [x] parent
+  - [x] path
+  - [ ] add
+  - [x] doc
+  - <del>[ ] isEqual</del>
+  - [ ] listDocuments
+  - [ ] withConverter
+- [ ] DocumentChange
+  - [ ] doc
+  - [ ] newIndex
+  - [ ] oldIndex
+  - [ ] type
+  - <del>[ ] isEqual</del>
+- [x] DocumentReference
+  - [ ] firestore
+  - [x] id
+  - [ ] parent
+  - [x] path
+  - [x] collection
+  - [x] create
+  - [x] delete
+  - [x] get
+  - <del>[ ] isEqual</del>
+  - [ ] listCollections
+  - [ ] onSnapshot
+  - [ ] set
+  - [ ] update
+  - [ ] withConverter
+- [x] DocumentSnapshot
+  - [ ] createTime
+  - [x] exists
+  - [x] id
+  - [ ] readTime
+  - [x] ref
+  - [ ] updateTime
+  - [x] data
+  - [ ] get
+  - <del>[ ] isEqual</del>
+- [ ] ExecutionStats
+  - [ ] debugStats
+  - [ ] executionDuration
+  - [ ] readOperations
+  - [ ] resultsReturned
+- [ ] ExplainMetrics
+  - [ ] executionStats
+  - [ ] planSummary
+- [ ] ExplainResults
+  - [ ] metrics
+  - [ ] snapshot
+- [ ] FieldPath
+  - [ ] documentId
+  - <del>[ ] isEqual</del>
+- [ ] FieldValue
+  - [ ] arrayRemove
+  - [ ] arrayUnion
+  - [ ] delete
+  - [ ] increment
+  - [ ] serverTimestamp
+  - [ ] vector
+  - <del>[ ] isEqual</del>
+- [ ] Filter
+  - [ ] and
+  - [ ] or
+  - [ ] where
+- [x] Firestore
+  - [ ] databaseId
+  - [ ] batch
+  - [ ] bulkWriter
+  - [ ] bundle
+  - [x] collection
+  - [ ] collectionGroup
+  - [x] doc
+  - [ ] getAll
+  - [ ] listCollections
+  - [ ] recursiveDelete
+  - [ ] runTransaction
+  - [ ] settings
+  - [ ] snapshot_
+  - [ ] terminate
+  - [ ] toJSON
+- [ ] GeoPoint
+  - [ ] latitude
+  - [ ] longitude
+  - <del>[ ] isEqual</del>
+- [ ] PlanSummary
+  - [ ] indexesUsed
+- [ ] Query
+  - [ ] firestore
+  - [ ] aggregate
+  - [ ] count
+  - [ ] endAt
+  - [ ] endBefore
+  - [ ] explain
+  - [ ] explainStream
+  - [ ] findNearest
+  - [ ] get
+  - <del>[ ] isEqual</del>
+  - [ ] limit
+  - [ ] limitToLast
+  - [ ] offset
+  - [ ] onSnapshot
+  - [ ] orderBy
+  - [ ] select
+  - [ ] startAfter
+  - [ ] startAt
+  - [ ] stream
+  - [ ] where
+  - [ ] withConverter
+- [ ] QueryDocumentSnapshot
+  - [ ] createTime
+  - [ ] updateTime
+  - [ ] data
+- [ ] QueryPartition
+  - [ ] endBefore
+  - [ ] startAt
+  - [ ] toQuery
+- [ ] QuerySnapshot
+  - [ ] docs
+  - [ ] empty
+  - [ ] query
+  - [ ] readTime
+  - [ ] size
+  - [ ] docChanges
+  - [ ] forEach
+  - <del>[ ] isEqual</del>
+- [x] Timestamp
+  - [ ] nanoseconds
+  - [ ] seconds
+  - [ ] fromDate
+  - [x] fromMillis
+  - <del>[ ] isEqual</del>
+  - [ ] now
+  - [ ] toDate
+  - [x] toMillis
+  - [ ] valueOf
+- [ ] Transaction
+  - [ ] create
+  - [ ] delete
+  - [ ] get
+  - [ ] getAll
+  - [ ] set
+  - [ ] update
+- [ ] VectorQuery
+  - [ ] query
+  - [ ] explain
+  - [ ] get
+  - <del>[ ] isEqual</del>
+- [ ] VectorQuerySnapshot
+  - [ ] docs
+  - [ ] empty
+  - [ ] query
+  - [ ] readTime
+  - [ ] size
+  - [ ] docChanges
+  - [ ] forEach
+  - <del>[ ] isEqual</del>
+- [ ] VectorValue
+  - <del>[ ] isEqual</del>
+  - [ ] toArray
+- [ ] WriteBatch
+  - [ ] commit
+  - [ ] create
+  - [ ] delete
+  - [ ] set
+  - [ ] update
+- [x] WriteResult
+  - [x] writeTime
+  - <del>[ ] isEqual</del>
