@@ -29,9 +29,12 @@ impl DocumentSnapshot {
         }
     }
 
-    // pub fn create_time(&self) -> Option<DateTime> {
-    //     todo!()
-    // }
+    pub fn create_time(&self) -> Option<crate::Timestamp> {
+        self.document
+            .as_ref()
+            .and_then(|doc| doc.create_time)
+            .map(crate::Timestamp::from_prost_timestamp)
+    }
 
     pub fn data<T: serde::de::DeserializeOwned>(&self) -> Option<Result<T, Error>> {
         self.document.as_ref().map(|it| {
