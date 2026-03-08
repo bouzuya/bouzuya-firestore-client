@@ -1,6 +1,5 @@
 use std::str::FromStr;
 
-use crate::CollectionPath;
 use crate::Error;
 use crate::Precondition;
 
@@ -232,7 +231,7 @@ impl FirestoreClient {
 
     pub(crate) async fn list_documents(
         &self,
-        collection_path: &CollectionPath,
+        collection_path: &firestore_path::CollectionPath,
     ) -> Result<Vec<firestore_path::DocumentPath>, Error> {
         let root_document_name = self.database_name.root_document_name().to_string();
         let parent = match collection_path.parent() {
@@ -243,7 +242,7 @@ impl FirestoreClient {
                 .to_string(),
             None => root_document_name.clone(),
         };
-        let collection_id = collection_path.id().to_string();
+        let collection_id = collection_path.collection_id().to_string();
         let mut result = Vec::new();
         let mut page_token = String::new();
         loop {

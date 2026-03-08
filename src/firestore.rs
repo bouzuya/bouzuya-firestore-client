@@ -1,6 +1,5 @@
 use std::str::FromStr;
 
-use crate::CollectionPath;
 use crate::CollectionReference;
 use crate::DocumentReference;
 use crate::Error;
@@ -38,7 +37,8 @@ impl Firestore {
         collection_path: impl Into<String>,
     ) -> Result<CollectionReference, Error> {
         let s: String = collection_path.into();
-        let collection_path = CollectionPath::from_str(&s)?;
+        let collection_path = firestore_path::CollectionPath::from_str(&s)
+            .map_err(|e| Error::from_source(Box::new(e)))?;
         Ok(CollectionReference::new(collection_path, self.clone()))
     }
 

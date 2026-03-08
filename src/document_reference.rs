@@ -1,4 +1,3 @@
-use crate::CollectionPath;
 use crate::CollectionReference;
 use crate::DocumentSnapshot;
 use crate::Error;
@@ -31,11 +30,9 @@ impl DocumentReference {
         let collection_id = firestore_path::CollectionId::from_str(&s)
             .map_err(|e| Error::from_source(Box::new(e)))?;
         Ok(CollectionReference::new(
-            CollectionPath::from(
-                self.document_path
-                    .collection(firestore_path::CollectionPath::new(None, collection_id))
-                    .map_err(|e| Error::from_source(Box::new(e)))?,
-            ),
+            self.document_path
+                .collection(firestore_path::CollectionPath::new(None, collection_id))
+                .map_err(|e| Error::from_source(Box::new(e)))?,
             self.firestore.clone(),
         ))
     }
@@ -78,10 +75,7 @@ impl DocumentReference {
     }
 
     pub fn parent(&self) -> CollectionReference {
-        CollectionReference::new(
-            CollectionPath::from(self.document_path.parent().clone()),
-            self.firestore.clone(),
-        )
+        CollectionReference::new(self.document_path.parent().clone(), self.firestore.clone())
     }
 
     pub fn path(&self) -> String {

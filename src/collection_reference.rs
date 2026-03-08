@@ -1,15 +1,17 @@
-use crate::CollectionPath;
 use crate::DocumentReference;
 use crate::Error;
 use crate::Firestore;
 
 pub struct CollectionReference {
-    collection_path: CollectionPath,
+    collection_path: firestore_path::CollectionPath,
     firestore: Firestore,
 }
 
 impl CollectionReference {
-    pub(crate) fn new(collection_path: CollectionPath, firestore: Firestore) -> Self {
+    pub(crate) fn new(
+        collection_path: firestore_path::CollectionPath,
+        firestore: Firestore,
+    ) -> Self {
         Self {
             collection_path,
             firestore,
@@ -26,7 +28,10 @@ impl CollectionReference {
         );
         let document_id = <firestore_path::DocumentId as std::str::FromStr>::from_str(&s)
             .expect("generated document id should be valid");
-        let document_path = self.collection_path.doc(document_id);
+        let document_path = self
+            .collection_path
+            .doc(document_id)
+            .map_err(|e| Error::from_source(Box::new(e)))?;
         let document_ref = DocumentReference::new(document_path, self.firestore.clone());
         let _write_result = document_ref.create(&data).await?;
         Ok(document_ref)
@@ -38,13 +43,15 @@ impl CollectionReference {
         let document_id = firestore_path::DocumentId::from_str(&s)
             .map_err(|e| Error::from_source(Box::new(e)))?;
         Ok(DocumentReference::new(
-            self.collection_path.doc(document_id),
+            self.collection_path
+                .doc(document_id)
+                .map_err(|e| Error::from_source(Box::new(e)))?,
             self.firestore.clone(),
         ))
     }
 
     pub fn id(&self) -> String {
-        self.collection_path.id().to_string()
+        self.collection_path.collection_id().to_string()
     }
 
     pub async fn list_documents(&self) -> Result<Vec<DocumentReference>, Error> {
@@ -61,7 +68,7 @@ impl CollectionReference {
 
     pub fn parent(&self) -> Option<DocumentReference> {
         self.collection_path.parent().map(|parent_document_path| {
-            DocumentReference::new(parent_document_path, self.firestore.clone())
+            DocumentReference::new(parent_document_path.clone(), self.firestore.clone())
         })
     }
 
@@ -74,10 +81,10 @@ impl CollectionReference {
 mod tests {
     #[tokio::test]
     async fn test_new() -> anyhow::Result<()> {
-        use crate::CollectionPath;
         use crate::CollectionReference;
         use crate::Firestore;
         use crate::FirestoreOptions;
+        use firestore_path::CollectionPath;
         use std::str::FromStr as _;
         let collection_path = CollectionPath::from_str("rooms")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
