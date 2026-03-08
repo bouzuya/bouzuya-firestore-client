@@ -32,6 +32,18 @@ impl DocumentPath {
     }
 }
 
+impl From<DocumentPath> for firestore_path::DocumentPath {
+    fn from(document_path: DocumentPath) -> Self {
+        document_path.0
+    }
+}
+
+impl From<firestore_path::DocumentPath> for DocumentPath {
+    fn from(document_path: firestore_path::DocumentPath) -> Self {
+        Self(document_path)
+    }
+}
+
 impl std::fmt::Display for DocumentPath {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)
@@ -79,6 +91,26 @@ mod tests {
         use std::str::FromStr as _;
         let document_path = DocumentPath::from_str("rooms/roomA")?;
         assert_eq!(document_path.to_string(), "rooms/roomA");
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_firestore_path_document_path() -> anyhow::Result<()> {
+        use crate::document_path::DocumentPath;
+        use std::str::FromStr as _;
+        let inner = firestore_path::DocumentPath::from_str("rooms/roomA")?;
+        let document_path = DocumentPath::from(inner);
+        assert_eq!(document_path.to_string(), "rooms/roomA");
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_self_for_firestore_path_document_path() -> anyhow::Result<()> {
+        use crate::document_path::DocumentPath;
+        use std::str::FromStr as _;
+        let document_path = DocumentPath::from_str("rooms/roomA")?;
+        let inner = firestore_path::DocumentPath::from(document_path);
+        assert_eq!(inner.to_string(), "rooms/roomA");
         Ok(())
     }
 
