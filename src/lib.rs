@@ -1,4 +1,3 @@
-mod collection_id;
 mod collection_path;
 mod collection_reference;
 mod document_reference;
@@ -11,7 +10,6 @@ mod precondition;
 mod timestamp;
 mod write_result;
 
-pub(crate) use self::collection_id::CollectionId;
 pub(crate) use self::collection_path::CollectionPath;
 pub use self::collection_reference::CollectionReference;
 pub use self::document_reference::DocumentReference;

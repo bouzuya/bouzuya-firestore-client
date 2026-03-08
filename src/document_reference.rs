@@ -1,4 +1,3 @@
-use crate::CollectionId;
 use crate::CollectionPath;
 use crate::CollectionReference;
 use crate::DocumentSnapshot;
@@ -29,7 +28,8 @@ impl DocumentReference {
     ) -> Result<CollectionReference, Error> {
         use std::str::FromStr as _;
         let s: String = collection_id.into();
-        let collection_id = firestore_path::CollectionId::from(CollectionId::from_str(&s)?);
+        let collection_id = firestore_path::CollectionId::from_str(&s)
+            .map_err(|e| Error::from_source(Box::new(e)))?;
         Ok(CollectionReference::new(
             CollectionPath::from(
                 self.document_path

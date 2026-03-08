@@ -1,4 +1,3 @@
-use crate::CollectionId;
 use crate::Error;
 
 #[derive(Debug, thiserror::Error)]
@@ -24,8 +23,8 @@ impl CollectionPath {
             .expect("collection path and document id should form a valid document path")
     }
 
-    pub(crate) fn id(&self) -> CollectionId {
-        CollectionId::from_collection_id(self.0.collection_id().clone())
+    pub(crate) fn id(&self) -> firestore_path::CollectionId {
+        self.0.collection_id().clone()
     }
 
     pub(crate) fn parent(&self) -> Option<firestore_path::DocumentPath> {
@@ -37,8 +36,8 @@ impl CollectionPath {
     }
 }
 
-impl From<CollectionId> for CollectionPath {
-    fn from(collection_id: CollectionId) -> Self {
+impl From<firestore_path::CollectionId> for CollectionPath {
+    fn from(collection_id: firestore_path::CollectionId) -> Self {
         <Self as std::str::FromStr>::from_str(&collection_id.to_string())
             .expect("collection id should be valid collection path")
     }
@@ -108,8 +107,8 @@ mod tests {
 
     #[test]
     fn test_from_collection_id() -> anyhow::Result<()> {
-        use crate::collection_id::CollectionId;
         use crate::collection_path::CollectionPath;
+        use firestore_path::CollectionId;
         use std::str::FromStr as _;
         let collection_id = CollectionId::from_str("rooms")?;
         let collection_path = CollectionPath::from(collection_id);
