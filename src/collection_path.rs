@@ -1,5 +1,4 @@
 use crate::CollectionId;
-use crate::DocumentId;
 use crate::DocumentPath;
 use crate::Error;
 
@@ -23,7 +22,7 @@ impl CollectionPath {
 }
 
 impl CollectionPath {
-    pub(crate) fn doc(&self, document_id: DocumentId) -> DocumentPath {
+    pub(crate) fn doc(&self, document_id: firestore_path::DocumentId) -> DocumentPath {
         use std::str::FromStr as _;
         DocumentPath::from_str(&format!("{}/{}", self, document_id))
             .expect("collection path and document id should form a valid document path")
@@ -101,8 +100,8 @@ mod tests {
 
     #[test]
     fn test_doc() -> anyhow::Result<()> {
-        use crate::collection_path::CollectionPath;
-        use crate::document_id::DocumentId;
+        use crate::CollectionPath;
+        use firestore_path::DocumentId;
         use std::str::FromStr as _;
         let collection_path = CollectionPath::from_str("rooms")?;
         let document_id = DocumentId::from_str("roomA")?;

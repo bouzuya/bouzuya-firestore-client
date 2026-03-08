@@ -1,5 +1,4 @@
 use crate::CollectionPath;
-use crate::DocumentId;
 use crate::DocumentReference;
 use crate::Error;
 use crate::Firestore;
@@ -20,7 +19,14 @@ impl CollectionReference {
 
 impl CollectionReference {
     pub async fn add(&self, data: impl serde::ser::Serialize) -> Result<DocumentReference, Error> {
-        let document_path = self.collection_path.doc(DocumentId::generate());
+        let s = rand::distr::SampleString::sample_string(
+            &rand::distr::Alphanumeric,
+            &mut rand::rand_core::UnwrapErr(rand::rngs::SysRng),
+            20,
+        );
+        let document_id = <firestore_path::DocumentId as std::str::FromStr>::from_str(&s)
+            .expect("generated document id should be valid");
+        let document_path = self.collection_path.doc(document_id);
         let document_ref = DocumentReference::new(document_path, self.firestore.clone());
         let _write_result = document_ref.create(&data).await?;
         Ok(document_ref)
@@ -29,7 +35,8 @@ impl CollectionReference {
     pub fn doc(&self, document_id: impl Into<String>) -> Result<DocumentReference, Error> {
         use std::str::FromStr as _;
         let s: String = document_id.into();
-        let document_id = DocumentId::from_str(&s)?;
+        let document_id = firestore_path::DocumentId::from_str(&s)
+            .map_err(|e| Error::from_source(Box::new(e)))?;
         Ok(DocumentReference::new(
             self.collection_path.doc(document_id),
             self.firestore.clone(),

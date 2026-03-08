@@ -1,7 +1,6 @@
 mod collection_id;
 mod collection_path;
 mod collection_reference;
-mod document_id;
 mod document_path;
 mod document_reference;
 mod document_snapshot;
@@ -16,7 +15,6 @@ mod write_result;
 pub(crate) use self::collection_id::CollectionId;
 pub(crate) use self::collection_path::CollectionPath;
 pub use self::collection_reference::CollectionReference;
-pub(crate) use self::document_id::DocumentId;
 pub(crate) use self::document_path::DocumentPath;
 pub use self::document_reference::DocumentReference;
 pub use self::document_snapshot::DocumentSnapshot;

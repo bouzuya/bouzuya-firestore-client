@@ -1,6 +1,5 @@
 use crate::CollectionId;
 use crate::CollectionPath;
-use crate::DocumentId;
 use crate::Error;
 
 #[derive(Debug, thiserror::Error)]
@@ -23,8 +22,8 @@ impl DocumentPath {
             .expect("document path and collection id should form a valid collection path")
     }
 
-    pub(crate) fn id(&self) -> DocumentId {
-        DocumentId::from_document_id(self.0.document_id().clone())
+    pub(crate) fn id(&self) -> firestore_path::DocumentId {
+        self.0.document_id().clone()
     }
 
     pub(crate) fn parent(&self) -> CollectionPath {
