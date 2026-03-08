@@ -28,6 +28,18 @@ impl DocumentId {
     }
 }
 
+impl From<DocumentId> for firestore_path::DocumentId {
+    fn from(document_id: DocumentId) -> Self {
+        document_id.0
+    }
+}
+
+impl From<firestore_path::DocumentId> for DocumentId {
+    fn from(document_id: firestore_path::DocumentId) -> Self {
+        Self(document_id)
+    }
+}
+
 impl std::fmt::Display for DocumentId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)
@@ -124,6 +136,26 @@ mod tests {
         let inner = firestore_path::DocumentId::from_str("roomA")?;
         let document_id = DocumentId::from_document_id(inner);
         assert_eq!(document_id.to_string(), "roomA");
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_firestore_path_document_id() -> anyhow::Result<()> {
+        use crate::document_id::DocumentId;
+        use std::str::FromStr as _;
+        let inner = firestore_path::DocumentId::from_str("roomA")?;
+        let document_id = DocumentId::from(inner);
+        assert_eq!(document_id.to_string(), "roomA");
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_self_for_firestore_path_document_id() -> anyhow::Result<()> {
+        use crate::document_id::DocumentId;
+        use std::str::FromStr as _;
+        let document_id = DocumentId::from_str("roomA")?;
+        let inner = firestore_path::DocumentId::from(document_id);
+        assert_eq!(inner.to_string(), "roomA");
         Ok(())
     }
 
