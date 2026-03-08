@@ -14,6 +14,7 @@ async fn test_document_reference_clone() -> Result<(), bouzuya_firestore_client:
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_document_reference_create() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
@@ -31,6 +32,7 @@ async fn test_document_reference_create() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_document_reference_delete() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;

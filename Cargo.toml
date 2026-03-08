@@ -21,3 +21,4 @@ tonic = { version = "0.14", features = [
 
 [dev-dependencies]
 anyhow = "1"
+serial_test = "3"

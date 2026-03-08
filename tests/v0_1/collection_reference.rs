@@ -1,4 +1,5 @@
 #[tokio::test]
+#[serial_test::serial]
 async fn test_collection_reference_add() -> anyhow::Result<()> {
     use bouzuya_firestore_client::DocumentReference;
     use bouzuya_firestore_client::Firestore;
@@ -13,6 +14,7 @@ async fn test_collection_reference_add() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_collection_reference_list_documents() -> anyhow::Result<()> {
     use bouzuya_firestore_client::DocumentReference;
     use bouzuya_firestore_client::Firestore;

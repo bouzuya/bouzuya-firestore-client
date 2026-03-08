@@ -1,4 +1,5 @@
 #[tokio::test]
+#[serial_test::serial]
 async fn test_document_snapshot_create_time() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
@@ -27,6 +28,7 @@ async fn test_document_snapshot_create_time() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_document_snapshot_data() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
@@ -42,6 +44,7 @@ async fn test_document_snapshot_data() -> Result<(), bouzuya_firestore_client::E
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_document_snapshot_exists() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
@@ -55,6 +58,7 @@ async fn test_document_snapshot_exists() -> Result<(), bouzuya_firestore_client:
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_document_snapshot_id() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
@@ -66,6 +70,7 @@ async fn test_document_snapshot_id() -> Result<(), bouzuya_firestore_client::Err
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_document_snapshot_update_time() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
@@ -94,6 +99,7 @@ async fn test_document_snapshot_update_time() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_document_snapshot_ref() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;

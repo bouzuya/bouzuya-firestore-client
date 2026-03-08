@@ -57,6 +57,7 @@ impl Firestore {
 #[cfg(test)]
 mod tests {
     #[tokio::test]
+    #[serial_test::serial]
     async fn test_firestore_client() -> anyhow::Result<()> {
         use crate::DocumentPath;
         use crate::Firestore;

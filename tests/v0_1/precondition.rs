@@ -5,6 +5,7 @@ fn test_precondition_import() {
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_precondition_exists() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
@@ -40,6 +41,7 @@ async fn test_precondition_exists() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_precondition_last_update_time() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;

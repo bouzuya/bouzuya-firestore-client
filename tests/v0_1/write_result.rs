@@ -5,6 +5,7 @@ fn test_write_result_import() {
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_write_result_write_time() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
