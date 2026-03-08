@@ -2,7 +2,6 @@ use std::str::FromStr;
 
 use crate::CollectionPath;
 use crate::CollectionReference;
-use crate::DocumentPath;
 use crate::DocumentReference;
 use crate::Error;
 use crate::FirestoreClient;
@@ -45,7 +44,8 @@ impl Firestore {
 
     pub fn doc(&self, document_path: impl Into<String>) -> Result<DocumentReference, Error> {
         let s: String = document_path.into();
-        let document_path = DocumentPath::from_str(&s)?;
+        let document_path = firestore_path::DocumentPath::from_str(&s)
+            .map_err(|e| Error::from_source(Box::new(e)))?;
         Ok(DocumentReference::new(document_path, self.clone()))
     }
 
@@ -59,9 +59,9 @@ mod tests {
     #[tokio::test]
     #[serial_test::serial]
     async fn test_firestore_client() -> anyhow::Result<()> {
-        use crate::DocumentPath;
         use crate::Firestore;
         use crate::FirestoreOptions;
+        use firestore_path::DocumentPath;
         use std::str::FromStr as _;
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let firestore_client = firestore.firestore_client();

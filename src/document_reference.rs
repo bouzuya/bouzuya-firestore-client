@@ -1,6 +1,6 @@
 use crate::CollectionId;
+use crate::CollectionPath;
 use crate::CollectionReference;
-use crate::DocumentPath;
 use crate::DocumentSnapshot;
 use crate::Error;
 use crate::Firestore;
@@ -9,12 +9,12 @@ use crate::WriteResult;
 
 #[derive(Clone)]
 pub struct DocumentReference {
-    document_path: DocumentPath,
+    document_path: firestore_path::DocumentPath,
     firestore: Firestore,
 }
 
 impl DocumentReference {
-    pub(crate) fn new(document_path: DocumentPath, firestore: Firestore) -> Self {
+    pub(crate) fn new(document_path: firestore_path::DocumentPath, firestore: Firestore) -> Self {
         Self {
             document_path,
             firestore,
@@ -29,9 +29,13 @@ impl DocumentReference {
     ) -> Result<CollectionReference, Error> {
         use std::str::FromStr as _;
         let s: String = collection_id.into();
-        let collection_id = CollectionId::from_str(&s)?;
+        let collection_id = firestore_path::CollectionId::from(CollectionId::from_str(&s)?);
         Ok(CollectionReference::new(
-            self.document_path.collection(collection_id),
+            CollectionPath::from(
+                self.document_path
+                    .collection(firestore_path::CollectionPath::new(None, collection_id))
+                    .map_err(|e| Error::from_source(Box::new(e)))?,
+            ),
             self.firestore.clone(),
         ))
     }
@@ -70,11 +74,14 @@ impl DocumentReference {
     }
 
     pub fn id(&self) -> String {
-        self.document_path.id().to_string()
+        self.document_path.document_id().to_string()
     }
 
     pub fn parent(&self) -> CollectionReference {
-        CollectionReference::new(self.document_path.parent(), self.firestore.clone())
+        CollectionReference::new(
+            CollectionPath::from(self.document_path.parent().clone()),
+            self.firestore.clone(),
+        )
     }
 
     pub fn path(&self) -> String {
@@ -86,10 +93,10 @@ impl DocumentReference {
 mod tests {
     #[tokio::test]
     async fn test_new() -> anyhow::Result<()> {
-        use crate::DocumentPath;
         use crate::DocumentReference;
         use crate::Firestore;
         use crate::FirestoreOptions;
+        use firestore_path::DocumentPath;
         use std::str::FromStr as _;
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let document_path = DocumentPath::from_str("rooms/roomA")?;

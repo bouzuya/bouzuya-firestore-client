@@ -1,5 +1,4 @@
 use crate::CollectionId;
-use crate::DocumentPath;
 use crate::Error;
 
 #[derive(Debug, thiserror::Error)]
@@ -16,15 +15,12 @@ impl From<E> for Error {
 pub(crate) struct CollectionPath(firestore_path::CollectionPath);
 
 impl CollectionPath {
-    pub(crate) fn from_collection_path(collection_path: firestore_path::CollectionPath) -> Self {
-        Self(collection_path)
-    }
-}
-
-impl CollectionPath {
-    pub(crate) fn doc(&self, document_id: firestore_path::DocumentId) -> DocumentPath {
+    pub(crate) fn doc(
+        &self,
+        document_id: firestore_path::DocumentId,
+    ) -> firestore_path::DocumentPath {
         use std::str::FromStr as _;
-        DocumentPath::from_str(&format!("{}/{}", self, document_id))
+        firestore_path::DocumentPath::from_str(&format!("{}/{}", self, document_id))
             .expect("collection path and document id should form a valid document path")
     }
 
@@ -32,10 +28,10 @@ impl CollectionPath {
         CollectionId::from_collection_id(self.0.collection_id().clone())
     }
 
-    pub(crate) fn parent(&self) -> Option<DocumentPath> {
+    pub(crate) fn parent(&self) -> Option<firestore_path::DocumentPath> {
         self.0.parent().map(|parent| {
             use std::str::FromStr as _;
-            DocumentPath::from_str(&parent.to_string())
+            firestore_path::DocumentPath::from_str(&parent.to_string())
                 .expect("collection path's parent should be a valid document path")
         })
     }
@@ -117,16 +113,6 @@ mod tests {
         use std::str::FromStr as _;
         let collection_id = CollectionId::from_str("rooms")?;
         let collection_path = CollectionPath::from(collection_id);
-        assert_eq!(collection_path.to_string(), "rooms");
-        Ok(())
-    }
-
-    #[test]
-    fn test_from_collection_path() -> anyhow::Result<()> {
-        use crate::collection_path::CollectionPath;
-        use std::str::FromStr as _;
-        let inner = firestore_path::CollectionPath::from_str("rooms")?;
-        let collection_path = CollectionPath::from_collection_path(inner);
         assert_eq!(collection_path.to_string(), "rooms");
         Ok(())
     }

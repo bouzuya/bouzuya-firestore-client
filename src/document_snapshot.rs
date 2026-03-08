@@ -87,11 +87,11 @@ impl DocumentSnapshot {
 mod tests {
     #[tokio::test]
     async fn test_new() -> anyhow::Result<()> {
-        use crate::DocumentPath;
         use crate::DocumentReference;
         use crate::DocumentSnapshot;
         use crate::Firestore;
         use crate::FirestoreOptions;
+        use firestore_path::DocumentPath;
         use std::str::FromStr as _;
         let document_path = DocumentPath::from_str("rooms/roomA")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;

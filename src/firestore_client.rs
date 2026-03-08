@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
 use crate::CollectionPath;
-use crate::DocumentPath;
 use crate::Error;
 use crate::Precondition;
 
@@ -96,7 +95,7 @@ impl FirestoreClient {
 
     pub(crate) async fn create_document(
         &self,
-        document_path: &DocumentPath,
+        document_path: &firestore_path::DocumentPath,
         value: google::firestore::v1::Value,
     ) -> Result<::prost_types::Timestamp, Error> {
         let mut client = self.client().await?;
@@ -149,7 +148,7 @@ impl FirestoreClient {
 
     pub(crate) async fn delete_document(
         &self,
-        document_path: &DocumentPath,
+        document_path: &firestore_path::DocumentPath,
         precondition: Precondition,
     ) -> Result<::prost_types::Timestamp, Error> {
         let mut client = self.client().await?;
@@ -209,7 +208,7 @@ impl FirestoreClient {
 
     pub(crate) async fn get_document(
         &self,
-        document_path: &DocumentPath,
+        document_path: &firestore_path::DocumentPath,
     ) -> Result<Option<google::firestore::v1::Document>, Error> {
         let mut client = self.client().await?;
         let request = google::firestore::v1::GetDocumentRequest {
@@ -234,7 +233,7 @@ impl FirestoreClient {
     pub(crate) async fn list_documents(
         &self,
         collection_path: &CollectionPath,
-    ) -> Result<Vec<DocumentPath>, Error> {
+    ) -> Result<Vec<firestore_path::DocumentPath>, Error> {
         let root_document_name = self.database_name.root_document_name().to_string();
         let parent = match collection_path.parent() {
             Some(parent_doc_path) => self
@@ -269,15 +268,13 @@ impl FirestoreClient {
                 list_response
                     .documents
                     .into_iter()
-                    .map(|doc| -> Result<DocumentPath, firestore_path::Error> {
-                        Ok(DocumentPath::from_str(
-                            &firestore_path::DocumentPath::from(
+                    .map(
+                        |doc| -> Result<firestore_path::DocumentPath, firestore_path::Error> {
+                            Ok(firestore_path::DocumentPath::from(
                                 firestore_path::DocumentName::from_str(&doc.name)?,
-                            )
-                            .to_string(),
-                        )
-                        .expect("document path should be valid"))
-                    })
+                            ))
+                        },
+                    )
                     .collect::<Result<Vec<_>, firestore_path::Error>>()
                     .map_err(|e| Error::from_source(Box::new(e)))?,
             );
