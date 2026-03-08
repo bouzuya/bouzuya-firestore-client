@@ -16,18 +16,18 @@
   - [ ] type
   - [ ] average
   - [ ] count
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
   - [ ] sum
 - [ ] AggregateQuery
   - [ ] query
   - [ ] explain
   - [ ] get
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
 - [ ] AggregateQuerySnapshot
   - [ ] query
   - [ ] readTime
   - [ ] data
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
 - [ ] BulkWriter
   - [ ] close
   - [ ] create
@@ -56,25 +56,25 @@
   - [x] path
   - [x] add
   - [x] doc
-  - <del>[ ] isEqual</del>
-  - [ ] listDocuments
+  - [x] <del>isEqual</del>
+  - [x] listDocuments
   - [ ] withConverter
 - [ ] DocumentChange
   - [ ] doc
   - [ ] newIndex
   - [ ] oldIndex
   - [ ] type
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
 - [x] DocumentReference
   - [ ] firestore
   - [x] id
-  - [ ] parent
+  - [x] parent
   - [x] path
   - [x] collection
   - [x] create
   - [x] delete
   - [x] get
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
   - [ ] listCollections
   - [ ] onSnapshot
   - [ ] set
@@ -89,7 +89,7 @@
   - [x] updateTime
   - [x] data
   - [ ] get
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
 - [ ] ExecutionStats
   - [ ] debugStats
   - [ ] executionDuration
@@ -103,7 +103,7 @@
   - [ ] snapshot
 - [ ] FieldPath
   - [ ] documentId
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
 - [ ] FieldValue
   - [ ] arrayRemove
   - [ ] arrayUnion
@@ -111,7 +111,7 @@
   - [ ] increment
   - [ ] serverTimestamp
   - [ ] vector
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
 - [ ] Filter
   - [ ] and
   - [ ] or
@@ -135,7 +135,7 @@
 - [ ] GeoPoint
   - [ ] latitude
   - [ ] longitude
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
 - [ ] PlanSummary
   - [ ] indexesUsed
 - [ ] Query
@@ -148,7 +148,7 @@
   - [ ] explainStream
   - [ ] findNearest
   - [ ] get
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
   - [ ] limit
   - [ ] limitToLast
   - [ ] offset
@@ -176,13 +176,13 @@
   - [ ] size
   - [ ] docChanges
   - [ ] forEach
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
 - [x] Timestamp
   - [ ] nanoseconds
   - [ ] seconds
   - [ ] fromDate
   - [x] fromMillis
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
   - [ ] now
   - [ ] toDate
   - [x] toMillis
@@ -198,7 +198,7 @@
   - [ ] query
   - [ ] explain
   - [ ] get
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
 - [ ] VectorQuerySnapshot
   - [ ] docs
   - [ ] empty
@@ -207,9 +207,9 @@
   - [ ] size
   - [ ] docChanges
   - [ ] forEach
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
 - [ ] VectorValue
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
   - [ ] toArray
 - [ ] WriteBatch
   - [ ] commit
@@ -219,4 +219,4 @@
   - [ ] update
 - [x] WriteResult
   - [x] writeTime
-  - <del>[ ] isEqual</del>
+  - [x] <del>isEqual</del>
