@@ -49,6 +49,18 @@ impl From<CollectionId> for CollectionPath {
     }
 }
 
+impl From<CollectionPath> for firestore_path::CollectionPath {
+    fn from(collection_path: CollectionPath) -> Self {
+        collection_path.0
+    }
+}
+
+impl From<firestore_path::CollectionPath> for CollectionPath {
+    fn from(collection_path: firestore_path::CollectionPath) -> Self {
+        Self(collection_path)
+    }
+}
+
 impl std::fmt::Display for CollectionPath {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)
@@ -117,6 +129,26 @@ mod tests {
         let inner = firestore_path::CollectionPath::from_str("rooms")?;
         let collection_path = CollectionPath::from_collection_path(inner);
         assert_eq!(collection_path.to_string(), "rooms");
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_firestore_path_collection_path() -> anyhow::Result<()> {
+        use crate::collection_path::CollectionPath;
+        use std::str::FromStr as _;
+        let inner = firestore_path::CollectionPath::from_str("rooms")?;
+        let collection_path = CollectionPath::from(inner);
+        assert_eq!(collection_path.to_string(), "rooms");
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_self_for_firestore_path_collection_path() -> anyhow::Result<()> {
+        use crate::collection_path::CollectionPath;
+        use std::str::FromStr as _;
+        let collection_path = CollectionPath::from_str("rooms")?;
+        let inner = firestore_path::CollectionPath::from(collection_path);
+        assert_eq!(inner.to_string(), "rooms");
         Ok(())
     }
 
