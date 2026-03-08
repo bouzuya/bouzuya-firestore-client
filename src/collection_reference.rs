@@ -40,6 +40,18 @@ impl CollectionReference {
         self.collection_path.id().to_string()
     }
 
+    pub async fn list_documents(&self) -> Result<Vec<DocumentReference>, Error> {
+        let document_ids = self
+            .firestore
+            .firestore_client()
+            .list_documents(&self.collection_path)
+            .await?;
+        Ok(document_ids
+            .into_iter()
+            .map(|it| DocumentReference::new(it, self.firestore.clone()))
+            .collect())
+    }
+
     pub fn parent(&self) -> Option<DocumentReference> {
         self.collection_path.parent().map(|parent_document_path| {
             DocumentReference::new(parent_document_path, self.firestore.clone())

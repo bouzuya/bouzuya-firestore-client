@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use crate::CollectionPath;
 use crate::DocumentPath;
 use crate::Error;
 use crate::Precondition;
@@ -230,6 +231,64 @@ impl FirestoreClient {
         }
     }
 
+    pub(crate) async fn list_documents(
+        &self,
+        collection_path: &CollectionPath,
+    ) -> Result<Vec<DocumentPath>, Error> {
+        let root_document_name = self.database_name.root_document_name().to_string();
+        let parent = match collection_path.parent() {
+            Some(parent_doc_path) => self
+                .database_name
+                .doc(firestore_path::DocumentPath::from_str(&parent_doc_path.to_string()).unwrap())
+                .unwrap()
+                .to_string(),
+            None => root_document_name.clone(),
+        };
+        let collection_id = collection_path.id().to_string();
+        let mut result = Vec::new();
+        let mut page_token = String::new();
+        loop {
+            let mut client = self.client().await?;
+            let request = google::firestore::v1::ListDocumentsRequest {
+                parent: parent.clone(),
+                collection_id: collection_id.clone(),
+                // use server default page size
+                page_size: 0,
+                page_token: page_token.clone(),
+                // __name__ ASC
+                order_by: String::new(),
+                mask: Some(google::firestore::v1::DocumentMask {
+                    field_paths: vec![],
+                }),
+                show_missing: true,
+                consistency_selector: None,
+            };
+            let response = client.list_documents(request).await.map_err(E::from)?;
+            let list_response = response.into_inner();
+            result.extend(
+                list_response
+                    .documents
+                    .into_iter()
+                    .map(|doc| -> Result<DocumentPath, firestore_path::Error> {
+                        Ok(DocumentPath::from_str(
+                            &firestore_path::DocumentPath::from(
+                                firestore_path::DocumentName::from_str(&doc.name)?,
+                            )
+                            .to_string(),
+                        )
+                        .expect("document path should be valid"))
+                    })
+                    .collect::<Result<Vec<_>, firestore_path::Error>>()
+                    .map_err(|e| Error::from_source(Box::new(e)))?,
+            );
+            page_token = list_response.next_page_token;
+            if page_token.is_empty() {
+                break;
+            }
+        }
+        Ok(result)
+    }
+
     async fn client(
         &self,
     ) -> Result<
@@ -242,7 +301,14 @@ impl FirestoreClient {
         E,
     > {
         let header_map = match self.credentials {
-            None => http::HeaderMap::new(),
+            None => {
+                let mut header_map = http::HeaderMap::new();
+                header_map.insert(
+                    http::header::AUTHORIZATION,
+                    http::HeaderValue::from_static("Bearer owner"),
+                );
+                header_map
+            }
             Some(ref credentials) => {
                 let cacheable_headers = credentials.headers(http::Extensions::new()).await?;
                 match cacheable_headers {
