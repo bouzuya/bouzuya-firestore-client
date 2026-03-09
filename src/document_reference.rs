@@ -27,8 +27,8 @@ impl DocumentReference {
     ) -> Result<CollectionReference, Error> {
         use std::str::FromStr as _;
         let s: String = collection_id.into();
-        let collection_id = firestore_path::CollectionId::from_str(&s)
-            .map_err(|e| Error::from_source(Box::new(e)))?;
+        let collection_id =
+            firestore_path::CollectionId::from_str(&s).map_err(Error::invalid_collection_id)?;
         Ok(CollectionReference::new(
             self.document_path
                 .collection(firestore_path::CollectionPath::new(None, collection_id))
