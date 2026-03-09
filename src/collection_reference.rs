@@ -31,7 +31,7 @@ impl CollectionReference {
         let document_path = self
             .collection_path
             .doc(document_id)
-            .map_err(|e| Error::from_source(Box::new(e)))?;
+            .map_err(Error::invalid_document_path)?;
         let document_ref = DocumentReference::new(document_path, self.firestore.clone());
         let _write_result = document_ref.create(&data).await?;
         Ok(document_ref)
@@ -45,7 +45,7 @@ impl CollectionReference {
         Ok(DocumentReference::new(
             self.collection_path
                 .doc(document_id)
-                .map_err(|e| Error::from_source(Box::new(e)))?,
+                .map_err(Error::invalid_document_path)?,
             self.firestore.clone(),
         ))
     }

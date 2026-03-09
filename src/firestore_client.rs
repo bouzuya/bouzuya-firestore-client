@@ -275,7 +275,7 @@ impl FirestoreClient {
                         },
                     )
                     .collect::<Result<Vec<_>, firestore_path::Error>>()
-                    .map_err(|e| Error::from_source(Box::new(e)))?,
+                    .map_err(Error::invalid_document_path)?,
             );
             page_token = list_response.next_page_token;
             if page_token.is_empty() {
