@@ -37,15 +37,15 @@ impl Firestore {
         collection_path: impl Into<String>,
     ) -> Result<CollectionReference, Error> {
         let s: String = collection_path.into();
-        let collection_path = firestore_path::CollectionPath::from_str(&s)
-            .map_err(|e| Error::from_source(Box::new(e)))?;
+        let collection_path =
+            firestore_path::CollectionPath::from_str(&s).map_err(Error::invalid_collection_path)?;
         Ok(CollectionReference::new(collection_path, self.clone()))
     }
 
     pub fn doc(&self, document_path: impl Into<String>) -> Result<DocumentReference, Error> {
         let s: String = document_path.into();
-        let document_path = firestore_path::DocumentPath::from_str(&s)
-            .map_err(|e| Error::from_source(Box::new(e)))?;
+        let document_path =
+            firestore_path::DocumentPath::from_str(&s).map_err(Error::invalid_document_path)?;
         Ok(DocumentReference::new(document_path, self.clone()))
     }
 
