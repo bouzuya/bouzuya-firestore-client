@@ -2,6 +2,8 @@
 enum E {
     #[error("invalid collection id")]
     InvalidCollectionId(#[source] firestore_path::Error),
+    #[error("invalid collection path")]
+    InvalidCollectionPath(#[source] firestore_path::Error),
     #[error("invalid document id")]
     InvalidDocumentId(#[source] firestore_path::Error),
     #[error("invalid document path")]
@@ -21,6 +23,10 @@ impl Error {
 
     pub(crate) fn invalid_collection_id(e: firestore_path::Error) -> Self {
         Self(E::InvalidCollectionId(e))
+    }
+
+    pub(crate) fn invalid_collection_path(e: firestore_path::Error) -> Self {
+        Self(E::InvalidCollectionPath(e))
     }
 
     pub(crate) fn invalid_document_id(e: firestore_path::Error) -> Self {
@@ -51,6 +57,18 @@ mod tests {
             <firestore_path::CollectionId as std::str::FromStr>::from_str("").unwrap_err();
         let error = Error::invalid_collection_id(firestore_path_error);
         assert_eq!(error.to_string(), "firestore error: invalid collection id");
+    }
+
+    #[test]
+    fn test_invalid_collection_path() {
+        use crate::error::Error;
+        let firestore_path_error =
+            <firestore_path::CollectionPath as std::str::FromStr>::from_str("").unwrap_err();
+        let error = Error::invalid_collection_path(firestore_path_error);
+        assert_eq!(
+            error.to_string(),
+            "firestore error: invalid collection path"
+        );
     }
 
     #[test]

@@ -32,7 +32,7 @@ impl DocumentReference {
         Ok(CollectionReference::new(
             self.document_path
                 .collection(firestore_path::CollectionPath::new(None, collection_id))
-                .map_err(|e| Error::from_source(Box::new(e)))?,
+                .map_err(Error::invalid_collection_path)?,
             self.firestore.clone(),
         ))
     }
