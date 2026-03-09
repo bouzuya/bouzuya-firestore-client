@@ -1,10 +1,16 @@
 #[derive(Debug, thiserror::Error)]
+enum E {
+    #[error("unknown")]
+    Unknown(#[source] Box<dyn std::error::Error + Send + Sync>),
+}
+
+#[derive(Debug, thiserror::Error)]
 #[error("firestore error")]
-pub struct Error(#[source] Box<dyn std::error::Error + Send + Sync>);
+pub struct Error(#[source] E);
 
 impl Error {
     pub(crate) fn from_source(source: Box<dyn std::error::Error + Send + Sync>) -> Self {
-        Self(source)
+        Self(E::Unknown(source))
     }
 }
 
