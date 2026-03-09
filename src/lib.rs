@@ -7,6 +7,7 @@ mod firestore_client;
 mod firestore_options;
 mod precondition;
 mod timestamp;
+mod transaction;
 mod write_result;
 
 pub use self::collection_reference::CollectionReference;
@@ -18,4 +19,5 @@ pub(crate) use self::firestore_client::FirestoreClient;
 pub use self::firestore_options::FirestoreOptions;
 pub use self::precondition::Precondition;
 pub use self::timestamp::Timestamp;
+pub use self::transaction::Transaction;
 pub use self::write_result::WriteResult;

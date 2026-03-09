@@ -187,7 +187,7 @@
   - [ ] toDate
   - [x] toMillis
   - [ ] valueOf
-- [ ] Transaction
+- [x] Transaction
   - [ ] create
   - [ ] delete
   - [ ] get
