@@ -40,8 +40,8 @@ impl CollectionReference {
     pub fn doc(&self, document_id: impl Into<String>) -> Result<DocumentReference, Error> {
         use std::str::FromStr as _;
         let s: String = document_id.into();
-        let document_id = firestore_path::DocumentId::from_str(&s)
-            .map_err(|e| Error::from_source(Box::new(e)))?;
+        let document_id =
+            firestore_path::DocumentId::from_str(&s).map_err(Error::invalid_document_id)?;
         Ok(DocumentReference::new(
             self.collection_path
                 .doc(document_id)
