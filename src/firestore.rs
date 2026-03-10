@@ -26,7 +26,8 @@ impl Firestore {
         };
         // FIXME: Use options
         let firestore_client = FirestoreClient::new(
-            "projects/demo-project/databases/(default)".to_owned(),
+            "demo-project".to_owned(),
+            "(default)".to_owned(),
             emulator_host,
         )?;
         Ok(Self { firestore_client })

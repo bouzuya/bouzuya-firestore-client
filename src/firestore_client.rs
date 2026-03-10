@@ -37,7 +37,11 @@ pub(crate) struct FirestoreClient {
 
 impl FirestoreClient {
     // NOTE: No tests are written for this method (requires a real project).
-    pub(crate) fn new(database: String, emulator_host: Option<String>) -> Result<Self, Error> {
+    pub(crate) fn new(
+        project_id: String,
+        database_id: String,
+        emulator_host: Option<String>,
+    ) -> Result<Self, Error> {
         let (channel, credentials) = match emulator_host {
             Some(host) => (
                 tonic::transport::Channel::from_shared(format!("http://{}", host))
@@ -62,8 +66,12 @@ impl FirestoreClient {
                 ),
             ),
         };
-        let database_name =
-            <firestore_path::DatabaseName as std::str::FromStr>::from_str(&database).unwrap();
+        let database_name = firestore_path::DatabaseName::new(
+            firestore_path::ProjectId::from_str(&project_id)
+                .map_err(|e| Error::from_source(Box::new(e)))?,
+            firestore_path::DatabaseId::from_str(&database_id)
+                .map_err(|e| Error::from_source(Box::new(e)))?,
+        );
         Ok(Self {
             channel,
             credentials,
@@ -416,7 +424,8 @@ mod tests {
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
         let client = FirestoreClient::new(
             // FIXME
-            "projects/demo-project/databases/(default)".to_owned(),
+            "demo-project".to_owned(),
+            "(default)".to_owned(),
             emulator_host,
         )?;
         let options = TransactionOptions::default();
@@ -432,7 +441,8 @@ mod tests {
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
         let client = FirestoreClient::new(
             // FIXME
-            "projects/demo-project/databases/(default)".to_owned(),
+            "demo-project".to_owned(),
+            "(default)".to_owned(),
             emulator_host,
         )?;
         let options = TransactionOptions::default();
@@ -448,7 +458,8 @@ mod tests {
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
         let client = FirestoreClient::new(
             // FIXME
-            "projects/demo-project/databases/(default)".to_owned(),
+            "demo-project".to_owned(),
+            "(default)".to_owned(),
             emulator_host,
         )?;
         let options = TransactionOptions::default();
@@ -466,7 +477,7 @@ mod tests {
             firestore_path::ProjectId::from_str(&project_id)?,
             firestore_path::DatabaseId::from_str(&database_id)?,
         );
-        let mut client = FirestoreClient::new(database_name.to_string(), None)?;
+        let mut client = FirestoreClient::new(project_id, database_id, None)?;
         let request = google::firestore::v1::ExecutePipelineRequest {
             database: database_name.to_string(),
             pipeline_type: Some(
@@ -508,7 +519,7 @@ mod tests {
             firestore_path::ProjectId::from_str(&project_id)?,
             firestore_path::DatabaseId::from_str(&database_id)?,
         );
-        let mut client = FirestoreClient::new(database_name.to_string(), None)?;
+        let mut client = FirestoreClient::new(project_id, database_id, None)?;
         let request = google::firestore::v1::ExecutePipelineRequest {
             database: database_name.to_string(),
             pipeline_type: Some(
