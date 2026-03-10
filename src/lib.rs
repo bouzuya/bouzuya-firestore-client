@@ -8,6 +8,7 @@ mod firestore_options;
 mod precondition;
 mod timestamp;
 mod transaction;
+mod transaction_options;
 mod write_result;
 
 pub use self::collection_reference::CollectionReference;
@@ -20,4 +21,5 @@ pub use self::firestore_options::FirestoreOptions;
 pub use self::precondition::Precondition;
 pub use self::timestamp::Timestamp;
 pub use self::transaction::Transaction;
+pub use self::transaction_options::TransactionOptions;
 pub use self::write_result::WriteResult;

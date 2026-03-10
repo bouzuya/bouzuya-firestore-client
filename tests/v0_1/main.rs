@@ -6,4 +6,5 @@ mod firestore_options;
 mod precondition;
 mod timestamp;
 mod transaction;
+mod transaction_options;
 mod write_result;

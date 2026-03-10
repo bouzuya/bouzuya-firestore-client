@@ -5,6 +5,7 @@ use crate::DocumentReference;
 use crate::Error;
 use crate::FirestoreClient;
 use crate::FirestoreOptions;
+use crate::TransactionOptions;
 
 #[derive(Clone)]
 pub struct Firestore {
