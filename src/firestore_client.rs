@@ -411,17 +411,14 @@ mod tests {
     #[tokio::test]
     #[serial_test::serial]
     async fn test_begin_transaction() -> anyhow::Result<()> {
+        use crate::TransactionOptions;
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
         let client = FirestoreClient::new(
             // FIXME
             "projects/demo-project/databases/(default)".to_owned(),
             emulator_host,
         )?;
-        let options = crate::TransactionOptions {
-            max_attempts: None,
-            read_only: None,
-            read_time: None,
-        };
+        let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
         assert!(!transaction.is_empty());
         Ok(())
@@ -430,17 +427,14 @@ mod tests {
     #[tokio::test]
     #[serial_test::serial]
     async fn test_commit() -> anyhow::Result<()> {
+        use crate::TransactionOptions;
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
         let client = FirestoreClient::new(
             // FIXME
             "projects/demo-project/databases/(default)".to_owned(),
             emulator_host,
         )?;
-        let options = crate::TransactionOptions {
-            max_attempts: None,
-            read_only: None,
-            read_time: None,
-        };
+        let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
         let _ = client.commit(transaction, vec![]).await?;
         Ok(())
@@ -456,11 +450,7 @@ mod tests {
             "projects/demo-project/databases/(default)".to_owned(),
             emulator_host,
         )?;
-        let options = TransactionOptions {
-            max_attempts: None,
-            read_only: None,
-            read_time: None,
-        };
+        let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
         client.rollback(transaction).await?;
         Ok(())

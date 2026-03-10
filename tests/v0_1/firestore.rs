@@ -40,15 +40,10 @@ async fn test_firestore_run_transaction() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FirestoreOptions;
     use bouzuya_firestore_client::TransactionOptions;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let options = TransactionOptions {
-        max_attempts: None,
-        read_only: None,
-        read_time: None,
-    };
     let result = firestore
         .run_transaction(
             |_transaction| Box::pin(async { Ok::<(), Error>(()) }),
-            options,
+            TransactionOptions::default(),
         )
         .await;
     assert!(result.is_ok());
@@ -63,15 +58,10 @@ async fn test_firestore_run_transaction_return_value() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FirestoreOptions;
     use bouzuya_firestore_client::TransactionOptions;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let options = TransactionOptions {
-        max_attempts: None,
-        read_only: None,
-        read_time: None,
-    };
     let value = firestore
         .run_transaction(
             |_transaction| Box::pin(async { Ok::<i32, Error>(42) }),
-            options,
+            TransactionOptions::default(),
         )
         .await?;
     assert_eq!(value, 42);
@@ -86,11 +76,6 @@ async fn test_firestore_run_transaction_error() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FirestoreOptions;
     use bouzuya_firestore_client::TransactionOptions;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let options = TransactionOptions {
-        max_attempts: None,
-        read_only: None,
-        read_time: None,
-    };
     // Obtain an Error by triggering an invalid document path parse
     let err = firestore
         .doc("rooms")
@@ -99,7 +84,7 @@ async fn test_firestore_run_transaction_error() -> anyhow::Result<()> {
     let result = firestore
         .run_transaction(
             move |_transaction| Box::pin(async move { Err::<(), Error>(err) }),
-            options,
+            TransactionOptions::default(),
         )
         .await;
     assert!(result.is_err());
