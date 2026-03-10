@@ -2,6 +2,7 @@ use std::str::FromStr;
 
 use crate::Error;
 use crate::Precondition;
+use crate::TransactionOptions;
 
 use serde_firestore_value::google;
 use serde_firestore_value::google::firestore::v1::ExecutePipelineRequest;
@@ -70,26 +71,57 @@ impl FirestoreClient {
         })
     }
 
-    // NOTE: No tests are written for this method (requires a real project).
-    #[allow(dead_code)]
-    pub(crate) async fn execute_pipeline(
-        &mut self,
-        request: ExecutePipelineRequest,
-    ) -> Result<tonic::Response<tonic::codec::Streaming<ExecutePipelineResponse>>, Error> {
+    pub(crate) async fn begin_transaction(
+        &self,
+        options: &TransactionOptions,
+    ) -> Result<Vec<u8>, Error> {
         let mut client = self.client().await?;
-        let mut request = tonic::Request::new(request);
-        request.metadata_mut().append(
-            "x-goog-request-params",
-            // It causes an error if the order is database_id, project_id
-            tonic::metadata::MetadataValue::from_str(&format!(
-                "project_id={}&database_id={}",
-                self.database_name.project_id(),
-                self.database_name.database_id(),
-            ))
-            .unwrap(),
-        );
-        let response = client.execute_pipeline(request).await.map_err(E::from)?;
-        Ok(response)
+        let request = google::firestore::v1::BeginTransactionRequest {
+            database: self.database_name.to_string(),
+            options: Some(google::firestore::v1::TransactionOptions {
+                mode: if options.read_only.unwrap_or(false) {
+                    Some(
+                        google::firestore::v1::transaction_options::Mode::ReadOnly(
+                            google::firestore::v1::transaction_options::ReadOnly {
+                                consistency_selector: options.read_time.map(|t| {
+                                    google::firestore::v1::transaction_options::read_only::ConsistencySelector::ReadTime(
+                                        t.into_prost_timestamp(),
+                                    )
+                                }),
+                            },
+                        ),
+                    )
+                } else {
+                    Some(google::firestore::v1::transaction_options::Mode::ReadWrite(
+                        google::firestore::v1::transaction_options::ReadWrite {
+                            retry_transaction: vec![],
+                        },
+                    ))
+                },
+            }),
+        };
+        let response = client.begin_transaction(request).await.map_err(E::from)?;
+        let google::firestore::v1::BeginTransactionResponse { transaction } = response.into_inner();
+        Ok(transaction)
+    }
+
+    pub(crate) async fn commit(
+        &self,
+        transaction: Vec<u8>,
+        writes: Vec<google::firestore::v1::Write>,
+    ) -> Result<Option<::prost_types::Timestamp>, Error> {
+        let mut client = self.client().await?;
+        let request = google::firestore::v1::CommitRequest {
+            database: self.database_name.to_string(),
+            writes,
+            transaction,
+        };
+        let response = client.commit(request).await.map_err(E::from)?;
+        let google::firestore::v1::CommitResponse {
+            write_results: _,
+            commit_time,
+        } = response.into_inner();
+        Ok(commit_time)
     }
 
     pub(crate) async fn create_document(
@@ -205,6 +237,28 @@ impl FirestoreClient {
         }))
     }
 
+    // NOTE: No tests are written for this method (requires a real project).
+    #[allow(dead_code)]
+    pub(crate) async fn execute_pipeline(
+        &mut self,
+        request: ExecutePipelineRequest,
+    ) -> Result<tonic::Response<tonic::codec::Streaming<ExecutePipelineResponse>>, Error> {
+        let mut client = self.client().await?;
+        let mut request = tonic::Request::new(request);
+        request.metadata_mut().append(
+            "x-goog-request-params",
+            // It causes an error if the order is database_id, project_id
+            tonic::metadata::MetadataValue::from_str(&format!(
+                "project_id={}&database_id={}",
+                self.database_name.project_id(),
+                self.database_name.database_id(),
+            ))
+            .unwrap(),
+        );
+        let response = client.execute_pipeline(request).await.map_err(E::from)?;
+        Ok(response)
+    }
+
     pub(crate) async fn get_document(
         &self,
         document_path: &firestore_path::DocumentPath,
@@ -285,6 +339,16 @@ impl FirestoreClient {
         Ok(result)
     }
 
+    pub(crate) async fn rollback(&self, transaction: Vec<u8>) -> Result<(), Error> {
+        let mut client = self.client().await?;
+        let request = google::firestore::v1::RollbackRequest {
+            database: self.database_name.to_string(),
+            transaction,
+        };
+        let response = client.rollback(request).await.map_err(E::from)?;
+        Ok(response.into_inner())
+    }
+
     async fn client(
         &self,
     ) -> Result<
@@ -343,6 +407,64 @@ mod tests {
     use std::str::FromStr;
 
     use super::*;
+
+    #[tokio::test]
+    #[serial_test::serial]
+    async fn test_begin_transaction() -> anyhow::Result<()> {
+        let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
+        let client = FirestoreClient::new(
+            // FIXME
+            "projects/demo-project/databases/(default)".to_owned(),
+            emulator_host,
+        )?;
+        let options = crate::TransactionOptions {
+            max_attempts: None,
+            read_only: None,
+            read_time: None,
+        };
+        let transaction = client.begin_transaction(&options).await?;
+        assert!(!transaction.is_empty());
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[serial_test::serial]
+    async fn test_commit() -> anyhow::Result<()> {
+        let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
+        let client = FirestoreClient::new(
+            // FIXME
+            "projects/demo-project/databases/(default)".to_owned(),
+            emulator_host,
+        )?;
+        let options = crate::TransactionOptions {
+            max_attempts: None,
+            read_only: None,
+            read_time: None,
+        };
+        let transaction = client.begin_transaction(&options).await?;
+        let _ = client.commit(transaction, vec![]).await?;
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[serial_test::serial]
+    async fn test_rollback() -> anyhow::Result<()> {
+        use crate::TransactionOptions;
+        let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
+        let client = FirestoreClient::new(
+            // FIXME
+            "projects/demo-project/databases/(default)".to_owned(),
+            emulator_host,
+        )?;
+        let options = TransactionOptions {
+            max_attempts: None,
+            read_only: None,
+            read_time: None,
+        };
+        let transaction = client.begin_transaction(&options).await?;
+        client.rollback(transaction).await?;
+        Ok(())
+    }
 
     #[ignore = "real project required"]
     #[tokio::test]

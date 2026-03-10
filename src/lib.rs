@@ -23,3 +23,4 @@ pub use self::timestamp::Timestamp;
 pub use self::transaction::Transaction;
 pub use self::transaction_options::TransactionOptions;
 pub use self::write_result::WriteResult;
+pub(crate) use serde_firestore_value::google;
