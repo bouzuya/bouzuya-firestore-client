@@ -346,7 +346,8 @@ impl FirestoreClient {
             transaction,
         };
         let response = client.rollback(request).await.map_err(E::from)?;
-        Ok(response.into_inner())
+        let _: () = response.into_inner();
+        Ok(())
     }
 
     async fn client(
