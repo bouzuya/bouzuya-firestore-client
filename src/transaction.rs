@@ -1,4 +1,6 @@
-use crate::{DocumentReference, Error, google};
+use crate::DocumentReference;
+use crate::Error;
+use crate::google;
 
 pub struct Transaction {
     pub(crate) transaction: Vec<u8>,

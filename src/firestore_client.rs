@@ -432,13 +432,9 @@ mod tests {
     #[serial_test::serial]
     async fn test_begin_transaction() -> anyhow::Result<()> {
         use crate::TransactionOptions;
+        let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
-        let client = FirestoreClient::new(
-            // FIXME
-            "demo-project".to_owned(),
-            "(default)".to_owned(),
-            emulator_host,
-        )?;
+        let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
         let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
         assert!(!transaction.is_empty());
@@ -449,13 +445,9 @@ mod tests {
     #[serial_test::serial]
     async fn test_commit() -> anyhow::Result<()> {
         use crate::TransactionOptions;
+        let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
-        let client = FirestoreClient::new(
-            // FIXME
-            "demo-project".to_owned(),
-            "(default)".to_owned(),
-            emulator_host,
-        )?;
+        let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
         let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
         let _ = client.commit(transaction, vec![]).await?;
@@ -466,17 +458,14 @@ mod tests {
     async fn test_document_name() -> anyhow::Result<()> {
         use firestore_path::DocumentPath;
         use std::str::FromStr as _;
+        let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
-        let client = FirestoreClient::new(
-            // FIXME
-            "demo-project".to_owned(),
-            "(default)".to_owned(),
-            emulator_host,
-        )?;
+        let client =
+            FirestoreClient::new(project_id.clone(), "(default)".to_owned(), emulator_host)?;
         let doc_path = DocumentPath::from_str("rooms/roomA")?;
         assert_eq!(
             client.document_name(&doc_path),
-            "projects/demo-project/databases/(default)/documents/rooms/roomA"
+            format!("projects/{project_id}/databases/(default)/documents/rooms/roomA")
         );
         Ok(())
     }
@@ -485,13 +474,9 @@ mod tests {
     #[serial_test::serial]
     async fn test_rollback() -> anyhow::Result<()> {
         use crate::TransactionOptions;
+        let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
-        let client = FirestoreClient::new(
-            // FIXME
-            "demo-project".to_owned(),
-            "(default)".to_owned(),
-            emulator_host,
-        )?;
+        let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
         let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
         client.rollback(transaction).await?;

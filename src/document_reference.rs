@@ -102,12 +102,13 @@ mod tests {
         use crate::FirestoreOptions;
         use firestore_path::DocumentPath;
         use std::str::FromStr as _;
+        let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let document_path = DocumentPath::from_str("rooms/roomA")?;
         let document_ref = DocumentReference::new(document_path, firestore);
         assert_eq!(
             document_ref.document_name(),
-            "projects/demo-project/databases/(default)/documents/rooms/roomA"
+            format!("projects/{project_id}/databases/(default)/documents/rooms/roomA")
         );
         Ok(())
     }
