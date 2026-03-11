@@ -61,6 +61,16 @@ impl DocumentReference {
         )))
     }
 
+    pub(crate) fn document_name(&self) -> String {
+        self.firestore
+            .firestore_client()
+            .document_name(&self.document_path)
+    }
+
+    pub fn firestore(&self) -> &Firestore {
+        &self.firestore
+    }
+
     pub async fn get(&self) -> Result<DocumentSnapshot, Error> {
         let document = self
             .firestore
@@ -68,10 +78,6 @@ impl DocumentReference {
             .get_document(&self.document_path)
             .await?;
         Ok(DocumentSnapshot::new(document, self.clone()))
-    }
-
-    pub fn firestore(&self) -> &Firestore {
-        &self.firestore
     }
 
     pub fn id(&self) -> String {
@@ -89,6 +95,23 @@ impl DocumentReference {
 
 #[cfg(test)]
 mod tests {
+    #[tokio::test]
+    async fn test_document_name() -> anyhow::Result<()> {
+        use crate::DocumentReference;
+        use crate::Firestore;
+        use crate::FirestoreOptions;
+        use firestore_path::DocumentPath;
+        use std::str::FromStr as _;
+        let firestore = Firestore::new(FirestoreOptions::default())?;
+        let document_path = DocumentPath::from_str("rooms/roomA")?;
+        let document_ref = DocumentReference::new(document_path, firestore);
+        assert_eq!(
+            document_ref.document_name(),
+            "projects/demo-project/databases/(default)/documents/rooms/roomA"
+        );
+        Ok(())
+    }
+
     #[tokio::test]
     async fn test_new() -> anyhow::Result<()> {
         use crate::DocumentReference;
