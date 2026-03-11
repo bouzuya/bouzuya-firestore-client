@@ -70,6 +70,10 @@ impl DocumentReference {
         Ok(DocumentSnapshot::new(document, self.clone()))
     }
 
+    pub fn firestore(&self) -> &Firestore {
+        &self.firestore
+    }
+
     pub fn id(&self) -> String {
         self.document_path.document_id().to_string()
     }
