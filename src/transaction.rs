@@ -1,8 +1,41 @@
-use crate::google;
+use crate::{DocumentReference, Error, google};
 
 pub struct Transaction {
     pub(crate) transaction: Vec<u8>,
     pub(crate) writes: Vec<google::firestore::v1::Write>,
+}
+
+impl Transaction {
+    pub fn create(
+        &mut self,
+        document_ref: &DocumentReference,
+        data: &impl serde::ser::Serialize,
+    ) -> Result<(), Error> {
+        let value =
+            serde_firestore_value::to_value(data).map_err(|e| Error::from_source(Box::new(e)))?;
+        let fields = match value.value_type {
+            Some(google::firestore::v1::value::ValueType::MapValue(map_value)) => map_value.fields,
+            _ => return Err(Error::from_source("value must be a map".into())),
+        };
+        self.writes.push(google::firestore::v1::Write {
+            update_mask: None,
+            update_transforms: vec![],
+            current_document: Some(google::firestore::v1::Precondition {
+                condition_type: Some(google::firestore::v1::precondition::ConditionType::Exists(
+                    false,
+                )),
+            }),
+            operation: Some(google::firestore::v1::write::Operation::Update(
+                google::firestore::v1::Document {
+                    name: document_ref.document_name(),
+                    fields,
+                    create_time: None,
+                    update_time: None,
+                },
+            )),
+        });
+        Ok(())
+    }
 }
 
 #[cfg(test)]
