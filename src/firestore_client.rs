@@ -189,6 +189,13 @@ impl FirestoreClient {
         }))
     }
 
+    pub(crate) fn document_name(&self, document_path: &firestore_path::DocumentPath) -> String {
+        self.database_name
+            .doc(document_path.to_string())
+            .expect("invalid document path")
+            .to_string()
+    }
+
     pub(crate) async fn delete_document(
         &self,
         document_path: &firestore_path::DocumentPath,
@@ -452,6 +459,25 @@ mod tests {
         let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
         let _ = client.commit(transaction, vec![]).await?;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_document_name() -> anyhow::Result<()> {
+        use firestore_path::DocumentPath;
+        use std::str::FromStr as _;
+        let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
+        let client = FirestoreClient::new(
+            // FIXME
+            "demo-project".to_owned(),
+            "(default)".to_owned(),
+            emulator_host,
+        )?;
+        let doc_path = DocumentPath::from_str("rooms/roomA")?;
+        assert_eq!(
+            client.document_name(&doc_path),
+            "projects/demo-project/databases/(default)/documents/rooms/roomA"
+        );
         Ok(())
     }
 
