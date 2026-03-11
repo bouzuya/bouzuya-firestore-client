@@ -55,7 +55,7 @@ impl Firestore {
     pub async fn run_transaction<'a, T, F>(
         &'a self,
         update_function: F,
-        _transaction_options: TransactionOptions,
+        transaction_options: TransactionOptions,
     ) -> Result<T, Error>
     where
         F: for<'c> FnOnce(
@@ -67,10 +67,9 @@ impl Firestore {
             + Send
             + Sync,
     {
-        // FIXME: Use transaction options
         let transaction = self
             .firestore_client
-            .begin_transaction(&_transaction_options)
+            .begin_transaction(&transaction_options)
             .await?;
         let result = async {
             let mut transaction = Transaction {

@@ -81,17 +81,21 @@ impl FirestoreClient {
 
     pub(crate) async fn begin_transaction(
         &self,
-        options: &TransactionOptions,
+        TransactionOptions {
+            max_attempts: _,
+            read_only,
+            read_time,
+        }: &TransactionOptions,
     ) -> Result<Vec<u8>, Error> {
         let mut client = self.client().await?;
         let request = google::firestore::v1::BeginTransactionRequest {
             database: self.database_name.to_string(),
             options: Some(google::firestore::v1::TransactionOptions {
-                mode: if options.read_only.unwrap_or(false) {
+                mode: if read_only.unwrap_or(false) {
                     Some(
                         google::firestore::v1::transaction_options::Mode::ReadOnly(
                             google::firestore::v1::transaction_options::ReadOnly {
-                                consistency_selector: options.read_time.map(|t| {
+                                consistency_selector: read_time.map(|t| {
                                     google::firestore::v1::transaction_options::read_only::ConsistencySelector::ReadTime(
                                         t.into_prost_timestamp(),
                                     )
