@@ -25,6 +25,6 @@ mod tests {
             transaction: vec![],
             writes: vec![google::firestore::v1::Write::default()],
         };
-        assert_eq!(transaction.writes.len(), 2);
+        assert_eq!(transaction.writes.len(), 1);
     }
 }

@@ -14,7 +14,11 @@ pub struct Firestore {
 }
 
 impl Firestore {
-    pub fn new(_options: FirestoreOptions) -> Result<Self, Error> {
+    pub fn new(FirestoreOptions { project_id }: FirestoreOptions) -> Result<Self, Error> {
+        let project_id = project_id
+            .or_else(|| std::env::var("GCLOUD_PROJECT").ok())
+            .or_else(|| std::env::var("GOOGLE_CLOUD_PROJECT").ok())
+            .ok_or_else(|| Error::from_source("project_id is required".into()))?;
         let emulator_host = match std::env::var("FIRESTORE_EMULATOR_HOST") {
             Ok(firestore_emulator_host) => Some(firestore_emulator_host),
             Err(e) => match e {
@@ -24,12 +28,8 @@ impl Firestore {
                 }
             },
         };
-        // FIXME: Use options
-        let firestore_client = FirestoreClient::new(
-            "demo-project".to_owned(),
-            "(default)".to_owned(),
-            emulator_host,
-        )?;
+        let firestore_client =
+            FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
         Ok(Self { firestore_client })
     }
 }
