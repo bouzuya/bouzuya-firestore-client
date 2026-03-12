@@ -1,5 +1,6 @@
 use crate::DocumentReference;
 use crate::Error;
+use crate::Precondition;
 use crate::google;
 
 pub struct Transaction {
@@ -34,6 +35,46 @@ impl Transaction {
                     create_time: None,
                     update_time: None,
                 },
+            )),
+        });
+        Ok(())
+    }
+
+    pub fn delete(
+        &mut self,
+        document_ref: &DocumentReference,
+        precondition: Option<Precondition>,
+    ) -> Result<(), Error> {
+        let Precondition {
+            exists,
+            last_update_time,
+        } = precondition.unwrap_or_default();
+        let current_document = match (exists, last_update_time) {
+            (None, None) => None,
+            (None, Some(last_update_time)) => Some(google::firestore::v1::Precondition {
+                condition_type: Some(
+                    google::firestore::v1::precondition::ConditionType::UpdateTime(
+                        last_update_time.into_prost_timestamp(),
+                    ),
+                ),
+            }),
+            (Some(exists), None) => Some(google::firestore::v1::Precondition {
+                condition_type: Some(google::firestore::v1::precondition::ConditionType::Exists(
+                    exists,
+                )),
+            }),
+            (Some(_), Some(_)) => {
+                return Err(Error::from_source(
+                    "precondition cannot have both exists and last_update_time".into(),
+                ));
+            }
+        };
+        self.writes.push(google::firestore::v1::Write {
+            update_mask: None,
+            update_transforms: vec![],
+            current_document,
+            operation: Some(google::firestore::v1::write::Operation::Delete(
+                document_ref.document_name(),
             )),
         });
         Ok(())
