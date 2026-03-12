@@ -33,6 +33,7 @@ async fn test_transaction_create() -> anyhow::Result<()> {
 async fn test_transaction_delete() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
+    use bouzuya_firestore_client::Precondition;
     use bouzuya_firestore_client::TransactionOptions;
     use std::collections::HashMap;
     let firestore = Firestore::new(FirestoreOptions::default())?;
@@ -49,7 +50,7 @@ async fn test_transaction_delete() -> anyhow::Result<()> {
             |transaction| {
                 let document_ref = document_ref.clone();
                 Box::pin(async move {
-                    transaction.delete(&document_ref, None)?;
+                    transaction.delete(&document_ref, Precondition::default())?;
                     Ok(())
                 })
             },
@@ -84,10 +85,10 @@ async fn test_transaction_delete_with_precondition() -> anyhow::Result<()> {
                 Box::pin(async move {
                     transaction.delete(
                         &document_ref,
-                        Some(Precondition {
+                        Precondition {
                             exists: Some(true),
                             last_update_time: None,
-                        }),
+                        },
                     )?;
                     Ok(())
                 })

@@ -43,12 +43,11 @@ impl Transaction {
     pub fn delete(
         &mut self,
         document_ref: &DocumentReference,
-        precondition: Option<Precondition>,
-    ) -> Result<(), Error> {
-        let Precondition {
+        Precondition {
             exists,
             last_update_time,
-        } = precondition.unwrap_or_default();
+        }: Precondition,
+    ) -> Result<(), Error> {
         let current_document = match (exists, last_update_time) {
             (None, None) => None,
             (None, Some(last_update_time)) => Some(google::firestore::v1::Precondition {
