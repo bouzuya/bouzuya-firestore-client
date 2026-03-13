@@ -4,7 +4,6 @@ mod document_snapshot;
 mod firestore;
 mod firestore_options;
 mod precondition;
-mod set_options;
 mod timestamp;
 mod transaction;
 mod transaction_options;
