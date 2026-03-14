@@ -1,4 +1,5 @@
 use crate::DocumentReference;
+use crate::DocumentSnapshot;
 use crate::Error;
 use crate::Precondition;
 use crate::google;
@@ -77,6 +78,16 @@ impl Transaction {
             )),
         });
         Ok(())
+    }
+
+    // TODO: Query support
+    pub async fn get(&self, document_ref: &DocumentReference) -> Result<DocumentSnapshot, Error> {
+        let document = document_ref
+            .firestore()
+            .firestore_client()
+            .get_document_in_transaction(document_ref.document_path(), self.transaction.clone())
+            .await?;
+        Ok(DocumentSnapshot::new(document, document_ref.clone()))
     }
 
     pub fn set(
