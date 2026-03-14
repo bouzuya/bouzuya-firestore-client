@@ -105,6 +105,63 @@ impl Transaction {
         });
         Ok(())
     }
+
+    pub fn update(
+        &mut self,
+        document_ref: &DocumentReference,
+        data: &impl serde::ser::Serialize,
+        Precondition {
+            exists,
+            last_update_time,
+        }: Precondition,
+    ) -> Result<(), Error> {
+        let value =
+            serde_firestore_value::to_value(data).map_err(|e| Error::from_source(Box::new(e)))?;
+        let fields = match value.value_type {
+            Some(google::firestore::v1::value::ValueType::MapValue(map_value)) => map_value.fields,
+            _ => return Err(Error::from_source("value must be a map".into())),
+        };
+        let current_document = match (exists, last_update_time) {
+            // default to exists: true if no precondition is provided, since update requires the document to exist
+            (None, None) => Some(google::firestore::v1::Precondition {
+                condition_type: Some(google::firestore::v1::precondition::ConditionType::Exists(
+                    true,
+                )),
+            }),
+            (None, Some(last_update_time)) => Some(google::firestore::v1::Precondition {
+                condition_type: Some(
+                    google::firestore::v1::precondition::ConditionType::UpdateTime(
+                        last_update_time.into_prost_timestamp(),
+                    ),
+                ),
+            }),
+            (Some(exists), None) => Some(google::firestore::v1::Precondition {
+                condition_type: Some(google::firestore::v1::precondition::ConditionType::Exists(
+                    exists,
+                )),
+            }),
+            (Some(_), Some(_)) => {
+                return Err(Error::from_source(
+                    "precondition cannot have both exists and last_update_time".into(),
+                ));
+            }
+        };
+        let field_paths = fields.keys().cloned().collect();
+        self.writes.push(google::firestore::v1::Write {
+            update_mask: Some(google::firestore::v1::DocumentMask { field_paths }),
+            update_transforms: vec![],
+            current_document,
+            operation: Some(google::firestore::v1::write::Operation::Update(
+                google::firestore::v1::Document {
+                    name: document_ref.document_name(),
+                    fields,
+                    create_time: None,
+                    update_time: None,
+                },
+            )),
+        });
+        Ok(())
+    }
 }
 
 #[cfg(test)]
