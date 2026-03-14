@@ -302,6 +302,35 @@ impl FirestoreClient {
         }
     }
 
+    pub(crate) async fn get_document_in_transaction(
+        &self,
+        document_path: &firestore_path::DocumentPath,
+        transaction: Vec<u8>,
+    ) -> Result<Option<google::firestore::v1::Document>, Error> {
+        let mut client = self.client().await?;
+        let request = google::firestore::v1::GetDocumentRequest {
+            name: self
+                .database_name
+                .doc(document_path.to_string())
+                .expect("invalid document path")
+                .to_string(),
+            mask: None,
+            consistency_selector: Some(
+                google::firestore::v1::get_document_request::ConsistencySelector::Transaction(
+                    transaction,
+                ),
+            ),
+        };
+        let result = client.get_document(request).await;
+        match result {
+            Ok(response) => Ok(Some(response.into_inner())),
+            Err(status) => match status.code() {
+                tonic::Code::NotFound => Ok(None),
+                _ => Err(Error::from(E::from(status))),
+            },
+        }
+    }
+
     pub(crate) async fn list_documents(
         &self,
         collection_path: &firestore_path::CollectionPath,
@@ -467,6 +496,26 @@ mod tests {
             client.document_name(&doc_path),
             format!("projects/{project_id}/databases/(default)/documents/rooms/roomA")
         );
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[serial_test::serial]
+    async fn test_get_document_in_transaction() -> anyhow::Result<()> {
+        use crate::TransactionOptions;
+        use firestore_path::DocumentPath;
+        use std::str::FromStr as _;
+        let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
+        let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
+        let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
+        let options = TransactionOptions::default();
+        let transaction = client.begin_transaction(&options).await?;
+        let doc_path = DocumentPath::from_str("rooms/test-get-document-in-transaction")?;
+        let result = client
+            .get_document_in_transaction(&doc_path, transaction.clone())
+            .await?;
+        assert!(result.is_none());
+        client.rollback(transaction).await?;
         Ok(())
     }
 
