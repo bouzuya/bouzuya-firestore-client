@@ -67,6 +67,10 @@ impl DocumentReference {
             .document_name(&self.document_path)
     }
 
+    pub(crate) fn document_path(&self) -> &firestore_path::DocumentPath {
+        &self.document_path
+    }
+
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
     }
@@ -110,6 +114,20 @@ mod tests {
             document_ref.document_name(),
             format!("projects/{project_id}/databases/(default)/documents/rooms/roomA")
         );
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_document_path() -> anyhow::Result<()> {
+        use crate::DocumentReference;
+        use crate::Firestore;
+        use crate::FirestoreOptions;
+        use firestore_path::DocumentPath;
+        use std::str::FromStr as _;
+        let firestore = Firestore::new(FirestoreOptions::default())?;
+        let document_path = DocumentPath::from_str("rooms/roomA")?;
+        let document_ref = DocumentReference::new(document_path.clone(), firestore);
+        assert_eq!(document_ref.document_path(), &document_path);
         Ok(())
     }
 
