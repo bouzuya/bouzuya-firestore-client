@@ -127,7 +127,7 @@
   - [ ] getAll
   - [ ] listCollections
   - [ ] recursiveDelete
-  - [ ] runTransaction
+  - [x] runTransaction
   - [ ] settings
   - [ ] snapshot_
   - [ ] terminate
@@ -188,12 +188,15 @@
   - [x] toMillis
   - [ ] valueOf
 - [x] Transaction
-  - [ ] create
-  - [ ] delete
-  - [ ] get
-  - [ ] getAll
-  - [ ] set
-  - [ ] update
+  - [x] create
+    - [ ] (transforms)
+  - [x] delete
+  - [x] get
+  - [x] <del>getAll</del>
+  - [x] set
+    - [ ] (transforms)
+  - [x] update
+    - [ ] (transforms)
 - [ ] VectorQuery
   - [ ] query
   - [ ] explain
