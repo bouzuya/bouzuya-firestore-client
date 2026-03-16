@@ -11,7 +11,7 @@ prost-types = "0.14.3"
 rand = "0.10.0"
 serde = { version = "1", features = ["derive"] }
 serde-firestore-value = { git = "https://github.com/bouzuya/serde-firestore-value", branch = "master" }
-thiserror = "2.0.18"
+thiserror = "2"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 tonic = { version = "0.14", features = [
     "transport",
