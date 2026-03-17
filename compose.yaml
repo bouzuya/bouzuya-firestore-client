@@ -7,11 +7,10 @@ services:
     volumes:
       - ./firebase:/firebase
   workspace:
-    command: sleep infinity
     environment:
       - FIRESTORE_EMULATOR_HOST=firebase:8080
       - GOOGLE_CLOUD_PROJECT=demo-project
-    image: debian:trixie
+    image: rust:1.94-trixie
     volumes:
       - .:/workspaces/bouzuya-firestore-client:cached
       - ~/.claude:/home/vscode/.claude

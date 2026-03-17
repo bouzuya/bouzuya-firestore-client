@@ -32,7 +32,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@stable
-      - run: docker compose up -d firebase
-      - run: timeout 60 bash -c 'until nc -z localhost 8080 2>/dev/null; do sleep 1; done'
-      - run: cargo test --no-run
-      - run: cargo test
+      - run: docker compose up --detach
+      - run: docker compose run --rm workspace /bin/bash -c 'until curl --fail --silent http://firebase:8080/; do sleep 1; done'
+      - run: docker compose run --rm workspace /bin/bash -c 'cd /workspaces/bouzuya-firestore-client && cargo test'
+      - if: always()
+        run: docker compose down --volumes
