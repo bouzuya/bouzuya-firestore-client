@@ -1,5 +1,7 @@
 #[derive(Debug, thiserror::Error)]
 enum E {
+    #[error("custom")]
+    Custom(#[source] Box<dyn std::error::Error + Send + Sync>),
     #[error("invalid collection id")]
     InvalidCollectionId(#[source] firestore_path::Error),
     #[error("invalid collection path")]
@@ -17,6 +19,10 @@ enum E {
 pub struct Error(#[source] E);
 
 impl Error {
+    pub fn custom(e: impl Into<Box<dyn std::error::Error + Send + Sync>>) -> Self {
+        Self(E::Custom(e.into()))
+    }
+
     pub(crate) fn from_source(source: Box<dyn std::error::Error + Send + Sync>) -> Self {
         Self(E::Unknown(source))
     }

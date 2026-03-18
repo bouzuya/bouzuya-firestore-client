@@ -2,6 +2,7 @@ mod bouzuya_firestore_client;
 mod collection_reference;
 mod document_reference;
 mod document_snapshot;
+mod error;
 mod firestore;
 mod firestore_options;
 mod precondition;
