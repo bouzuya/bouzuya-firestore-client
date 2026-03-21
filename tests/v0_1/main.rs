@@ -1,5 +1,6 @@
 mod bouzuya_firestore_client;
 mod collection_reference;
+mod device;
 mod document_reference;
 mod document_snapshot;
 mod error;

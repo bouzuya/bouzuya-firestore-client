@@ -1,4 +1,5 @@
 mod collection_reference;
+mod device;
 mod document_reference;
 mod document_snapshot;
 mod error;
@@ -12,6 +13,7 @@ mod transaction_options;
 mod write_result;
 
 pub use self::collection_reference::CollectionReference;
+pub use self::device::Device;
 pub use self::document_reference::DocumentReference;
 pub use self::document_snapshot::DocumentSnapshot;
 pub use self::error::Error;
