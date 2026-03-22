@@ -574,6 +574,21 @@ mod tests {
         Ok(())
     }
 
+    #[tokio::test]
+    #[serial_test::serial]
+    async fn test_batch_get() -> anyhow::Result<()> {
+        use firestore_path::DocumentPath;
+        use std::str::FromStr as _;
+        let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
+        let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
+        let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
+        let doc_path = DocumentPath::from_str("rooms/test-batch-get")?;
+        let result = client.batch_get(&[doc_path]).await?;
+        assert_eq!(result.len(), 1);
+        assert!(result[0].is_none());
+        Ok(())
+    }
+
     #[ignore = "real project required"]
     #[tokio::test]
     async fn test_execute_pipeline_2() -> anyhow::Result<()> {
