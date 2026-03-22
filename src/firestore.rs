@@ -2,6 +2,7 @@ use std::str::FromStr;
 
 use crate::CollectionReference;
 use crate::DocumentReference;
+use crate::DocumentSnapshot;
 use crate::Error;
 use crate::FirestoreClient;
 use crate::FirestoreOptions;
@@ -43,6 +44,23 @@ impl Firestore {
         let collection_path =
             firestore_path::CollectionPath::from_str(&s).map_err(Error::invalid_collection_path)?;
         Ok(CollectionReference::new(collection_path, self.clone()))
+    }
+
+    pub async fn get_all(
+        &self,
+        document_refs: impl IntoIterator<Item = DocumentReference>,
+    ) -> Result<Vec<DocumentSnapshot>, Error> {
+        let document_refs: Vec<DocumentReference> = document_refs.into_iter().collect();
+        let document_paths: Vec<firestore_path::DocumentPath> = document_refs
+            .iter()
+            .map(|r| r.document_path().clone())
+            .collect();
+        let documents = self.firestore_client.batch_get(&document_paths).await?;
+        Ok(documents
+            .into_iter()
+            .zip(document_refs)
+            .map(|(doc, doc_ref)| DocumentSnapshot::new(doc, doc_ref))
+            .collect())
     }
 
     pub fn doc(&self, document_path: impl Into<String>) -> Result<DocumentReference, Error> {
