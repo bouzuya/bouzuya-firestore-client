@@ -79,7 +79,6 @@ impl FirestoreClient {
         })
     }
 
-    #[allow(dead_code)]
     pub(crate) async fn batch_get(
         &self,
         document_paths: &[firestore_path::DocumentPath],
