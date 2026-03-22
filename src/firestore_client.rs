@@ -79,6 +79,47 @@ impl FirestoreClient {
         })
     }
 
+    #[allow(dead_code)]
+    pub(crate) async fn batch_get(
+        &self,
+        document_paths: &[firestore_path::DocumentPath],
+    ) -> Result<Vec<Option<google::firestore::v1::Document>>, Error> {
+        let mut client = self.client().await?;
+        let documents = document_paths
+            .iter()
+            .map(|p| self.document_name(p))
+            .collect::<Vec<_>>();
+        let request = google::firestore::v1::BatchGetDocumentsRequest {
+            database: self.database_name.to_string(),
+            documents,
+            mask: None,
+            consistency_selector: None,
+        };
+        let mut stream = client
+            .batch_get_documents(request)
+            .await
+            .map_err(E::from)?
+            .into_inner();
+        let mut map = std::collections::HashMap::new();
+        while let Some(response) = stream.message().await.map_err(E::from)? {
+            match response.result {
+                Some(google::firestore::v1::batch_get_documents_response::Result::Found(doc)) => {
+                    map.insert(doc.name.clone(), Some(doc));
+                }
+                Some(google::firestore::v1::batch_get_documents_response::Result::Missing(
+                    name,
+                )) => {
+                    map.insert(name, None);
+                }
+                None => {}
+            }
+        }
+        Ok(document_paths
+            .iter()
+            .map(|p| map.remove(&self.document_name(p)).unwrap_or(None))
+            .collect())
+    }
+
     pub(crate) async fn begin_transaction(
         &self,
         TransactionOptions {
