@@ -8,7 +8,7 @@
 	},
 	"dockerComposeFile": [
 		"../compose.yaml",
-		"../compose.override.yaml"
+		"./compose.override.yaml"
 	],
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:2": {
