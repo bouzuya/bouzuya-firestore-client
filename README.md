@@ -77,8 +77,8 @@
   - [x] <del>isEqual</del>
   - [ ] listCollections
   - [ ] onSnapshot
-  - [ ] set
-  - [ ] update
+  - [x] set
+  - [x] update
   - [ ] withConverter
 - [x] DocumentSnapshot
   - [x] createTime
