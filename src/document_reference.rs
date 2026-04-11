@@ -95,6 +95,23 @@ impl DocumentReference {
     pub fn path(&self) -> String {
         self.document_path.to_string()
     }
+
+    pub async fn update(
+        &self,
+        data: impl serde::ser::Serialize,
+        precondition: Precondition,
+    ) -> Result<WriteResult, Error> {
+        let value =
+            serde_firestore_value::to_value(&data).map_err(|e| Error::from_source(Box::new(e)))?;
+        let write_time = self
+            .firestore
+            .firestore_client()
+            .update_document(&self.document_path, value, precondition)
+            .await?;
+        Ok(WriteResult::new(crate::Timestamp::from_prost_timestamp(
+            write_time,
+        )))
+    }
 }
 
 #[cfg(test)]
