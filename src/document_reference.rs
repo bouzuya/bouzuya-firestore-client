@@ -84,6 +84,18 @@ impl DocumentReference {
         Ok(DocumentSnapshot::new(document, self.clone()))
     }
 
+    pub async fn list_collections(&self) -> Result<Vec<CollectionReference>, Error> {
+        let collection_ids = self
+            .firestore
+            .firestore_client()
+            .list_collection_ids(&self.document_path)
+            .await?;
+        collection_ids
+            .into_iter()
+            .map(|id| self.collection(id))
+            .collect()
+    }
+
     pub fn id(&self) -> String {
         self.document_path.document_id().to_string()
     }

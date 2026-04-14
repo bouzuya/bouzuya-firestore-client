@@ -371,6 +371,32 @@ impl FirestoreClient {
         }
     }
 
+    pub(crate) async fn list_collection_ids(
+        &self,
+        document_path: &firestore_path::DocumentPath,
+    ) -> Result<Vec<String>, Error> {
+        let parent = self.document_name(document_path);
+        let mut result = Vec::new();
+        let mut page_token = String::new();
+        loop {
+            let mut client = self.client().await?;
+            let request = google::firestore::v1::ListCollectionIdsRequest {
+                parent: parent.clone(),
+                page_size: 0,
+                page_token: page_token.clone(),
+                consistency_selector: None,
+            };
+            let response = client.list_collection_ids(request).await.map_err(E::from)?;
+            let list_response = response.into_inner();
+            result.extend(list_response.collection_ids);
+            page_token = list_response.next_page_token;
+            if page_token.is_empty() {
+                break;
+            }
+        }
+        Ok(result)
+    }
+
     pub(crate) async fn list_documents(
         &self,
         collection_path: &firestore_path::CollectionPath,

@@ -75,8 +75,8 @@
   - [x] delete
   - [x] get
   - [x] <del>isEqual</del>
-  - [ ] listCollections
-  - [ ] onSnapshot
+  - [x] listCollections
+  - [x] <del>onSnapshot</del>
   - [x] set
   - [x] update
   - [ ] withConverter
