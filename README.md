@@ -1,7 +1,8 @@
 # bouzuya-firestore-client
 
-- <https://googleapis.dev/nodejs/firestore/latest/CollectionReference.html>
-- <https://googleapis.dev/nodejs/firestore/latest/Firestore.html>
+## References
+
+- <https://googleapis.dev/nodejs/firestore/latest/index.html>
 - <https://docs.cloud.google.com/firestore/native/docs/data-model>
 - <https://docs.cloud.google.com/nodejs/docs/reference/firestore/latest/overview>
 
@@ -28,7 +29,7 @@
   - [ ] readTime
   - [ ] data
   - [x] <del>isEqual</del>
-- [ ] BulkWriter
+- [ ] BulkWriter : Error
   - [ ] close
   - [ ] create
   - [ ] delete
@@ -47,10 +48,31 @@
   - [ ] bundleId
   - [ ] add
   - [ ] build
-- [ ] CollectionGroup
+- [ ] CollectionGroup : Query
   - [ ] getPartitions
   - [ ] withConverter
-- [x] CollectionReference
+  - [ ] (Query) firestore
+  - [ ] (Query) aggregate
+  - [ ] (Query) count
+  - [ ] (Query) endAt
+  - [ ] (Query) endBefore
+  - [ ] (Query) explain
+  - [ ] (Query) explainStream
+  - [ ] (Query) findNearest
+  - [ ] (Query) get
+  - [x] (Query) <del>isEqual</del>
+  - [ ] (Query) limit
+  - [ ] (Query) limitToLast
+  - [ ] (Query) offset
+  - [ ] (Query) onSnapshot
+  - [ ] (Query) orderBy
+  - [ ] (Query) select
+  - [ ] (Query) startAfter
+  - [ ] (Query) startAt
+  - [ ] (Query) stream
+  - [ ] (Query) where
+  - [ ] (Query) withConverter
+- [x] CollectionReference : Query
   - [x] id
   - [x] parent
   - [x] path
@@ -59,6 +81,27 @@
   - [x] <del>isEqual</del>
   - [x] listDocuments
   - [ ] withConverter
+  - [ ] (Query) firestore
+  - [ ] (Query) aggregate
+  - [ ] (Query) count
+  - [ ] (Query) endAt
+  - [ ] (Query) endBefore
+  - [ ] (Query) explain
+  - [ ] (Query) explainStream
+  - [ ] (Query) findNearest
+  - [ ] (Query) get
+  - [x] (Query) <del>isEqual</del>
+  - [ ] (Query) limit
+  - [ ] (Query) limitToLast
+  - [ ] (Query) offset
+  - [ ] (Query) onSnapshot
+  - [ ] (Query) orderBy
+  - [ ] (Query) select
+  - [ ] (Query) startAfter
+  - [ ] (Query) startAt
+  - [ ] (Query) stream
+  - [ ] (Query) where
+  - [ ] (Query) withConverter
 - [ ] DocumentChange
   - [ ] doc
   - [ ] newIndex
@@ -66,7 +109,7 @@
   - [ ] type
   - [x] <del>isEqual</del>
 - [x] DocumentReference
-  - [ ] firestore
+  - [x] firestore
   - [x] id
   - [x] parent
   - [x] path
@@ -101,7 +144,7 @@
 - [ ] ExplainResults
   - [ ] metrics
   - [ ] snapshot
-- [ ] FieldPath
+- [ ] FieldPath : Path
   - [ ] documentId
   - [x] <del>isEqual</del>
 - [ ] FieldValue
@@ -124,7 +167,7 @@
   - [x] collection
   - [ ] collectionGroup
   - [x] doc
-  - [ ] getAll
+  - [x] getAll
   - [ ] listCollections
   - [ ] recursiveDelete
   - [x] runTransaction
@@ -160,10 +203,19 @@
   - [ ] stream
   - [ ] where
   - [ ] withConverter
-- [ ] QueryDocumentSnapshot
+- [ ] QueryDocumentSnapshot : DocumentSnapshot
   - [ ] createTime
   - [ ] updateTime
   - [ ] data
+  - [ ] (DocumentSnapshot) createTime
+  - [ ] (DocumentSnapshot) exists
+  - [ ] (DocumentSnapshot) id
+  - [ ] (DocumentSnapshot) readTime
+  - [ ] (DocumentSnapshot) ref
+  - [ ] (DocumentSnapshot) updateTime
+  - [ ] (DocumentSnapshot) data
+  - [ ] (DocumentSnapshot) get
+  - [x] (DocumentSnapshot) <del>isEqual</del>
 - [ ] QueryPartition
   - [ ] endBefore
   - [ ] startAt
