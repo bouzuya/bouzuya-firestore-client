@@ -63,6 +63,19 @@ impl Firestore {
             .collect())
     }
 
+    pub async fn list_collections(&self) -> Result<Vec<CollectionReference>, Error> {
+        use std::str::FromStr as _;
+        let collection_ids = self.firestore_client.list_root_collection_ids().await?;
+        collection_ids
+            .into_iter()
+            .map(|id| {
+                let collection_path = firestore_path::CollectionPath::from_str(&id)
+                    .map_err(Error::invalid_collection_path)?;
+                Ok(CollectionReference::new(collection_path, self.clone()))
+            })
+            .collect()
+    }
+
     pub fn doc(&self, document_path: impl Into<String>) -> Result<DocumentReference, Error> {
         let s: String = document_path.into();
         let document_path =
