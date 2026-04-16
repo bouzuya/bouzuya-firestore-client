@@ -50,6 +50,10 @@ impl CollectionReference {
         ))
     }
 
+    pub fn firestore(&self) -> &Firestore {
+        &self.firestore
+    }
+
     pub fn id(&self) -> String {
         self.collection_path.collection_id().to_string()
     }
