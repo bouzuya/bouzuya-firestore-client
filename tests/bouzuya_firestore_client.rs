@@ -61,6 +61,13 @@ fn test_transaction_options_import() {
     let _: Option<TransactionOptions> = None;
 }
 
+// since v2.1
+#[test]
+fn test_query_import() {
+    use bouzuya_firestore_client::Query;
+    let _: Option<Query> = None;
+}
+
 // since v0.1
 #[test]
 fn test_write_result_import() {
