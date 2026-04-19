@@ -3,7 +3,7 @@
 - Run `cargo +nightly fmt` and `cargo clippy -- -D warnings` after every file edit.
 - Module files (`lib.rs` and files containing submodules) must only contain `mod xxx;` and `pub use self::xxx::...;`.
 - `pub(crate)` methods must have tests in `#[cfg(test)] mod tests` within the same file.
-- `pub` structs, functions, and trait implementations must have tests in `tests/{next_version}/{struct_name}.rs`.
+- `pub` structs, functions, and trait implementations must have tests in `tests/{struct_name}/{method_name}.rs`.
 - Do not use `unwrap` in test code. Use `?` with a `Result` return type instead.
 - Sort methods within an `impl` block in ascending (alphabetical) order.
 - Place associated functions (e.g. `new`) and methods (taking `&self` or `&mut self`) in separate `impl` blocks.
