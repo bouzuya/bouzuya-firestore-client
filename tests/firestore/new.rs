@@ -1,0 +1,8 @@
+// since v0.1
+#[tokio::test]
+async fn test_firestore_new() {
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    let options = FirestoreOptions::default();
+    assert!(Firestore::new(options).is_ok());
+}
