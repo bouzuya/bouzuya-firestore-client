@@ -1,4 +1,4 @@
-// since v0.1
+// since v2.0
 #[test]
 fn test_firestore_options_database_id() {
     use bouzuya_firestore_client::FirestoreOptions;
