@@ -13,10 +13,7 @@ fn all_tests_have_version_comment() -> std::io::Result<()> {
 fn collect_errors(dir: &std::path::Path) -> std::io::Result<Vec<String>> {
     let entries = std::fs::read_dir(dir)?;
     let mut errors = Vec::new();
-    let mut paths = entries
-        .flatten()
-        .map(|e| e.path())
-        .collect::<Vec<std::path::PathBuf>>();
+    let mut paths = entries.flatten().map(|e| e.path()).collect::<Vec<std::path::PathBuf>>();
     paths.sort();
     for path in paths {
         if path.is_dir() {

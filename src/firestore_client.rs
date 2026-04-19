@@ -659,29 +659,10 @@ impl FirestoreClient {
 }
 
 #[cfg(test)]
-impl FirestoreClient {
-    pub(crate) fn database_name(&self) -> &firestore_path::DatabaseName {
-        &self.database_name
-    }
-}
-
-#[cfg(test)]
 mod tests {
     use std::str::FromStr;
 
     use super::*;
-
-    #[tokio::test]
-    async fn test_database_name() -> anyhow::Result<()> {
-        let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
-        let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
-        let client = FirestoreClient::new(project_id, "my-database".to_owned(), emulator_host)?;
-        assert_eq!(
-            client.database_name().database_id().to_string(),
-            "my-database"
-        );
-        Ok(())
-    }
 
     #[tokio::test]
     #[serial_test::serial]

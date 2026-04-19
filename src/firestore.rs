@@ -15,17 +15,11 @@ pub struct Firestore {
 }
 
 impl Firestore {
-    pub fn new(
-        FirestoreOptions {
-            project_id,
-            database_id,
-        }: FirestoreOptions,
-    ) -> Result<Self, Error> {
+    pub fn new(FirestoreOptions { project_id }: FirestoreOptions) -> Result<Self, Error> {
         let project_id = project_id
             .or_else(|| std::env::var("GCLOUD_PROJECT").ok())
             .or_else(|| std::env::var("GOOGLE_CLOUD_PROJECT").ok())
             .ok_or_else(|| Error::from_source("project_id is required".into()))?;
-        let database_id = database_id.unwrap_or_else(|| "(default)".to_owned());
         let emulator_host = match std::env::var("FIRESTORE_EMULATOR_HOST") {
             Ok(firestore_emulator_host) => Some(firestore_emulator_host),
             Err(e) => match e {
@@ -35,7 +29,8 @@ impl Firestore {
                 }
             },
         };
-        let firestore_client = FirestoreClient::new(project_id, database_id, emulator_host)?;
+        let firestore_client =
+            FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
         Ok(Self { firestore_client })
     }
 }
@@ -137,25 +132,6 @@ impl Firestore {
 
 #[cfg(test)]
 mod tests {
-    #[tokio::test]
-    async fn test_firestore_new_database_id() -> anyhow::Result<()> {
-        use crate::Firestore;
-        use crate::FirestoreOptions;
-        let firestore = Firestore::new(FirestoreOptions {
-            database_id: Some("my-database".to_owned()),
-            project_id: Some("demo-project".to_owned()),
-        })?;
-        assert_eq!(
-            firestore
-                .firestore_client()
-                .database_name()
-                .database_id()
-                .to_string(),
-            "my-database"
-        );
-        Ok(())
-    }
-
     #[tokio::test]
     #[serial_test::serial]
     async fn test_firestore_client() -> anyhow::Result<()> {
