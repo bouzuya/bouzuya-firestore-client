@@ -2,3 +2,9 @@
 pub struct QueryDocumentSnapshot {
     _private: (),
 }
+
+impl QueryDocumentSnapshot {
+    pub fn exists(&self) -> bool {
+        true
+    }
+}
