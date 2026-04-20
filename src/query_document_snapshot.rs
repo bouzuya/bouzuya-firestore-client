@@ -1,6 +1,7 @@
 use crate::DocumentSnapshot;
 use crate::Error;
 
+#[derive(Clone)]
 pub struct QueryDocumentSnapshot(DocumentSnapshot);
 
 impl QueryDocumentSnapshot {

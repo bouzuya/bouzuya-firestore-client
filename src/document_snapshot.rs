@@ -14,6 +14,7 @@ impl From<E> for Error {
     }
 }
 
+#[derive(Clone)]
 pub struct DocumentSnapshot {
     document: Option<serde_firestore_value::google::firestore::v1::Document>,
     document_reference: DocumentReference,
