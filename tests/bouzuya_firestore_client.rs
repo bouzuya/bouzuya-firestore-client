@@ -75,7 +75,7 @@ fn test_query_snapshot_import() {
     let _: Option<QuerySnapshot> = None;
 }
 
-// since v2.2
+// since v2.1
 #[test]
 fn test_query_document_snapshot_import() {
     use bouzuya_firestore_client::QueryDocumentSnapshot;
