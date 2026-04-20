@@ -15,8 +15,7 @@
 			"username": "vscode",
 			"uid": 1000,
 			"gid": 1000
-		},
-		"ghcr.io/devcontainers/features/copilot-cli:1": {}
+		}
 	},
 	"name": "bouzuya-firestore-client",
 	"postCreateCommand": ".devcontainer/post-create.sh",
