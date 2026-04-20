@@ -1,11 +1,23 @@
-#[allow(clippy::manual_non_exhaustive)]
-pub struct QueryDocumentSnapshot {
-    _private: (),
+use crate::DocumentSnapshot;
+use crate::Error;
+
+pub struct QueryDocumentSnapshot(DocumentSnapshot);
+
+impl QueryDocumentSnapshot {
+    #[allow(dead_code)]
+    pub(crate) fn new(document_snapshot: DocumentSnapshot) -> Self {
+        assert!(document_snapshot.exists());
+        Self(document_snapshot)
+    }
 }
 
 impl QueryDocumentSnapshot {
+    pub fn data<T: serde::de::DeserializeOwned>(&self) -> Result<T, Error> {
+        self.0.data().expect("document exists")
+    }
+
     pub fn exists(&self) -> bool {
-        true
+        self.0.exists()
     }
 }
 
