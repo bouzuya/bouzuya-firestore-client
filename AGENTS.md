@@ -7,6 +7,7 @@
 - Do not use `unwrap` in test code. Use `?` with a `Result` return type instead.
 - Sort methods within an `impl` block in ascending (alphabetical) order.
 - Place associated functions (e.g. `new`) and methods (taking `&self` or `&mut self`) in separate `impl` blocks.
+- Do not include Conventional Commits-style type prefixes (e.g. `feat:`, `fix:`, `chore:`) in commit messages.
 - Follow the TDD (Red-Green-Refactor) cycle strictly, one step at a time.
     - Do not write production code unless a failing test requires it.
     - Do not write more test code than is sufficient to fail.
