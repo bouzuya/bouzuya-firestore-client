@@ -68,6 +68,13 @@ fn test_query_import() {
     let _: Option<Query> = None;
 }
 
+// since v2.1
+#[test]
+fn test_query_snapshot_import() {
+    use bouzuya_firestore_client::QuerySnapshot;
+    let _: Option<QuerySnapshot> = None;
+}
+
 // since v0.1
 #[test]
 fn test_write_result_import() {
