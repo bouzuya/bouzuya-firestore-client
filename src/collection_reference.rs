@@ -1,6 +1,8 @@
 use crate::DocumentReference;
 use crate::Error;
 use crate::Firestore;
+use crate::QueryDocumentSnapshot;
+use crate::QuerySnapshot;
 
 pub struct CollectionReference {
     collection_path: firestore_path::CollectionPath,
@@ -52,6 +54,20 @@ impl CollectionReference {
 
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
+    }
+
+    /// Equivalent to Query::get.
+    pub async fn get(&self) -> Result<QuerySnapshot, Error> {
+        // TODO: replace with query execution
+        let document_refs = self.list_documents().await?;
+        let document_snapshots = self.firestore.get_all(document_refs).await?;
+        Ok(QuerySnapshot::new(
+            document_snapshots
+                .into_iter()
+                .filter(|s| s.exists())
+                .map(QueryDocumentSnapshot::new)
+                .collect(),
+        ))
     }
 
     pub fn id(&self) -> String {
