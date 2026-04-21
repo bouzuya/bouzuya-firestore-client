@@ -34,6 +34,10 @@ impl QueryDocumentSnapshot {
     pub fn r#ref(&self) -> DocumentReference {
         self.0.r#ref()
     }
+
+    pub fn update_time(&self) -> Timestamp {
+        self.0.update_time().expect("document exists")
+    }
 }
 
 #[cfg(test)]
