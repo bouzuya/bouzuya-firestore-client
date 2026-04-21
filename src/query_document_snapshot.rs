@@ -1,5 +1,7 @@
+use crate::DocumentReference;
 use crate::DocumentSnapshot;
 use crate::Error;
+use crate::Timestamp;
 
 #[derive(Clone)]
 pub struct QueryDocumentSnapshot(DocumentSnapshot);
@@ -13,7 +15,7 @@ impl QueryDocumentSnapshot {
 }
 
 impl QueryDocumentSnapshot {
-    pub fn create_time(&self) -> crate::Timestamp {
+    pub fn create_time(&self) -> Timestamp {
         self.0.create_time().expect("document exists")
     }
 
@@ -27,6 +29,10 @@ impl QueryDocumentSnapshot {
 
     pub fn id(&self) -> String {
         self.0.id()
+    }
+
+    pub fn r#ref(&self) -> DocumentReference {
+        self.0.r#ref()
     }
 }
 
