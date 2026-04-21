@@ -5,6 +5,7 @@ use crate::Query;
 use crate::QueryDocumentSnapshot;
 use crate::QuerySnapshot;
 
+#[derive(Clone)]
 pub struct CollectionReference {
     collection_path: firestore_path::CollectionPath,
     firestore: Firestore,
@@ -76,7 +77,7 @@ impl CollectionReference {
     }
 
     pub fn limit(&self, n: i32) -> Query {
-        Query::new().limit(n)
+        Query::new(self.clone()).limit(n)
     }
 
     pub async fn list_documents(&self) -> Result<Vec<DocumentReference>, Error> {
