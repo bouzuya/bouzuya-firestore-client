@@ -24,6 +24,10 @@ impl QueryDocumentSnapshot {
     pub fn exists(&self) -> bool {
         self.0.exists()
     }
+
+    pub fn id(&self) -> String {
+        self.0.id()
+    }
 }
 
 #[cfg(test)]
