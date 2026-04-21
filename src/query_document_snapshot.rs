@@ -13,6 +13,10 @@ impl QueryDocumentSnapshot {
 }
 
 impl QueryDocumentSnapshot {
+    pub fn create_time(&self) -> crate::Timestamp {
+        self.0.create_time().expect("document exists")
+    }
+
     pub fn data<T: serde::de::DeserializeOwned>(&self) -> Result<T, Error> {
         self.0.data().expect("document exists")
     }
