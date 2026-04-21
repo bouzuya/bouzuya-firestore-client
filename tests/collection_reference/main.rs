@@ -3,6 +3,7 @@ mod doc;
 mod firestore;
 mod get;
 mod id;
+mod limit;
 mod list_documents;
 mod parent;
 mod path;

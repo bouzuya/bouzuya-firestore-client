@@ -1,6 +1,7 @@
 use crate::DocumentReference;
 use crate::Error;
 use crate::Firestore;
+use crate::Query;
 use crate::QueryDocumentSnapshot;
 use crate::QuerySnapshot;
 
@@ -72,6 +73,10 @@ impl CollectionReference {
 
     pub fn id(&self) -> String {
         self.collection_path.collection_id().to_string()
+    }
+
+    pub fn limit(&self, n: i32) -> Query {
+        Query::new().limit(n)
     }
 
     pub async fn list_documents(&self) -> Result<Vec<DocumentReference>, Error> {
