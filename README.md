@@ -204,16 +204,16 @@
   - [ ] where
   - [ ] withConverter
 - [ ] QueryDocumentSnapshot : DocumentSnapshot
-  - [ ] createTime
-  - [ ] updateTime
-  - [ ] data
-  - [ ] (DocumentSnapshot) createTime
-  - [ ] (DocumentSnapshot) exists
-  - [ ] (DocumentSnapshot) id
+  - [x] createTime
+  - [x] updateTime
+  - [x] data
+  - [x] (DocumentSnapshot) createTime
+  - [x] (DocumentSnapshot) exists
+  - [x] (DocumentSnapshot) id
   - [ ] (DocumentSnapshot) readTime
-  - [ ] (DocumentSnapshot) ref
-  - [ ] (DocumentSnapshot) updateTime
-  - [ ] (DocumentSnapshot) data
+  - [x] (DocumentSnapshot) ref
+  - [x] (DocumentSnapshot) updateTime
+  - [x] (DocumentSnapshot) data
   - [ ] (DocumentSnapshot) get
   - [x] (DocumentSnapshot) <del>isEqual</del>
 - [ ] QueryPartition
