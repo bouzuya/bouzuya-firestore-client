@@ -16,6 +16,10 @@ impl QuerySnapshot {
     pub fn docs(&self) -> Vec<QueryDocumentSnapshot> {
         self.docs.clone()
     }
+
+    pub fn empty(&self) -> bool {
+        self.docs.is_empty()
+    }
 }
 
 #[cfg(test)]
