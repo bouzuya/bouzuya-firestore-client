@@ -10,8 +10,8 @@ use crate::google;
 pub struct Query {
     collection_reference: CollectionReference,
     firestore: Firestore,
-    #[allow(dead_code)]
     limit: Option<i32>,
+    offset: Option<i32>,
 }
 
 impl Query {
@@ -21,6 +21,7 @@ impl Query {
             collection_reference,
             firestore,
             limit: None,
+            offset: None,
         }
     }
 }
@@ -35,6 +36,10 @@ impl Query {
         let fsq = firestore_structured_query::Query::collection(self.collection_reference.id());
         let fsq = match self.limit {
             Some(n) => fsq.limit(n),
+            None => fsq,
+        };
+        let fsq = match self.offset {
+            Some(n) => fsq.offset(n),
             None => fsq,
         };
         let structured_query = google::firestore::v1::StructuredQuery::from(fsq);
@@ -63,6 +68,16 @@ impl Query {
             collection_reference: self.collection_reference.clone(),
             firestore: self.firestore.clone(),
             limit: Some(n),
+            offset: self.offset,
+        }
+    }
+
+    pub fn offset(&self, n: i32) -> Query {
+        Query {
+            collection_reference: self.collection_reference.clone(),
+            firestore: self.firestore.clone(),
+            limit: self.limit,
+            offset: Some(n),
         }
     }
 }
