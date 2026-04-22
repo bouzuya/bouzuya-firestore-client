@@ -1,25 +1,67 @@
 use crate::CollectionReference;
+use crate::DocumentReference;
+use crate::DocumentSnapshot;
+use crate::Error;
+use crate::Firestore;
+use crate::QueryDocumentSnapshot;
+use crate::QuerySnapshot;
+use crate::google;
 
-#[allow(clippy::manual_non_exhaustive)]
 pub struct Query {
     collection_reference: CollectionReference,
+    firestore: Firestore,
     #[allow(dead_code)]
     limit: Option<i32>,
 }
 
 impl Query {
     pub(crate) fn new(collection_reference: CollectionReference) -> Self {
+        let firestore = collection_reference.firestore().clone();
         Self {
             collection_reference,
+            firestore,
             limit: None,
         }
     }
 }
 
 impl Query {
+    pub async fn get(&self) -> Result<QuerySnapshot, Error> {
+        let collection_path = <firestore_path::CollectionPath as std::str::FromStr>::from_str(
+            &self.collection_reference.path(),
+        )
+        .map_err(Error::invalid_collection_path)?;
+        // collection query
+        let fsq = firestore_structured_query::Query::collection(self.collection_reference.id());
+        let fsq = match self.limit {
+            Some(n) => fsq.limit(n),
+            None => fsq,
+        };
+        let structured_query = google::firestore::v1::StructuredQuery::from(fsq);
+        let firestore_client = self.firestore.firestore_client();
+        let documents = firestore_client
+            .run_query(&collection_path, structured_query)
+            .await?;
+        let query_document_snapshots = documents
+            .into_iter()
+            .map(|document| {
+                let document_name =
+                    <firestore_path::DocumentName as std::str::FromStr>::from_str(&document.name)
+                        .map_err(|e| Error::from_source(Box::new(e)))?;
+                let document_path = firestore_path::DocumentPath::from(document_name);
+                let document_reference =
+                    DocumentReference::new(document_path, self.firestore.clone());
+                let document_snapshot = DocumentSnapshot::new(Some(document), document_reference);
+                Ok(QueryDocumentSnapshot::new(document_snapshot))
+            })
+            .collect::<Result<Vec<_>, Error>>()?;
+        Ok(QuerySnapshot::new(query_document_snapshots))
+    }
+
     pub fn limit(&self, n: i32) -> Query {
         Query {
             collection_reference: self.collection_reference.clone(),
+            firestore: self.firestore.clone(),
             limit: Some(n),
         }
     }

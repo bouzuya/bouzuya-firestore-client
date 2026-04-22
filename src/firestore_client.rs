@@ -594,6 +594,46 @@ impl FirestoreClient {
         }))
     }
 
+    pub(crate) async fn run_query(
+        &self,
+        collection_path: &firestore_path::CollectionPath,
+        structured_query: google::firestore::v1::StructuredQuery,
+    ) -> Result<Vec<google::firestore::v1::Document>, Error> {
+        let root_document_name = self.database_name.root_document_name().to_string();
+        let parent = match collection_path.parent() {
+            Some(parent_doc_path) => self
+                .database_name
+                .doc(parent_doc_path.clone())
+                // FIXME
+                .unwrap()
+                .to_string(),
+            None => root_document_name,
+        };
+        let mut client = self.client().await?;
+        let request = google::firestore::v1::RunQueryRequest {
+            parent,
+            explain_options: None,
+            query_type: Some(
+                google::firestore::v1::run_query_request::QueryType::StructuredQuery(
+                    structured_query,
+                ),
+            ),
+            consistency_selector: None,
+        };
+        let mut stream = client
+            .run_query(request)
+            .await
+            .map_err(E::from)?
+            .into_inner();
+        let mut documents = vec![];
+        while let Some(response) = stream.message().await.map_err(E::from)? {
+            if let Some(doc) = response.document {
+                documents.push(doc);
+            }
+        }
+        Ok(documents)
+    }
+
     pub(crate) async fn rollback(&self, transaction: Vec<u8>) -> Result<(), Error> {
         let mut client = self.client().await?;
         let request = google::firestore::v1::RollbackRequest {

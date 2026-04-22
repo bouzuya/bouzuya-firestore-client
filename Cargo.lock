@@ -133,6 +133,7 @@ version = "2.0.0"
 dependencies = [
  "anyhow",
  "firestore-path",
+ "firestore-structured-query",
  "google-cloud-auth",
  "http",
  "prost-types",
@@ -394,6 +395,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba518266ccc6663170ad6463255f1af6452f44b7817325cb972964c9a508331a"
 dependencies = [
  "thiserror 2.0.18",
+]
+
+[[package]]
+name = "firestore-structured-query"
+version = "0.29.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aef62d915fc29cf757c968420412e180ca0a13eeafb698832d332b583f68bcb8"
+dependencies = [
+ "googleapis-tonic-google-firestore-v1",
+ "serde-firestore-value",
 ]
 
 [[package]]
