@@ -5,5 +5,6 @@ mod get;
 mod id;
 mod limit;
 mod list_documents;
+mod offset;
 mod parent;
 mod path;

@@ -80,6 +80,10 @@ impl CollectionReference {
         Query::new(self.clone()).limit(n)
     }
 
+    pub fn offset(&self, n: i32) -> Query {
+        Query::new(self.clone()).offset(n)
+    }
+
     pub async fn list_documents(&self) -> Result<Vec<DocumentReference>, Error> {
         let document_ids = self
             .firestore
