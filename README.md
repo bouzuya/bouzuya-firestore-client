@@ -81,7 +81,7 @@
   - [x] <del>isEqual</del>
   - [x] listDocuments
   - [ ] withConverter
-  - [ ] (Query) firestore
+  - [x] (Query) firestore
   - [ ] (Query) aggregate
   - [ ] (Query) count
   - [ ] (Query) endAt
@@ -91,9 +91,9 @@
   - [ ] (Query) findNearest
   - [ ] (Query) get
   - [x] (Query) <del>isEqual</del>
-  - [ ] (Query) limit
+  - [x] (Query) limit
   - [ ] (Query) limitToLast
-  - [ ] (Query) offset
+  - [x] (Query) offset
   - [ ] (Query) onSnapshot
   - [ ] (Query) orderBy
   - [ ] (Query) select
@@ -192,9 +192,9 @@
   - [ ] findNearest
   - [ ] get
   - [x] <del>isEqual</del>
-  - [ ] limit
+  - [x] limit
   - [ ] limitToLast
-  - [ ] offset
+  - [x] offset
   - [ ] onSnapshot
   - [ ] orderBy
   - [ ] select
