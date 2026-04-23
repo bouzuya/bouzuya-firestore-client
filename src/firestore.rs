@@ -41,7 +41,10 @@ impl Firestore {
         };
         let firestore_client = FirestoreClient::new(project_id, database_id, emulator_host)?;
         let id = NEXT_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        Ok(Self { firestore_client, id })
+        Ok(Self {
+            firestore_client,
+            id,
+        })
     }
 }
 
@@ -142,9 +145,7 @@ impl Firestore {
 
 impl std::fmt::Debug for Firestore {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Firestore")
-            .field("id", &self.id)
-            .finish()
+        f.debug_struct("Firestore").field("id", &self.id).finish()
     }
 }
 

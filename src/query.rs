@@ -19,12 +19,13 @@ impl Query {
         let firestore = collection_reference.firestore().clone();
         let collection_path = <firestore_path::CollectionPath as std::str::FromStr>::from_str(
             &collection_reference.path(),
-        ).expect("collection_reference has valid path");
+        )
+        .expect("collection_reference has valid path");
         let query = firestore_structured_query::Query::collection(collection_reference.id());
         Self {
             collection_path,
             firestore,
-            query
+            query,
         }
     }
 }
@@ -34,7 +35,10 @@ impl Query {
         // collection query
         let firestore_client = self.firestore.firestore_client();
         let documents = firestore_client
-            .run_query(&self.collection_path, google::firestore::v1::StructuredQuery::from(self.query.clone()))
+            .run_query(
+                &self.collection_path,
+                google::firestore::v1::StructuredQuery::from(self.query.clone()),
+            )
             .await?;
         let query_document_snapshots = documents
             .into_iter()
