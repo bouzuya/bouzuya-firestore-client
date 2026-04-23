@@ -102,8 +102,10 @@ impl FirestoreClient {
         let mut map = std::collections::HashMap::new();
         while let Some(response) = stream.message().await.map_err(E::from)? {
             match response.result {
-                Some(google::firestore::v1::batch_get_documents_response::Result::Found(doc)) => {
-                    map.insert(doc.name.clone(), Some(doc));
+                Some(google::firestore::v1::batch_get_documents_response::Result::Found(
+                    document,
+                )) => {
+                    map.insert(document.name.clone(), Some(document));
                 }
                 Some(google::firestore::v1::batch_get_documents_response::Result::Missing(
                     name,
@@ -459,9 +461,9 @@ impl FirestoreClient {
                     .documents
                     .into_iter()
                     .map(
-                        |doc| -> Result<firestore_path::DocumentPath, firestore_path::Error> {
+                        |document| -> Result<firestore_path::DocumentPath, firestore_path::Error> {
                             Ok(firestore_path::DocumentPath::from(
-                                firestore_path::DocumentName::from_str(&doc.name)?,
+                                firestore_path::DocumentName::from_str(&document.name)?,
                             ))
                         },
                     )
@@ -627,8 +629,8 @@ impl FirestoreClient {
             .into_inner();
         let mut documents = vec![];
         while let Some(response) = stream.message().await.map_err(E::from)? {
-            if let Some(doc) = response.document {
-                documents.push(doc);
+            if let Some(document) = response.document {
+                documents.push(document);
             }
         }
         Ok(documents)

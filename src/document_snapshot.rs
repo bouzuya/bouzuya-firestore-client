@@ -34,18 +34,18 @@ impl DocumentSnapshot {
     pub fn create_time(&self) -> Option<Timestamp> {
         self.document
             .as_ref()
-            .and_then(|doc| doc.create_time)
+            .and_then(|document| document.create_time)
             .map(Timestamp::from_prost_timestamp)
     }
 
     pub fn data<T: serde::de::DeserializeOwned>(&self) -> Option<Result<T, Error>> {
-        self.document.as_ref().map(|it| {
+        self.document.as_ref().map(|document| {
             serde_firestore_value::from_value::<T>(
                 &serde_firestore_value::google::firestore::v1::Value {
                     value_type: Some(
                         serde_firestore_value::google::firestore::v1::value::ValueType::MapValue(
                             serde_firestore_value::google::firestore::v1::MapValue {
-                                fields: it.fields.clone(),
+                                fields: document.fields.clone(),
                             },
                         ),
                     ),
@@ -79,7 +79,7 @@ impl DocumentSnapshot {
     pub fn update_time(&self) -> Option<Timestamp> {
         self.document
             .as_ref()
-            .and_then(|doc| doc.update_time)
+            .and_then(|document| document.update_time)
             .map(Timestamp::from_prost_timestamp)
     }
 }

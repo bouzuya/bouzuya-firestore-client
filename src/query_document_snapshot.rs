@@ -54,13 +54,13 @@ mod tests {
         let document_path = DocumentPath::from_str("rooms/roomA")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let document_reference = DocumentReference::new(document_path, firestore);
-        let doc = serde_firestore_value::google::firestore::v1::Document {
+        let document = serde_firestore_value::google::firestore::v1::Document {
             name: "projects/test/databases/(default)/documents/rooms/roomA".to_string(),
             fields: Default::default(),
             create_time: None,
             update_time: None,
         };
-        let snapshot = DocumentSnapshot::new(Some(doc), document_reference);
+        let snapshot = DocumentSnapshot::new(Some(document), document_reference);
         assert!(snapshot.exists());
         let qds = super::QueryDocumentSnapshot::new(snapshot);
         assert!(qds.exists());

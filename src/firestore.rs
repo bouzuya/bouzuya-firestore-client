@@ -72,7 +72,9 @@ impl Firestore {
         Ok(documents
             .into_iter()
             .zip(document_references)
-            .map(|(doc, document_reference)| DocumentSnapshot::new(doc, document_reference))
+            .map(|(document, document_reference)| {
+                DocumentSnapshot::new(document, document_reference)
+            })
             .collect())
     }
 

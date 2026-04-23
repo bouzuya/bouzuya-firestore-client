@@ -13,8 +13,8 @@ async fn test_query_snapshot_docs() -> Result<(), bouzuya_firestore_client::Erro
     let query_snapshot = collection_reference.get().await?;
     let query_document_snapshots = query_snapshot.docs();
     assert!(!query_document_snapshots.is_empty());
-    for doc in query_document_snapshots {
-        assert!(doc.exists());
+    for query_document_snapshot in query_document_snapshots {
+        assert!(query_document_snapshot.exists());
     }
     Ok(())
 }
