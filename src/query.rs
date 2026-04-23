@@ -7,7 +7,7 @@ use crate::QueryDocumentSnapshot;
 use crate::QuerySnapshot;
 use crate::google;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Query {
     collection_path: firestore_path::CollectionPath,
     firestore: Firestore,
