@@ -6,7 +6,7 @@ use crate::Precondition;
 use crate::Timestamp;
 use crate::WriteResult;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DocumentReference {
     document_path: firestore_path::DocumentPath,
     firestore: Firestore,
