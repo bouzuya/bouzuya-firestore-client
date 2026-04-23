@@ -3,23 +3,26 @@ use crate::QueryDocumentSnapshot;
 
 #[derive(Clone)]
 pub struct QuerySnapshot {
-    docs: Vec<QueryDocumentSnapshot>,
     query: Query,
+    query_document_snapshots: Vec<QueryDocumentSnapshot>,
 }
 
 impl QuerySnapshot {
-    pub(crate) fn new(query: Query, docs: Vec<QueryDocumentSnapshot>) -> Self {
-        Self { docs, query }
+    pub(crate) fn new(query: Query, query_document_snapshots: Vec<QueryDocumentSnapshot>) -> Self {
+        Self {
+            query,
+            query_document_snapshots,
+        }
     }
 }
 
 impl QuerySnapshot {
     pub fn docs(&self) -> Vec<QueryDocumentSnapshot> {
-        self.docs.clone()
+        self.query_document_snapshots.clone()
     }
 
     pub fn empty(&self) -> bool {
-        self.docs.is_empty()
+        self.query_document_snapshots.is_empty()
     }
 
     pub fn query(&self) -> Query {
@@ -27,7 +30,7 @@ impl QuerySnapshot {
     }
 
     pub fn size(&self) -> usize {
-        self.docs.len()
+        self.query_document_snapshots.len()
     }
 }
 

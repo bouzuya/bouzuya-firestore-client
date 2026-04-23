@@ -15,8 +15,8 @@ async fn test_query_document_snapshot_exists() -> anyhow::Result<()> {
         .add(HashMap::<String, String>::new())
         .await?;
     let query_snapshot = collection_reference.get().await?;
-    let docs = query_snapshot.docs();
-    assert_eq!(docs.len(), 1);
-    assert!(docs[0].exists());
+    let query_document_snapshots = query_snapshot.docs();
+    assert_eq!(query_document_snapshots.len(), 1);
+    assert!(query_document_snapshots[0].exists());
     Ok(())
 }

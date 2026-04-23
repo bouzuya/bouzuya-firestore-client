@@ -16,8 +16,8 @@ async fn test_query_document_snapshot_update_time() -> anyhow::Result<()> {
         .add(HashMap::<String, String>::new())
         .await?;
     let query_snapshot = collection_reference.get().await?;
-    let docs = query_snapshot.docs();
-    assert_eq!(docs.len(), 1);
-    let _update_time: Timestamp = docs[0].update_time();
+    let query_document_snapshots = query_snapshot.docs();
+    assert_eq!(query_document_snapshots.len(), 1);
+    let _update_time: Timestamp = query_document_snapshots[0].update_time();
     Ok(())
 }

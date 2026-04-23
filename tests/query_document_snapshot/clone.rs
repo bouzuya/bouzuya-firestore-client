@@ -20,9 +20,9 @@ async fn test_query_document_snapshot_clone() -> anyhow::Result<()> {
         .add(HashMap::<String, String>::new())
         .await?;
     let query_snapshot = collection_reference.get().await?;
-    let docs = query_snapshot.docs();
-    assert_eq!(docs.len(), 1);
-    let cloned = docs[0].clone();
-    assert_eq!(cloned.id(), docs[0].id());
+    let query_document_snapshots = query_snapshot.docs();
+    assert_eq!(query_document_snapshots.len(), 1);
+    let cloned = query_document_snapshots[0].clone();
+    assert_eq!(cloned.id(), query_document_snapshots[0].id());
     Ok(())
 }

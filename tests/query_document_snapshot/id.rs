@@ -15,8 +15,8 @@ async fn test_query_document_snapshot_id() -> anyhow::Result<()> {
         .add(HashMap::<String, String>::new())
         .await?;
     let query_snapshot = collection_reference.get().await?;
-    let docs = query_snapshot.docs();
-    assert_eq!(docs.len(), 1);
-    assert_eq!(docs[0].id(), document_reference.id());
+    let query_document_snapshots = query_snapshot.docs();
+    assert_eq!(query_document_snapshots.len(), 1);
+    assert_eq!(query_document_snapshots[0].id(), document_reference.id());
     Ok(())
 }
