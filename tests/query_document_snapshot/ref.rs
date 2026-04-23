@@ -4,6 +4,7 @@
 async fn test_query_document_snapshot_ref() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
+    use bouzuya_firestore_client::QueryDocumentSnapshot;
     use std::collections::HashMap;
     let firestore = Firestore::new(FirestoreOptions::default())?;
     let id = std::time::SystemTime::now()
@@ -15,7 +16,7 @@ async fn test_query_document_snapshot_ref() -> anyhow::Result<()> {
     let query_snapshot = collection_ref.get().await?;
     let docs = query_snapshot.docs();
     assert_eq!(docs.len(), 1);
-    // FIXME: Add impl Debug for DocumentReference
-    assert_eq!(docs[0].r#ref().id(), document_ref.id());
+    let query_document_snapshot: &QueryDocumentSnapshot = &docs[0];
+    assert_eq!(query_document_snapshot.r#ref(), document_ref);
     Ok(())
 }
