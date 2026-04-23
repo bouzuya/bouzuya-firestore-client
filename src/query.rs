@@ -90,12 +90,13 @@ mod tests {
         use crate::CollectionReference;
         use crate::Firestore;
         use crate::FirestoreOptions;
+        use crate::Query;
         use firestore_path::CollectionPath;
         use std::str::FromStr as _;
         let collection_path = CollectionPath::from_str("rooms")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let collection_ref = CollectionReference::new(collection_path, firestore);
-        let _query = crate::Query::new(collection_ref);
+        let _query = Query::new(collection_ref);
         Ok(())
     }
 }

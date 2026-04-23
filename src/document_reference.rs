@@ -3,6 +3,7 @@ use crate::DocumentSnapshot;
 use crate::Error;
 use crate::Firestore;
 use crate::Precondition;
+use crate::Timestamp;
 use crate::WriteResult;
 
 #[derive(Clone)]
@@ -45,7 +46,7 @@ impl DocumentReference {
             .firestore_client()
             .create_document(&self.document_path, value)
             .await?;
-        Ok(WriteResult::new(crate::Timestamp::from_prost_timestamp(
+        Ok(WriteResult::new(Timestamp::from_prost_timestamp(
             write_time,
         )))
     }
@@ -56,7 +57,7 @@ impl DocumentReference {
             .firestore_client()
             .delete_document(&self.document_path, precondition)
             .await?;
-        Ok(WriteResult::new(crate::Timestamp::from_prost_timestamp(
+        Ok(WriteResult::new(Timestamp::from_prost_timestamp(
             write_time,
         )))
     }
@@ -116,7 +117,7 @@ impl DocumentReference {
             .firestore_client()
             .set_document(&self.document_path, value)
             .await?;
-        Ok(WriteResult::new(crate::Timestamp::from_prost_timestamp(
+        Ok(WriteResult::new(Timestamp::from_prost_timestamp(
             write_time,
         )))
     }
@@ -133,7 +134,7 @@ impl DocumentReference {
             .firestore_client()
             .update_document(&self.document_path, value, precondition)
             .await?;
-        Ok(WriteResult::new(crate::Timestamp::from_prost_timestamp(
+        Ok(WriteResult::new(Timestamp::from_prost_timestamp(
             write_time,
         )))
     }
