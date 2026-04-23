@@ -61,7 +61,7 @@ impl Query {
                 Ok(QueryDocumentSnapshot::new(document_snapshot))
             })
             .collect::<Result<Vec<_>, Error>>()?;
-        Ok(QuerySnapshot::new(query_document_snapshots))
+        Ok(QuerySnapshot::new(self.clone(), query_document_snapshots))
     }
 
     pub fn limit(&self, n: i32) -> Query {
