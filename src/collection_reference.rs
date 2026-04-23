@@ -119,8 +119,8 @@ mod tests {
         use std::str::FromStr as _;
         let collection_path = CollectionPath::from_str("rooms")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
-        let collection_ref = CollectionReference::new(collection_path, firestore);
-        assert_eq!(collection_ref.id().to_string(), "rooms");
+        let collection_reference = CollectionReference::new(collection_path, firestore);
+        assert_eq!(collection_reference.id().to_string(), "rooms");
         Ok(())
     }
 }

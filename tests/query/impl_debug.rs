@@ -9,8 +9,8 @@ async fn test_query_impl_debug() -> anyhow::Result<()> {
     assert_impl::<Query>();
 
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let collection_ref = firestore.collection("rooms")?;
-    let query: Query = collection_ref.offset(0);
+    let collection_reference = firestore.collection("rooms")?;
+    let query: Query = collection_reference.offset(0);
     let debug_str = format!("{:?}", query);
     assert!(debug_str.contains("Query"));
     Ok(())

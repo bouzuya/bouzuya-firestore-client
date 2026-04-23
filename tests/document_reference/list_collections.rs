@@ -18,8 +18,11 @@ async fn test_document_reference_list_collections() -> anyhow::Result<()> {
     sub_collection.add(HashMap::<String, String>::new()).await?;
     let collection_refs: Vec<CollectionReference> = document_reference.list_collections().await?;
     assert!(!collection_refs.is_empty());
-    for collection_ref in &collection_refs {
-        assert_eq!(collection_ref.path(), format!("rooms/{}/messages", id));
+    for collection_reference in &collection_refs {
+        assert_eq!(
+            collection_reference.path(),
+            format!("rooms/{}/messages", id)
+        );
     }
     Ok(())
 }

@@ -7,9 +7,11 @@ async fn test_collection_reference_get() -> Result<(), bouzuya_firestore_client:
     use bouzuya_firestore_client::QuerySnapshot;
     use std::collections::HashMap;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let collection_ref = firestore.collection("rooms")?;
-    collection_ref.add(HashMap::<String, String>::new()).await?;
-    let query_snapshot: QuerySnapshot = collection_ref.get().await?;
+    let collection_reference = firestore.collection("rooms")?;
+    collection_reference
+        .add(HashMap::<String, String>::new())
+        .await?;
+    let query_snapshot: QuerySnapshot = collection_reference.get().await?;
     assert!(!query_snapshot.docs().is_empty());
     for snapshot in query_snapshot.docs() {
         assert!(snapshot.exists());

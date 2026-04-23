@@ -45,8 +45,8 @@ mod tests {
     async fn test_new() -> anyhow::Result<()> {
         let collection_path = CollectionPath::from_str("rooms")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
-        let collection_ref = CollectionReference::new(collection_path, firestore);
-        let query = Query::new(collection_ref);
+        let collection_reference = CollectionReference::new(collection_path, firestore);
+        let query = Query::new(collection_reference);
         let _qs = QuerySnapshot::new(query, vec![]);
         Ok(())
     }

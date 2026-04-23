@@ -6,11 +6,13 @@ async fn test_query_snapshot_size() -> Result<(), bouzuya_firestore_client::Erro
     use bouzuya_firestore_client::FirestoreOptions;
     use std::collections::HashMap;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let collection_ref = firestore.collection("query_snapshot_size")?;
-    let query_snapshot = collection_ref.get().await?;
+    let collection_reference = firestore.collection("query_snapshot_size")?;
+    let query_snapshot = collection_reference.get().await?;
     assert_eq!(query_snapshot.size(), 0);
-    collection_ref.add(HashMap::<String, String>::new()).await?;
-    let query_snapshot = collection_ref.get().await?;
+    collection_reference
+        .add(HashMap::<String, String>::new())
+        .await?;
+    let query_snapshot = collection_reference.get().await?;
     assert_eq!(query_snapshot.size(), 1);
     Ok(())
 }

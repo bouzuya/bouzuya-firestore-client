@@ -7,9 +7,11 @@ async fn test_collection_reference_list_documents() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FirestoreOptions;
     use std::collections::HashMap;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let collection_ref = firestore.collection("rooms")?;
-    collection_ref.add(HashMap::<String, String>::new()).await?;
-    let document_refs: Vec<DocumentReference> = collection_ref.list_documents().await?;
+    let collection_reference = firestore.collection("rooms")?;
+    collection_reference
+        .add(HashMap::<String, String>::new())
+        .await?;
+    let document_refs: Vec<DocumentReference> = collection_reference.list_documents().await?;
     assert!(!document_refs.is_empty());
     for document_reference in &document_refs {
         assert!(document_reference.path().starts_with("rooms/"));

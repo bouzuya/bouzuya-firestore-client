@@ -10,10 +10,10 @@ async fn test_query_document_snapshot_data() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let collection_ref = firestore.collection(format!("rooms/{}/items", id))?;
+    let collection_reference = firestore.collection(format!("rooms/{}/items", id))?;
     let data = HashMap::from([("key".to_string(), "value".to_string())]);
-    collection_ref.add(data).await?;
-    let query_snapshot = collection_ref.get().await?;
+    collection_reference.add(data).await?;
+    let query_snapshot = collection_reference.get().await?;
     let docs = query_snapshot.docs();
     assert_eq!(docs.len(), 1);
     let doc = &docs[0];
