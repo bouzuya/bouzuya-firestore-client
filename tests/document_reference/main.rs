@@ -5,6 +5,7 @@ mod firestore;
 mod get;
 mod id;
 mod impl_clone;
+mod impl_debug;
 mod list_collections;
 mod parent;
 mod path;
