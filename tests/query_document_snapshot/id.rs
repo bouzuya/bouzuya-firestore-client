@@ -11,10 +11,10 @@ async fn test_query_document_snapshot_id() -> anyhow::Result<()> {
         .as_nanos()
         .to_string();
     let collection_ref = firestore.collection(format!("rooms/{}/items", id))?;
-    let document_ref = collection_ref.add(HashMap::<String, String>::new()).await?;
+    let document_reference = collection_ref.add(HashMap::<String, String>::new()).await?;
     let query_snapshot = collection_ref.get().await?;
     let docs = query_snapshot.docs();
     assert_eq!(docs.len(), 1);
-    assert_eq!(docs[0].id(), document_ref.id());
+    assert_eq!(docs[0].id(), document_reference.id());
     Ok(())
 }

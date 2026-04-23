@@ -11,8 +11,8 @@ async fn test_document_reference_create() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let data: HashMap<String, String> = HashMap::new();
-    let _: WriteResult = document_ref.create(data).await?;
+    let _: WriteResult = document_reference.create(data).await?;
     Ok(())
 }

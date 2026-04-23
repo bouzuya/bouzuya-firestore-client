@@ -11,9 +11,9 @@ async fn test_write_result_write_time() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let data: HashMap<String, String> = HashMap::new();
-    let write_result = document_ref.create(data).await?;
+    let write_result = document_reference.create(data).await?;
     let write_time: Timestamp = write_result.write_time();
     assert!(write_time.to_millis() > 0);
     Ok(())

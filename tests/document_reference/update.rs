@@ -10,10 +10,10 @@ async fn test_document_reference_update_with_precondition_exists_error() -> anyh
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     // document does not exist
     let update_data = std::collections::HashMap::from([("a".to_string(), "updated".to_string())]);
-    let result = document_ref
+    let result = document_reference
         .update(
             update_data,
             Precondition {
@@ -41,12 +41,12 @@ async fn test_document_reference_update_with_precondition_last_update_time_error
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let initial = HashMap::from([("a".to_string(), "1".to_string())]);
-    document_ref.create(initial).await?;
+    document_reference.create(initial).await?;
     let update_data = HashMap::from([("a".to_string(), "updated".to_string())]);
     // use a mismatched last_update_time
-    let result = document_ref
+    let result = document_reference
         .update(
             update_data,
             Precondition {
@@ -73,11 +73,11 @@ async fn test_document_reference_update_with_precondition_exists() -> anyhow::Re
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let initial = HashMap::from([("a".to_string(), "1".to_string())]);
-    document_ref.create(initial).await?;
+    document_reference.create(initial).await?;
     let update_data = HashMap::from([("a".to_string(), "updated".to_string())]);
-    let _: WriteResult = document_ref
+    let _: WriteResult = document_reference
         .update(
             update_data,
             Precondition {
@@ -86,7 +86,7 @@ async fn test_document_reference_update_with_precondition_exists() -> anyhow::Re
             },
         )
         .await?;
-    let snapshot = document_ref.get().await?;
+    let snapshot = document_reference.get().await?;
     let data: HashMap<String, String> = snapshot.data().ok_or(anyhow::anyhow!("no data"))??;
     assert_eq!(data.get("a").map(String::as_str), Some("updated"));
     Ok(())
@@ -106,11 +106,11 @@ async fn test_document_reference_update_with_precondition_last_update_time() -> 
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let initial = HashMap::from([("a".to_string(), "1".to_string())]);
-    let write_result = document_ref.create(initial).await?;
+    let write_result = document_reference.create(initial).await?;
     let update_data = HashMap::from([("a".to_string(), "updated".to_string())]);
-    let _: WriteResult = document_ref
+    let _: WriteResult = document_reference
         .update(
             update_data,
             Precondition {
@@ -119,7 +119,7 @@ async fn test_document_reference_update_with_precondition_last_update_time() -> 
             },
         )
         .await?;
-    let snapshot = document_ref.get().await?;
+    let snapshot = document_reference.get().await?;
     let data: HashMap<String, String> = snapshot.data().ok_or(anyhow::anyhow!("no data"))??;
     assert_eq!(data.get("a").map(String::as_str), Some("updated"));
     Ok(())
@@ -139,17 +139,17 @@ async fn test_document_reference_update() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let initial = HashMap::from([
         ("a".to_string(), "1".to_string()),
         ("b".to_string(), "2".to_string()),
     ]);
-    document_ref.create(initial).await?;
+    document_reference.create(initial).await?;
     let update_data = HashMap::from([("a".to_string(), "updated".to_string())]);
-    let _: WriteResult = document_ref
+    let _: WriteResult = document_reference
         .update(update_data, Precondition::default())
         .await?;
-    let snapshot = document_ref.get().await?;
+    let snapshot = document_reference.get().await?;
     let data: HashMap<String, String> = snapshot.data().ok_or(anyhow::anyhow!("no data"))??;
     assert_eq!(data.get("a").map(String::as_str), Some("updated"));
     assert_eq!(data.get("b").map(String::as_str), Some("2"));

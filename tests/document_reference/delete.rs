@@ -12,27 +12,27 @@ async fn test_document_reference_delete() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
 
-    assert!(!document_ref.get().await?.exists());
+    assert!(!document_reference.get().await?.exists());
 
     // nonexistent document can be deleted
     let precondition = Precondition {
         exists: None,
         last_update_time: None,
     };
-    let _: WriteResult = document_ref.delete(precondition).await?;
-    assert!(!document_ref.get().await?.exists());
+    let _: WriteResult = document_reference.delete(precondition).await?;
+    assert!(!document_reference.get().await?.exists());
 
     let data: HashMap<String, String> = HashMap::new();
-    document_ref.create(data).await?;
-    assert!(document_ref.get().await?.exists());
+    document_reference.create(data).await?;
+    assert!(document_reference.get().await?.exists());
     let precondition = Precondition {
         exists: None,
         last_update_time: None,
     };
-    let _: WriteResult = document_ref.delete(precondition).await?;
-    assert!(!document_ref.get().await?.exists());
+    let _: WriteResult = document_reference.delete(precondition).await?;
+    assert!(!document_reference.get().await?.exists());
 
     Ok(())
 }

@@ -5,8 +5,8 @@ async fn test_document_reference_clone() -> Result<(), bouzuya_firestore_client:
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_ref = firestore.doc("rooms/roomA")?;
-    let cloned = document_ref.clone();
+    let document_reference = firestore.doc("rooms/roomA")?;
+    let cloned = document_reference.clone();
     assert_eq!(cloned.id().to_string(), "roomA");
 
     fn assert_fn<T: Clone>() {}

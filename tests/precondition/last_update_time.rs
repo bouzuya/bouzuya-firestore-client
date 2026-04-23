@@ -12,8 +12,8 @@ async fn test_precondition_last_update_time() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
-    let write_result = document_ref
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
+    let write_result = document_reference
         .create(HashMap::<String, String>::new())
         .await?;
     let write_time = write_result.write_time();
@@ -23,14 +23,14 @@ async fn test_precondition_last_update_time() -> anyhow::Result<()> {
         exists: None,
         last_update_time: Some(Timestamp::from_millis(0)),
     };
-    assert!(document_ref.delete(precondition).await.is_err());
+    assert!(document_reference.delete(precondition).await.is_err());
 
     // correct last_update_time should succeed
     let precondition = Precondition {
         exists: None,
         last_update_time: Some(write_time),
     };
-    assert!(document_ref.delete(precondition).await.is_ok());
+    assert!(document_reference.delete(precondition).await.is_ok());
 
     Ok(())
 }

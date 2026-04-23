@@ -11,20 +11,20 @@ async fn test_transaction_create() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let data = HashMap::<String, String>::new();
     firestore
         .run_transaction(
             |transaction| {
-                let document_ref = document_ref.clone();
+                let document_reference = document_reference.clone();
                 Box::pin(async move {
-                    transaction.create(&document_ref, &data)?;
+                    transaction.create(&document_reference, &data)?;
                     Ok(())
                 })
             },
             TransactionOptions::default(),
         )
         .await?;
-    assert!(document_ref.get().await?.exists());
+    assert!(document_reference.get().await?.exists());
     Ok(())
 }

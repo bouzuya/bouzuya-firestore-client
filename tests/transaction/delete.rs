@@ -12,23 +12,23 @@ async fn test_transaction_delete() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let data = HashMap::<String, String>::new();
-    document_ref.create(data).await?;
-    assert!(document_ref.get().await?.exists());
+    document_reference.create(data).await?;
+    assert!(document_reference.get().await?.exists());
     firestore
         .run_transaction(
             |transaction| {
-                let document_ref = document_ref.clone();
+                let document_reference = document_reference.clone();
                 Box::pin(async move {
-                    transaction.delete(&document_ref, Precondition::default())?;
+                    transaction.delete(&document_reference, Precondition::default())?;
                     Ok(())
                 })
             },
             TransactionOptions::default(),
         )
         .await?;
-    assert!(!document_ref.get().await?.exists());
+    assert!(!document_reference.get().await?.exists());
     Ok(())
 }
 
@@ -46,17 +46,17 @@ async fn test_transaction_delete_with_precondition() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let data = HashMap::<String, String>::new();
-    document_ref.create(data).await?;
-    assert!(document_ref.get().await?.exists());
+    document_reference.create(data).await?;
+    assert!(document_reference.get().await?.exists());
     firestore
         .run_transaction(
             |transaction| {
-                let document_ref = document_ref.clone();
+                let document_reference = document_reference.clone();
                 Box::pin(async move {
                     transaction.delete(
-                        &document_ref,
+                        &document_reference,
                         Precondition {
                             exists: Some(true),
                             last_update_time: None,
@@ -68,6 +68,6 @@ async fn test_transaction_delete_with_precondition() -> anyhow::Result<()> {
             TransactionOptions::default(),
         )
         .await?;
-    assert!(!document_ref.get().await?.exists());
+    assert!(!document_reference.get().await?.exists());
     Ok(())
 }

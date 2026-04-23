@@ -9,8 +9,8 @@ async fn test_document_reference_impl_debug() -> Result<(), bouzuya_firestore_cl
     assert_impl::<DocumentReference>();
 
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_ref = firestore.doc("rooms/roomA")?;
-    let debug_str = format!("{:?}", document_ref);
+    let document_reference = firestore.doc("rooms/roomA")?;
+    let debug_str = format!("{:?}", document_reference);
     assert!(debug_str.contains("DocumentReference"));
     Ok(())
 }

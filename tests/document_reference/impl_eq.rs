@@ -9,9 +9,9 @@ async fn test_document_reference_impl_eq() -> Result<(), bouzuya_firestore_clien
     assert_impl::<DocumentReference>();
 
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let doc_ref = firestore.doc("rooms/roomA")?;
-    assert_eq!(doc_ref, doc_ref.clone());
+    let document_reference = firestore.doc("rooms/roomA")?;
+    assert_eq!(document_reference, document_reference.clone());
     let doc_ref2 = firestore.doc("rooms/roomB")?;
-    assert_ne!(doc_ref, doc_ref2);
+    assert_ne!(document_reference, doc_ref2);
     Ok(())
 }

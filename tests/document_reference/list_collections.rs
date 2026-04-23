@@ -11,12 +11,12 @@ async fn test_document_reference_list_collections() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
-    let collection_refs: Vec<CollectionReference> = document_ref.list_collections().await?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
+    let collection_refs: Vec<CollectionReference> = document_reference.list_collections().await?;
     assert!(collection_refs.is_empty());
-    let sub_collection = document_ref.collection("messages")?;
+    let sub_collection = document_reference.collection("messages")?;
     sub_collection.add(HashMap::<String, String>::new()).await?;
-    let collection_refs: Vec<CollectionReference> = document_ref.list_collections().await?;
+    let collection_refs: Vec<CollectionReference> = document_reference.list_collections().await?;
     assert!(!collection_refs.is_empty());
     for collection_ref in &collection_refs {
         assert_eq!(collection_ref.path(), format!("rooms/{}/messages", id));

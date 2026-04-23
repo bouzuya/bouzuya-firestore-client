@@ -11,14 +11,14 @@ async fn test_transaction_get() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let initial = HashMap::from([("a".to_string(), "1".to_string())]);
-    document_ref.create(initial).await?;
+    document_reference.create(initial).await?;
     let snapshot = firestore
         .run_transaction(
             |transaction| {
-                let document_ref = document_ref.clone();
-                Box::pin(async move { transaction.get(&document_ref).await })
+                let document_reference = document_reference.clone();
+                Box::pin(async move { transaction.get(&document_reference).await })
             },
             TransactionOptions::default(),
         )
@@ -41,12 +41,12 @@ async fn test_transaction_get_not_found() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
     let snapshot = firestore
         .run_transaction(
             |transaction| {
-                let document_ref = document_ref.clone();
-                Box::pin(async move { transaction.get(&document_ref).await })
+                let document_reference = document_reference.clone();
+                Box::pin(async move { transaction.get(&document_reference).await })
             },
             TransactionOptions::default(),
         )

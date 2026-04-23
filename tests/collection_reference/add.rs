@@ -8,8 +8,8 @@ async fn test_collection_reference_add() -> anyhow::Result<()> {
     use std::collections::HashMap;
     let firestore = Firestore::new(FirestoreOptions::default())?;
     let collection_ref = firestore.collection("rooms")?;
-    let document_ref: DocumentReference =
+    let document_reference: DocumentReference =
         collection_ref.add(HashMap::<String, String>::new()).await?;
-    assert!(document_ref.path().starts_with("rooms/"));
+    assert!(document_reference.path().starts_with("rooms/"));
     Ok(())
 }
