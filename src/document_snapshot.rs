@@ -96,8 +96,8 @@ mod tests {
         use std::str::FromStr as _;
         let document_path = DocumentPath::from_str("rooms/roomA")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
-        let document_ref = DocumentReference::new(document_path, firestore);
-        let snapshot = DocumentSnapshot::new(None, document_ref);
+        let document_reference = DocumentReference::new(document_path, firestore);
+        let snapshot = DocumentSnapshot::new(None, document_reference);
         assert!(!snapshot.exists());
         assert_eq!(snapshot.id().to_string(), "roomA");
         Ok(())

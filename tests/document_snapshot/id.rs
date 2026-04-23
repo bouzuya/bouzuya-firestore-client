@@ -5,8 +5,8 @@ async fn test_document_snapshot_id() -> Result<(), bouzuya_firestore_client::Err
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let document_ref = firestore.doc("rooms/roomA")?;
-    let snapshot = document_ref.get().await?;
+    let document_reference = firestore.doc("rooms/roomA")?;
+    let snapshot = document_reference.get().await?;
     assert_eq!(snapshot.id().to_string(), "roomA");
     Ok(())
 }

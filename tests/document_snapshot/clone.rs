@@ -15,11 +15,11 @@ async fn test_document_snapshot_clone() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
-    document_ref
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
+    document_reference
         .create(HashMap::<String, String>::new())
         .await?;
-    let snapshot = document_ref.get().await?;
+    let snapshot = document_reference.get().await?;
     let cloned = snapshot.clone();
     assert_eq!(snapshot.id(), cloned.id());
     assert_eq!(snapshot.exists(), cloned.exists());

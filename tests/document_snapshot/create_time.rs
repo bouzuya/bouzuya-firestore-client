@@ -11,17 +11,17 @@ async fn test_document_snapshot_create_time() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
 
     // non-existing document has no create_time
-    let snapshot = document_ref.get().await?;
+    let snapshot = document_reference.get().await?;
     assert_eq!(snapshot.create_time(), None);
 
     // existing document has create_time
-    document_ref
+    document_reference
         .create(HashMap::<String, String>::new())
         .await?;
-    let snapshot = document_ref.get().await?;
+    let snapshot = document_reference.get().await?;
     let create_time: Option<Timestamp> = snapshot.create_time();
     assert!(create_time.is_some_and(|t| t.to_millis() > 0));
 

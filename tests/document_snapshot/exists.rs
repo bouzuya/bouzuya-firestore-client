@@ -10,17 +10,17 @@ async fn test_document_snapshot_exists() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
 
     // non-existing document
-    let snapshot = document_ref.get().await?;
+    let snapshot = document_reference.get().await?;
     assert!(!snapshot.exists());
 
     // existing document
-    document_ref
+    document_reference
         .create(HashMap::<String, String>::new())
         .await?;
-    let snapshot = document_ref.get().await?;
+    let snapshot = document_reference.get().await?;
     assert!(snapshot.exists());
 
     Ok(())

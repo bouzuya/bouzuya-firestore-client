@@ -10,18 +10,18 @@ async fn test_document_snapshot_data() -> anyhow::Result<()> {
         .duration_since(std::time::UNIX_EPOCH)?
         .as_nanos()
         .to_string();
-    let document_ref = firestore.doc(format!("rooms/{}", id))?;
+    let document_reference = firestore.doc(format!("rooms/{}", id))?;
 
     // non-existing document has no data
-    let snapshot = document_ref.get().await?;
+    let snapshot = document_reference.get().await?;
     let data: Option<Result<HashMap<String, String>, _>> = snapshot.data();
     assert!(data.is_none());
 
     // existing document with data
     let mut fields = HashMap::new();
     fields.insert("key".to_string(), "value".to_string());
-    document_ref.create(fields).await?;
-    let snapshot = document_ref.get().await?;
+    document_reference.create(fields).await?;
+    let snapshot = document_reference.get().await?;
     let data: HashMap<String, String> = snapshot
         .data::<HashMap<String, String>>()
         .ok_or(anyhow::anyhow!("data is None"))??;

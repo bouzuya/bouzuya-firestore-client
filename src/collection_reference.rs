@@ -36,9 +36,9 @@ impl CollectionReference {
             .collection_path
             .doc(document_id)
             .map_err(Error::invalid_document_path)?;
-        let document_ref = DocumentReference::new(document_path, self.firestore.clone());
-        let _write_result = document_ref.create(&data).await?;
-        Ok(document_ref)
+        let document_reference = DocumentReference::new(document_path, self.firestore.clone());
+        let _write_result = document_reference.create(&data).await?;
+        Ok(document_reference)
     }
 
     pub fn doc(&self, document_id: impl Into<String>) -> Result<DocumentReference, Error> {

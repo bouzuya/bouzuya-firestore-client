@@ -12,7 +12,7 @@ pub struct Transaction {
 impl Transaction {
     pub fn create(
         &mut self,
-        document_ref: &DocumentReference,
+        document_reference: &DocumentReference,
         data: &impl serde::ser::Serialize,
     ) -> Result<(), Error> {
         let value =
@@ -31,7 +31,7 @@ impl Transaction {
             }),
             operation: Some(google::firestore::v1::write::Operation::Update(
                 google::firestore::v1::Document {
-                    name: document_ref.document_name(),
+                    name: document_reference.document_name(),
                     fields,
                     create_time: None,
                     update_time: None,
@@ -43,7 +43,7 @@ impl Transaction {
 
     pub fn delete(
         &mut self,
-        document_ref: &DocumentReference,
+        document_reference: &DocumentReference,
         Precondition {
             exists,
             last_update_time,
@@ -74,25 +74,31 @@ impl Transaction {
             update_transforms: vec![],
             current_document,
             operation: Some(google::firestore::v1::write::Operation::Delete(
-                document_ref.document_name(),
+                document_reference.document_name(),
             )),
         });
         Ok(())
     }
 
     // TODO: Query support
-    pub async fn get(&self, document_ref: &DocumentReference) -> Result<DocumentSnapshot, Error> {
-        let document = document_ref
+    pub async fn get(
+        &self,
+        document_reference: &DocumentReference,
+    ) -> Result<DocumentSnapshot, Error> {
+        let document = document_reference
             .firestore()
             .firestore_client()
-            .get_document_in_transaction(document_ref.document_path(), self.transaction.clone())
+            .get_document_in_transaction(
+                document_reference.document_path(),
+                self.transaction.clone(),
+            )
             .await?;
-        Ok(DocumentSnapshot::new(document, document_ref.clone()))
+        Ok(DocumentSnapshot::new(document, document_reference.clone()))
     }
 
     pub fn set(
         &mut self,
-        document_ref: &DocumentReference,
+        document_reference: &DocumentReference,
         data: &impl serde::ser::Serialize,
     ) -> Result<(), Error> {
         let value =
@@ -107,7 +113,7 @@ impl Transaction {
             current_document: None,
             operation: Some(google::firestore::v1::write::Operation::Update(
                 google::firestore::v1::Document {
-                    name: document_ref.document_name(),
+                    name: document_reference.document_name(),
                     fields,
                     create_time: None,
                     update_time: None,
@@ -119,7 +125,7 @@ impl Transaction {
 
     pub fn update(
         &mut self,
-        document_ref: &DocumentReference,
+        document_reference: &DocumentReference,
         data: &impl serde::ser::Serialize,
         Precondition {
             exists,
@@ -164,7 +170,7 @@ impl Transaction {
             current_document,
             operation: Some(google::firestore::v1::write::Operation::Update(
                 google::firestore::v1::Document {
-                    name: document_ref.document_name(),
+                    name: document_reference.document_name(),
                     fields,
                     create_time: None,
                     update_time: None,

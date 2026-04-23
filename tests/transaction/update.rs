@@ -25,7 +25,11 @@ async fn test_transaction_update() -> anyhow::Result<()> {
                 let document_reference = document_reference.clone();
                 let update_data = update_data.clone();
                 Box::pin(async move {
-                    transaction.update(&document_reference, &update_data, Precondition::default())?;
+                    transaction.update(
+                        &document_reference,
+                        &update_data,
+                        Precondition::default(),
+                    )?;
                     Ok(())
                 })
             },

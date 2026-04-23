@@ -152,9 +152,9 @@ mod tests {
         let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let document_path = DocumentPath::from_str("rooms/roomA")?;
-        let document_ref = DocumentReference::new(document_path, firestore);
+        let document_reference = DocumentReference::new(document_path, firestore);
         assert_eq!(
-            document_ref.document_name(),
+            document_reference.document_name(),
             format!("projects/{project_id}/databases/(default)/documents/rooms/roomA")
         );
         Ok(())
@@ -169,8 +169,8 @@ mod tests {
         use std::str::FromStr as _;
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let document_path = DocumentPath::from_str("rooms/roomA")?;
-        let document_ref = DocumentReference::new(document_path.clone(), firestore);
-        assert_eq!(document_ref.document_path(), &document_path);
+        let document_reference = DocumentReference::new(document_path.clone(), firestore);
+        assert_eq!(document_reference.document_path(), &document_path);
         Ok(())
     }
 
@@ -183,8 +183,8 @@ mod tests {
         use std::str::FromStr as _;
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let document_path = DocumentPath::from_str("rooms/roomA")?;
-        let document_ref = DocumentReference::new(document_path, firestore);
-        assert_eq!(document_ref.id().to_string(), "roomA");
+        let document_reference = DocumentReference::new(document_path, firestore);
+        assert_eq!(document_reference.id().to_string(), "roomA");
         Ok(())
     }
 }
