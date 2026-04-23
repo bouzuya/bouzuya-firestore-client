@@ -428,9 +428,12 @@ impl FirestoreClient {
     ) -> Result<Vec<firestore_path::DocumentPath>, Error> {
         let root_document_name = self.database_name.root_document_name().to_string();
         let parent = match collection_path.parent() {
-            Some(parent_doc_path) => self
+            Some(parent_document_path) => self
                 .database_name
-                .doc(firestore_path::DocumentPath::from_str(&parent_doc_path.to_string()).unwrap())
+                .doc(
+                    firestore_path::DocumentPath::from_str(&parent_document_path.to_string())
+                        .unwrap(),
+                )
                 .unwrap()
                 .to_string(),
             None => root_document_name.clone(),
@@ -603,9 +606,9 @@ impl FirestoreClient {
     ) -> Result<Vec<google::firestore::v1::Document>, Error> {
         let root_document_name = self.database_name.root_document_name().to_string();
         let parent = match collection_path.parent() {
-            Some(parent_doc_path) => self
+            Some(parent_document_path) => self
                 .database_name
-                .doc(parent_doc_path.clone())
+                .doc(parent_document_path.clone())
                 // FIXME
                 .unwrap()
                 .to_string(),
@@ -780,9 +783,9 @@ mod tests {
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
         let client =
             FirestoreClient::new(project_id.clone(), "(default)".to_owned(), emulator_host)?;
-        let doc_path = DocumentPath::from_str("rooms/roomA")?;
+        let document_path = DocumentPath::from_str("rooms/roomA")?;
         assert_eq!(
-            client.document_name(&doc_path),
+            client.document_name(&document_path),
             format!("projects/{project_id}/databases/(default)/documents/rooms/roomA")
         );
         Ok(())
@@ -799,9 +802,9 @@ mod tests {
         let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
         let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
-        let doc_path = DocumentPath::from_str("rooms/test-get-document-in-transaction")?;
+        let document_path = DocumentPath::from_str("rooms/test-get-document-in-transaction")?;
         let result = client
-            .get_document_in_transaction(&doc_path, transaction.clone())
+            .get_document_in_transaction(&document_path, transaction.clone())
             .await?;
         assert!(result.is_none());
         client.rollback(transaction).await?;
@@ -871,8 +874,8 @@ mod tests {
         let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
         let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
-        let doc_path = DocumentPath::from_str("rooms/test-batch-get")?;
-        let result = client.batch_get(&[doc_path]).await?;
+        let document_path = DocumentPath::from_str("rooms/test-batch-get")?;
+        let result = client.batch_get(&[document_path]).await?;
         assert_eq!(result.len(), 1);
         assert!(result[0].is_none());
         Ok(())
