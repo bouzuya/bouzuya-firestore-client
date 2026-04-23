@@ -88,3 +88,10 @@ fn test_write_result_import() {
     use bouzuya_firestore_client::WriteResult;
     let _: Option<WriteResult> = None;
 }
+
+// since v2.1
+#[test]
+fn test_field_path_import() {
+    use bouzuya_firestore_client::FieldPath;
+    let _: Option<FieldPath> = None;
+}
