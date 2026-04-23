@@ -9,44 +9,32 @@ use crate::google;
 
 #[derive(Clone)]
 pub struct Query {
-    collection_reference: CollectionReference,
+    collection_path: firestore_path::CollectionPath,
     firestore: Firestore,
-    limit: Option<i32>,
-    offset: Option<i32>,
+    query: firestore_structured_query::Query,
 }
 
 impl Query {
     pub(crate) fn new(collection_reference: CollectionReference) -> Self {
         let firestore = collection_reference.firestore().clone();
+        let collection_path = <firestore_path::CollectionPath as std::str::FromStr>::from_str(
+            &collection_reference.path(),
+        ).expect("collection_reference has valid path");
+        let query = firestore_structured_query::Query::collection(collection_reference.id());
         Self {
-            collection_reference,
+            collection_path,
             firestore,
-            limit: None,
-            offset: None,
+            query
         }
     }
 }
 
 impl Query {
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
-        let collection_path = <firestore_path::CollectionPath as std::str::FromStr>::from_str(
-            &self.collection_reference.path(),
-        )
-        .map_err(Error::invalid_collection_path)?;
         // collection query
-        let fsq = firestore_structured_query::Query::collection(self.collection_reference.id());
-        let fsq = match self.limit {
-            Some(n) => fsq.limit(n),
-            None => fsq,
-        };
-        let fsq = match self.offset {
-            Some(n) => fsq.offset(n),
-            None => fsq,
-        };
-        let structured_query = google::firestore::v1::StructuredQuery::from(fsq);
         let firestore_client = self.firestore.firestore_client();
         let documents = firestore_client
-            .run_query(&collection_path, structured_query)
+            .run_query(&self.collection_path, google::firestore::v1::StructuredQuery::from(self.query.clone()))
             .await?;
         let query_document_snapshots = documents
             .into_iter()
@@ -66,19 +54,17 @@ impl Query {
 
     pub fn limit(&self, n: i32) -> Query {
         Query {
-            collection_reference: self.collection_reference.clone(),
+            collection_path: self.collection_path.clone(),
             firestore: self.firestore.clone(),
-            limit: Some(n),
-            offset: self.offset,
+            query: self.query.clone().limit(n),
         }
     }
 
     pub fn offset(&self, n: i32) -> Query {
         Query {
-            collection_reference: self.collection_reference.clone(),
+            collection_path: self.collection_path.clone(),
             firestore: self.firestore.clone(),
-            limit: self.limit,
-            offset: Some(n),
+            query: self.query.clone().offset(n),
         }
     }
 }
