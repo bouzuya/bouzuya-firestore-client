@@ -25,6 +25,10 @@ impl QuerySnapshot {
     pub fn query(&self) -> Query {
         self.query.clone()
     }
+
+    pub fn size(&self) -> usize {
+        self.docs.len()
+    }
 }
 
 #[cfg(test)]
