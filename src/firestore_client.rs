@@ -698,6 +698,14 @@ impl FirestoreClient {
     }
 }
 
+impl std::fmt::Debug for FirestoreClient {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("FirestoreClient")
+            .field("database_name", &self.database_name)
+            .finish()
+    }
+}
+
 #[cfg(test)]
 impl FirestoreClient {
     pub(crate) fn database_name(&self) -> &firestore_path::DatabaseName {
@@ -746,6 +754,19 @@ mod tests {
         let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
         let _ = client.commit(transaction, vec![]).await?;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_impl_debug() -> anyhow::Result<()> {
+        fn assert_impl<T: std::fmt::Debug>() {}
+        assert_impl::<FirestoreClient>();
+
+        let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
+        let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
+        let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
+        let debug_str = format!("{:?}", client);
+        assert!(debug_str.contains("FirestoreClient"));
         Ok(())
     }
 
