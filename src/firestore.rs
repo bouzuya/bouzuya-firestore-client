@@ -1,4 +1,5 @@
 use std::str::FromStr;
+use std::sync::atomic::AtomicU64;
 
 use crate::CollectionReference;
 use crate::DocumentReference;
@@ -9,9 +10,12 @@ use crate::FirestoreOptions;
 use crate::Transaction;
 use crate::TransactionOptions;
 
+static NEXT_ID: AtomicU64 = AtomicU64::new(0);
+
 #[derive(Clone)]
 pub struct Firestore {
     firestore_client: FirestoreClient,
+    id: u64,
 }
 
 impl Firestore {
@@ -36,7 +40,8 @@ impl Firestore {
             },
         };
         let firestore_client = FirestoreClient::new(project_id, database_id, emulator_host)?;
-        Ok(Self { firestore_client })
+        let id = NEXT_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        Ok(Self { firestore_client, id })
     }
 }
 
@@ -134,6 +139,22 @@ impl Firestore {
         self.firestore_client.clone()
     }
 }
+
+impl std::fmt::Debug for Firestore {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Firestore")
+            .field("id", &self.id)
+            .finish()
+    }
+}
+
+impl std::cmp::PartialEq for Firestore {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+impl std::cmp::Eq for Firestore {}
 
 #[cfg(test)]
 mod tests {

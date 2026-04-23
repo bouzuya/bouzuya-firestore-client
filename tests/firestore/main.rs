@@ -1,6 +1,9 @@
 mod collection;
 mod doc;
 mod get_all;
+mod impl_debug;
+mod impl_eq;
+mod impl_partial_eq;
 mod list_collections;
 mod new;
 mod run_transaction;
