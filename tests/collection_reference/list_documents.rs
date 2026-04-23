@@ -11,9 +11,9 @@ async fn test_collection_reference_list_documents() -> anyhow::Result<()> {
     collection_reference
         .add(HashMap::<String, String>::new())
         .await?;
-    let document_refs: Vec<DocumentReference> = collection_reference.list_documents().await?;
-    assert!(!document_refs.is_empty());
-    for document_reference in &document_refs {
+    let document_references: Vec<DocumentReference> = collection_reference.list_documents().await?;
+    assert!(!document_references.is_empty());
+    for document_reference in &document_references {
         assert!(document_reference.path().starts_with("rooms/"));
     }
     Ok(())

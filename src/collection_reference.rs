@@ -61,8 +61,8 @@ impl CollectionReference {
     /// Equivalent to Query::get.
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
         // TODO: replace with query execution
-        let document_refs = self.list_documents().await?;
-        let document_snapshots = self.firestore.get_all(document_refs).await?;
+        let document_references = self.list_documents().await?;
+        let document_snapshots = self.firestore.get_all(document_references).await?;
         Ok(QuerySnapshot::new(
             Query::new(self.clone()),
             document_snapshots

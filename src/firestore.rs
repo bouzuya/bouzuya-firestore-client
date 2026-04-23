@@ -61,17 +61,17 @@ impl Firestore {
 
     pub async fn get_all(
         &self,
-        document_refs: impl IntoIterator<Item = DocumentReference>,
+        document_references: impl IntoIterator<Item = DocumentReference>,
     ) -> Result<Vec<DocumentSnapshot>, Error> {
-        let document_refs: Vec<DocumentReference> = document_refs.into_iter().collect();
-        let document_paths: Vec<firestore_path::DocumentPath> = document_refs
+        let document_references: Vec<DocumentReference> = document_references.into_iter().collect();
+        let document_paths: Vec<firestore_path::DocumentPath> = document_references
             .iter()
             .map(|r| r.document_path().clone())
             .collect();
         let documents = self.firestore_client.batch_get(&document_paths).await?;
         Ok(documents
             .into_iter()
-            .zip(document_refs)
+            .zip(document_references)
             .map(|(doc, document_reference)| DocumentSnapshot::new(doc, document_reference))
             .collect())
     }
