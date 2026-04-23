@@ -64,6 +64,7 @@ impl CollectionReference {
         let document_refs = self.list_documents().await?;
         let document_snapshots = self.firestore.get_all(document_refs).await?;
         Ok(QuerySnapshot::new(
+            Query::new(self.clone()),
             document_snapshots
                 .into_iter()
                 .filter(|s| s.exists())
