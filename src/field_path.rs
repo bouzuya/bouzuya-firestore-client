@@ -1,12 +1,12 @@
 pub struct FieldPath {
     #[expect(dead_code)]
-    field: Vec<String>,
+    segments: Vec<String>,
 }
 
 impl FieldPath {
-    pub fn new(fields: impl IntoIterator<Item = impl Into<String>>) -> Self {
-        Self {
-            field: fields.into_iter().map(Into::into).collect(),
-        }
+    pub fn new(segments: impl IntoIterator<Item = impl Into<String>>) -> Result<Self, crate::Error> {
+        Ok(Self {
+            segments: segments.into_iter().map(Into::into).collect(),
+        })
     }
 }
