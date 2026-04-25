@@ -1,3 +1,4 @@
+// since v2.1
 #[test]
 fn test_simple_single_segment() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -6,6 +7,7 @@ fn test_simple_single_segment() -> anyhow::Result<()> {
     Ok(())
 }
 
+// since v2.1
 #[test]
 fn test_simple_multiple_segments() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -14,6 +16,7 @@ fn test_simple_multiple_segments() -> anyhow::Result<()> {
     Ok(())
 }
 
+// since v2.1
 #[test]
 fn test_quoted_segment() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -22,6 +25,7 @@ fn test_quoted_segment() -> anyhow::Result<()> {
     Ok(())
 }
 
+// since v2.1
 #[test]
 fn test_quoted_segment_with_escaped_backtick() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -30,6 +34,7 @@ fn test_quoted_segment_with_escaped_backtick() -> anyhow::Result<()> {
     Ok(())
 }
 
+// since v2.1
 #[test]
 fn test_quoted_segment_with_escaped_backslash() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -38,6 +43,7 @@ fn test_quoted_segment_with_escaped_backslash() -> anyhow::Result<()> {
     Ok(())
 }
 
+// since v2.1
 #[test]
 fn test_mixed_simple_and_quoted_segments() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -46,30 +52,35 @@ fn test_mixed_simple_and_quoted_segments() -> anyhow::Result<()> {
     Ok(())
 }
 
+// since v2.1
 #[test]
 fn test_error_unclosed_backtick() {
     use bouzuya_firestore_client::FieldPath;
     assert!("`x&y".parse::<FieldPath>().is_err());
 }
 
+// since v2.1
 #[test]
 fn test_error_invalid_escape() {
     use bouzuya_firestore_client::FieldPath;
     assert!(r"`\a`".parse::<FieldPath>().is_err());
 }
 
+// since v2.1
 #[test]
 fn test_error_unquoted_non_simple_segment() {
     use bouzuya_firestore_client::FieldPath;
     assert!("x&y".parse::<FieldPath>().is_err());
 }
 
+// since v2.1
 #[test]
 fn test_error_unquoted_digit_start_segment() {
     use bouzuya_firestore_client::FieldPath;
     assert!("1foo".parse::<FieldPath>().is_err());
 }
 
+// since v2.1
 #[test]
 fn test_quoted_simple_segment() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
