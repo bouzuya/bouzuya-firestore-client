@@ -13,6 +13,70 @@ fn is_simple_segment(s: &str) -> bool {
     }
 }
 
+impl std::str::FromStr for FieldPath {
+    type Err = crate::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut segments = Vec::new();
+        let mut chars = s.chars().peekable();
+        loop {
+            match chars.peek().copied() {
+                None => break,
+                Some('`') => {
+                    chars.next();
+                    let mut seg = String::new();
+                    loop {
+                        match chars.next() {
+                            None => {
+                                return Err(crate::Error::custom(
+                                    "unclosed backtick in field path",
+                                ));
+                            }
+                            Some('`') => break,
+                            Some('\\') => match chars.next() {
+                                Some('`') => seg.push('`'),
+                                Some('\\') => seg.push('\\'),
+                                _ => {
+                                    return Err(crate::Error::custom(
+                                        "invalid escape in field path",
+                                    ));
+                                }
+                            },
+                            Some(c) => seg.push(c),
+                        }
+                    }
+                    segments.push(seg);
+                    match chars.next() {
+                        None | Some('.') => {}
+                        Some(_) => {
+                            return Err(crate::Error::custom("expected '.' after quoted segment"));
+                        }
+                    }
+                }
+                _ => {
+                    let mut seg = String::new();
+                    while let Some(&c) = chars.peek() {
+                        if c == '.' {
+                            break;
+                        }
+                        seg.push(chars.next().unwrap());
+                    }
+                    if !is_simple_segment(&seg) {
+                        return Err(crate::Error::custom(
+                            "invalid unquoted segment in field path",
+                        ));
+                    }
+                    segments.push(seg);
+                    if chars.peek() == Some(&'.') {
+                        chars.next();
+                    }
+                }
+            }
+        }
+        Ok(Self { segments })
+    }
+}
+
 impl std::fmt::Display for FieldPath {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let parts: Vec<String> = self
