@@ -4,7 +4,15 @@ pub struct FieldPath {
 }
 
 impl FieldPath {
-    pub fn new(segments: impl IntoIterator<Item = impl Into<String>>) -> Result<Self, crate::Error> {
+    pub fn document_id() -> Self {
+        Self {
+            segments: vec!["__name__".to_string()],
+        }
+    }
+
+    pub fn new(
+        segments: impl IntoIterator<Item = impl Into<String>>,
+    ) -> Result<Self, crate::Error> {
         Ok(Self {
             segments: segments.into_iter().map(Into::into).collect(),
         })
