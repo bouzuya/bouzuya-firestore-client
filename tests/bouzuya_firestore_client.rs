@@ -95,3 +95,10 @@ fn test_field_path_import() {
     use bouzuya_firestore_client::FieldPath;
     let _: Option<FieldPath> = None;
 }
+
+// since v2.1
+#[test]
+fn test_filter_import() {
+    use bouzuya_firestore_client::Filter;
+    let _: Option<Filter> = None;
+}
