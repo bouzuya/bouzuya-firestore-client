@@ -305,17 +305,7 @@ impl FirestoreClient {
         request: ExecutePipelineRequest,
     ) -> Result<tonic::Response<tonic::codec::Streaming<ExecutePipelineResponse>>, Error> {
         let mut client = self.client().await?;
-        let mut request = tonic::Request::new(request);
-        request.metadata_mut().append(
-            "x-goog-request-params",
-            // It causes an error if the order is database_id, project_id
-            tonic::metadata::MetadataValue::from_str(&format!(
-                "project_id={}&database_id={}",
-                self.database_name.project_id(),
-                self.database_name.database_id(),
-            ))
-            .unwrap(),
-        );
+        let request = tonic::Request::new(request);
         let response = client.execute_pipeline(request).await.map_err(E::from)?;
         Ok(response)
     }
@@ -639,6 +629,14 @@ impl FirestoreClient {
         Ok(documents)
     }
 
+    pub(crate) fn request_params(&self) -> String {
+        format!(
+            "project_id={}&database_id={}",
+            self.database_name.project_id(),
+            self.database_name.database_id(),
+        )
+    }
+
     pub(crate) async fn rollback(&self, transaction: Vec<u8>) -> Result<(), Error> {
         let mut client = self.client().await?;
         let request = google::firestore::v1::RollbackRequest {
@@ -681,6 +679,7 @@ impl FirestoreClient {
             }
         };
         let metadata = tonic::metadata::MetadataMap::from_headers(header_map);
+        let request_params = self.request_params();
         let firestore_client =
             google::firestore::v1::firestore_client::FirestoreClient::with_interceptor(
                 self.channel.clone(),
@@ -695,6 +694,11 @@ impl FirestoreClient {
                             }
                         }
                     }
+                    request.metadata_mut().insert(
+                        "x-goog-request-params",
+                        tonic::metadata::MetadataValue::try_from(request_params.as_str())
+                            .expect("valid ascii"),
+                    );
                     Ok(request)
                 },
             );
@@ -863,6 +867,20 @@ mod tests {
         // while let Some(response) = streaming.message().await? {
         //     println!("{:#?}", response);
         // }
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_request_params() -> anyhow::Result<()> {
+        let client = FirestoreClient::new(
+            "my-project".to_owned(),
+            "my-database".to_owned(),
+            Some("localhost:8080".to_owned()),
+        )?;
+        assert_eq!(
+            client.request_params(),
+            "project_id=my-project&database_id=my-database"
+        );
         Ok(())
     }
 
