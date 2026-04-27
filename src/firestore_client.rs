@@ -87,7 +87,7 @@ impl FirestoreClient {
         let documents = document_paths
             .iter()
             .map(|p| self.document_name(p))
-            .collect::<Vec<_>>();
+            .collect::<Vec<String>>();
         let request = google::firestore::v1::BatchGetDocumentsRequest {
             database: self.database_name.to_string(),
             documents,
@@ -460,7 +460,7 @@ impl FirestoreClient {
                             ))
                         },
                     )
-                    .collect::<Result<Vec<_>, firestore_path::Error>>()
+                    .collect::<Result<Vec<firestore_path::DocumentPath>, firestore_path::Error>>()
                     .map_err(Error::invalid_document_path)?,
             );
             page_token = list_response.next_page_token;

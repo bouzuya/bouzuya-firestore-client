@@ -52,7 +52,7 @@ impl Query {
                 let document_snapshot = DocumentSnapshot::new(Some(document), document_reference);
                 Ok(QueryDocumentSnapshot::new(document_snapshot))
             })
-            .collect::<Result<Vec<_>, Error>>()?;
+            .collect::<Result<Vec<QueryDocumentSnapshot>, Error>>()?;
         Ok(QuerySnapshot::new(self.clone(), query_document_snapshots))
     }
 
