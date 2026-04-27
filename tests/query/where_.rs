@@ -34,8 +34,7 @@ async fn test_query_where_get() -> anyhow::Result<()> {
         )
         .await?;
     let filter = Filter::r#where("k".to_string(), "==", "target".to_string())?;
-    // FIXME: Add CollectionReference::r#where() and remove this workaround
-    let query = collection_reference.offset(0).r#where(filter);
+    let query = collection_reference.r#where(filter);
     let query_snapshot = query.get().await?;
     assert!(!query_snapshot.docs().is_empty());
     for query_document_snapshot in query_snapshot.docs() {
