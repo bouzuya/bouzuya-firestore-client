@@ -1,7 +1,6 @@
 use crate::Error;
 use crate::IntoFieldPath;
 
-#[allow(dead_code)]
 pub struct Filter(firestore_structured_query::Filter);
 
 impl Filter {
@@ -30,5 +29,24 @@ impl Filter {
         }
         .map(Self)
         .map_err(|e| Error::from_source(Box::new(e)))
+    }
+}
+
+impl Filter {
+    pub(crate) fn into_inner(self) -> firestore_structured_query::Filter {
+        self.0
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_into_inner() -> anyhow::Result<()> {
+        use crate::FieldPath;
+        use crate::Filter;
+        let f1 = Filter::r#where(FieldPath::new(["age"])?, "==", 30_i64)?.into_inner();
+        let f2 = Filter::r#where(FieldPath::new(["age"])?, "==", 30_i64)?.into_inner();
+        assert_eq!(f1, f2);
+        Ok(())
     }
 }

@@ -71,6 +71,14 @@ impl Query {
             query: self.query.clone().offset(n),
         }
     }
+
+    pub fn r#where(&self, filter: crate::Filter) -> Query {
+        Query {
+            collection_path: self.collection_path.clone(),
+            firestore: self.firestore.clone(),
+            query: self.query.clone().r#where(filter.into_inner()),
+        }
+    }
 }
 
 #[cfg(test)]
