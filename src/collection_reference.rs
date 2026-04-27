@@ -85,6 +85,10 @@ impl CollectionReference {
         Query::new(self.clone()).offset(n)
     }
 
+    pub fn r#where(&self, filter: crate::Filter) -> Query {
+        Query::new(self.clone()).r#where(filter)
+    }
+
     pub async fn list_documents(&self) -> Result<Vec<DocumentReference>, Error> {
         let document_ids = self
             .firestore
