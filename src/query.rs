@@ -125,6 +125,31 @@ impl Query {
         })
     }
 
+    #[allow(private_bounds)]
+    pub fn select<I>(&self, fields: I) -> Result<Query, Error>
+    where
+        I: IntoIterator,
+        I::Item: crate::IntoFieldPath,
+    {
+        use crate::IntoFieldPath as _;
+        let fields = fields
+            .into_iter()
+            .map(|f| {
+                let field_path = f.into_field_path()?;
+                Ok(firestore_structured_query::FieldPath::raw(
+                    field_path.to_string(),
+                ))
+            })
+            .collect::<Result<Vec<_>, Error>>()?;
+        Ok(Query {
+            collection_path: self.collection_path.clone(),
+            firestore: self.firestore.clone(),
+            order_by: self.order_by.clone(),
+            query: self.query.clone().select(fields),
+            where_: self.where_.clone(),
+        })
+    }
+
     pub fn start_after<I>(&self, values: I) -> Result<Query, Error>
     where
         I: IntoIterator,
