@@ -11,6 +11,7 @@ use crate::google;
 pub struct Query {
     collection_path: firestore_path::CollectionPath,
     firestore: Firestore,
+    order_by: Vec<firestore_structured_query::Order>,
     query: firestore_structured_query::Query,
 }
 
@@ -25,6 +26,7 @@ impl Query {
         Self {
             collection_path,
             firestore,
+            order_by: Vec::new(),
             query,
         }
     }
@@ -37,7 +39,9 @@ impl Query {
         let documents = firestore_client
             .run_query(
                 &self.collection_path,
-                google::firestore::v1::StructuredQuery::from(self.query.clone()),
+                google::firestore::v1::StructuredQuery::from(
+                    self.query.clone().order_by(self.order_by.clone()),
+                ),
             )
             .await?;
         let query_document_snapshots = documents
@@ -60,6 +64,7 @@ impl Query {
         Query {
             collection_path: self.collection_path.clone(),
             firestore: self.firestore.clone(),
+            order_by: self.order_by.clone(),
             query: self.query.clone().limit(n),
         }
     }
@@ -68,8 +73,37 @@ impl Query {
         Query {
             collection_path: self.collection_path.clone(),
             firestore: self.firestore.clone(),
+            order_by: self.order_by.clone(),
             query: self.query.clone().offset(n),
         }
+    }
+
+    #[allow(private_bounds)]
+    pub fn order_by(
+        &self,
+        field_path: impl crate::IntoFieldPath,
+        direction: &str,
+    ) -> Result<Query, Error> {
+        let field_path = field_path.into_field_path()?;
+        let field_path = firestore_structured_query::FieldPath::raw(field_path.to_string());
+        let order = match direction {
+            "asc" => field_path.ascending(),
+            "desc" => field_path.descending(),
+            _ => {
+                return Err(Error::custom(format!(
+                    "unsupported direction: {}",
+                    direction
+                )));
+            }
+        };
+        let mut order_by = self.order_by.clone();
+        order_by.push(order);
+        Ok(Query {
+            collection_path: self.collection_path.clone(),
+            firestore: self.firestore.clone(),
+            order_by,
+            query: self.query.clone(),
+        })
     }
 
     pub fn start_after<I>(&self, values: I) -> Result<Query, Error>
@@ -89,6 +123,7 @@ impl Query {
         Ok(Query {
             collection_path: self.collection_path.clone(),
             firestore: self.firestore.clone(),
+            order_by: self.order_by.clone(),
             query: self.query.clone().start_after(values),
         })
     }
@@ -97,6 +132,7 @@ impl Query {
         Query {
             collection_path: self.collection_path.clone(),
             firestore: self.firestore.clone(),
+            order_by: self.order_by.clone(),
             query: self.query.clone().r#where(filter.into_inner()),
         }
     }
