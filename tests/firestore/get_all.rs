@@ -18,11 +18,11 @@ async fn test_firestore_get_all_multiple() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
     use bouzuya_firestore_client::FirestoreOptions;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let doc_ref1 = firestore.doc("rooms/room1")?;
-    let doc_ref2 = firestore.doc("rooms/room2")?;
-    let doc_ref3 = firestore.doc("rooms/room3")?;
-    let snapshots = firestore.get_all([doc_ref1, doc_ref2, doc_ref3]).await?;
-    assert_eq!(snapshots.len(), 3);
+    let document_reference1 = firestore.doc("rooms/room1")?;
+    let document_reference2 = firestore.doc("rooms/room2")?;
+    let document_reference3 = firestore.doc("rooms/room3")?;
+    let document_snapshots = firestore.get_all([document_reference1, document_reference2, document_reference3]).await?;
+    assert_eq!(document_snapshots.len(), 3);
     Ok(())
 }
 
