@@ -45,7 +45,7 @@ async fn test_query_start_after_get() -> anyhow::Result<()> {
             .await?;
     }
     let query = collection_reference
-        .order_by("n".to_string(), "asc")?
+        .order_by("n", "asc")?
         .start_after(vec![2_i64])?;
     let query_snapshot = query.get().await?;
     assert!(!query_snapshot.docs().is_empty());

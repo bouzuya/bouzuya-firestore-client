@@ -31,8 +31,8 @@ async fn test_query_where_append() -> anyhow::Result<()> {
             })
             .await?;
     }
-    let f1 = Filter::r#where("n".to_string(), "==", 1_i64)?;
-    let f2 = Filter::r#where("k".to_string(), "==", "a".to_string())?;
+    let f1 = Filter::r#where("n", "==", 1_i64)?;
+    let f2 = Filter::r#where("k", "==", "a".to_string())?;
     let query_snapshot = collection_reference.r#where(f1).r#where(f2).get().await?;
     assert!(!query_snapshot.docs().is_empty());
     for query_document_snapshot in query_snapshot.docs() {
@@ -67,7 +67,7 @@ async fn test_query_where_get() -> anyhow::Result<()> {
                 .collect::<HashMap<String, String>>(),
         )
         .await?;
-    let filter = Filter::r#where("k".to_string(), "==", "target".to_string())?;
+    let filter = Filter::r#where("k", "==", "target".to_string())?;
     let query = collection_reference.r#where(filter);
     let query_snapshot = query.get().await?;
     assert!(!query_snapshot.docs().is_empty());

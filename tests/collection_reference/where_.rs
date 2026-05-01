@@ -33,7 +33,7 @@ async fn test_collection_reference_where_get() -> anyhow::Result<()> {
                 .collect::<HashMap<String, String>>(),
         )
         .await?;
-    let filter = Filter::r#where("k".to_string(), "==", "target".to_string())?;
+    let filter = Filter::r#where("k", "==", "target".to_string())?;
     let query_snapshot = collection_reference.r#where(filter).get().await?;
     assert!(!query_snapshot.docs().is_empty());
     for doc in query_snapshot.docs() {

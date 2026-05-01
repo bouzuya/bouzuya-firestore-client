@@ -16,7 +16,7 @@ async fn test_collection_reference_order_by_invalid_direction() -> anyhow::Resul
     use bouzuya_firestore_client::FirestoreOptions;
     let firestore = Firestore::new(FirestoreOptions::default())?;
     let collection_reference = firestore.collection("rooms")?;
-    let result = collection_reference.order_by("n".to_string(), "ascending");
+    let result = collection_reference.order_by("n", "ascending");
     assert!(result.is_err());
     Ok(())
 }
@@ -39,10 +39,7 @@ async fn test_collection_reference_order_by_get_asc() -> anyhow::Result<()> {
             )
             .await?;
     }
-    let query_snapshot = collection_reference
-        .order_by("n".to_string(), "asc")?
-        .get()
-        .await?;
+    let query_snapshot = collection_reference.order_by("n", "asc")?.get().await?;
     assert!(!query_snapshot.docs().is_empty());
     let mut prev: Option<i64> = None;
     for doc in query_snapshot.docs() {
@@ -75,10 +72,7 @@ async fn test_collection_reference_order_by_get_desc() -> anyhow::Result<()> {
             )
             .await?;
     }
-    let query_snapshot = collection_reference
-        .order_by("n".to_string(), "desc")?
-        .get()
-        .await?;
+    let query_snapshot = collection_reference.order_by("n", "desc")?.get().await?;
     assert!(!query_snapshot.docs().is_empty());
     let mut prev: Option<i64> = None;
     for doc in query_snapshot.docs() {
@@ -115,8 +109,8 @@ async fn test_collection_reference_order_by_append() -> anyhow::Result<()> {
         collection_reference.add(Doc { a, b }).await?;
     }
     let query_snapshot = collection_reference
-        .order_by("a".to_string(), "asc")?
-        .order_by("b".to_string(), "asc")?
+        .order_by("a", "asc")?
+        .order_by("b", "asc")?
         .get()
         .await?;
     assert!(!query_snapshot.docs().is_empty());
