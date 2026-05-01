@@ -85,6 +85,14 @@ impl CollectionReference {
         Query::new(self.clone()).offset(n)
     }
 
+    pub fn start_after<I>(&self, values: I) -> Result<Query, Error>
+    where
+        I: IntoIterator,
+        I::Item: serde::Serialize,
+    {
+        Query::new(self.clone()).start_after(values)
+    }
+
     pub fn r#where(&self, filter: crate::Filter) -> Query {
         Query::new(self.clone()).r#where(filter)
     }
