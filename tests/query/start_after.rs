@@ -49,8 +49,8 @@ async fn test_query_start_after_get() -> anyhow::Result<()> {
         .start_after(vec![2_i64])?;
     let query_snapshot = query.get().await?;
     assert!(!query_snapshot.docs().is_empty());
-    for doc in query_snapshot.docs() {
-        let data = doc.data::<HashMap<String, i64>>()?;
+    for query_document_snapshot in query_snapshot.docs() {
+        let data = query_document_snapshot.data::<HashMap<String, i64>>()?;
         let n = data.get("n").copied();
         assert!(matches!(n, Some(n) if n > 2), "expected n > 2, got {:?}", n);
     }

@@ -43,8 +43,8 @@ async fn test_query_order_by_get_asc() -> anyhow::Result<()> {
     let query_snapshot = collection_reference.order_by("n", "asc")?.get().await?;
     assert!(!query_snapshot.docs().is_empty());
     let mut prev: Option<i64> = None;
-    for doc in query_snapshot.docs() {
-        let data = doc.data::<HashMap<String, i64>>()?;
+    for query_document_snapshot in query_snapshot.docs() {
+        let data = query_document_snapshot.data::<HashMap<String, i64>>()?;
         let n = data.get("n").copied();
         let n = n.ok_or_else(|| anyhow::anyhow!("n missing"))?;
         if let Some(p) = prev {
@@ -76,8 +76,8 @@ async fn test_query_order_by_get_desc() -> anyhow::Result<()> {
     let query_snapshot = collection_reference.order_by("n", "desc")?.get().await?;
     assert!(!query_snapshot.docs().is_empty());
     let mut prev: Option<i64> = None;
-    for doc in query_snapshot.docs() {
-        let data = doc.data::<HashMap<String, i64>>()?;
+    for query_document_snapshot in query_snapshot.docs() {
+        let data = query_document_snapshot.data::<HashMap<String, i64>>()?;
         let n = data.get("n").copied();
         let n = n.ok_or_else(|| anyhow::anyhow!("n missing"))?;
         if let Some(p) = prev {
@@ -116,8 +116,8 @@ async fn test_query_order_by_append() -> anyhow::Result<()> {
         .await?;
     assert!(!query_snapshot.docs().is_empty());
     let mut prev: Option<(i64, i64)> = None;
-    for doc in query_snapshot.docs() {
-        let data = doc.data::<Doc>()?;
+    for query_document_snapshot in query_snapshot.docs() {
+        let data = query_document_snapshot.data::<Doc>()?;
         let curr = (data.a, data.b);
         if let Some(p) = prev {
             assert!(
