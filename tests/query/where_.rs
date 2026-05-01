@@ -12,6 +12,40 @@ fn test_query_where_() {
 // since v2.2
 #[tokio::test]
 #[serial_test::serial]
+async fn test_query_where_append() -> anyhow::Result<()> {
+    use bouzuya_firestore_client::Filter;
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    #[derive(serde::Deserialize, serde::Serialize)]
+    struct Doc {
+        k: String,
+        n: i64,
+    }
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let collection_reference = firestore.collection("test-query-where-append")?;
+    for (n, k) in [(1_i64, "a"), (2_i64, "a"), (1_i64, "b"), (2_i64, "b")] {
+        collection_reference
+            .add(Doc {
+                k: k.to_string(),
+                n,
+            })
+            .await?;
+    }
+    let f1 = Filter::r#where("n".to_string(), "==", 1_i64)?;
+    let f2 = Filter::r#where("k".to_string(), "==", "a".to_string())?;
+    let query_snapshot = collection_reference.r#where(f1).r#where(f2).get().await?;
+    assert!(!query_snapshot.docs().is_empty());
+    for query_document_snapshot in query_snapshot.docs() {
+        let data = query_document_snapshot.data::<Doc>()?;
+        assert_eq!(data.n, 1);
+        assert_eq!(data.k, "a");
+    }
+    Ok(())
+}
+
+// since v2.2
+#[tokio::test]
+#[serial_test::serial]
 async fn test_query_where_get() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Filter;
     use bouzuya_firestore_client::Firestore;

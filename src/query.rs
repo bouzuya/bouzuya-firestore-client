@@ -13,6 +13,7 @@ pub struct Query {
     firestore: Firestore,
     order_by: Vec<firestore_structured_query::Order>,
     query: firestore_structured_query::Query,
+    where_: Vec<firestore_structured_query::Filter>,
 }
 
 impl Query {
@@ -28,6 +29,7 @@ impl Query {
             firestore,
             order_by: Vec::new(),
             query,
+            where_: Vec::new(),
         }
     }
 }
@@ -36,12 +38,22 @@ impl Query {
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
         // collection query
         let firestore_client = self.firestore.firestore_client();
+        let mut query = self.query.clone().order_by(self.order_by.clone());
+        match self.where_.len() {
+            0 => {}
+            1 => {
+                query = query.r#where(self.where_[0].clone());
+            }
+            _ => {
+                query = query.r#where(firestore_structured_query::Filter::and(
+                    self.where_.iter().cloned(),
+                ));
+            }
+        }
         let documents = firestore_client
             .run_query(
                 &self.collection_path,
-                google::firestore::v1::StructuredQuery::from(
-                    self.query.clone().order_by(self.order_by.clone()),
-                ),
+                google::firestore::v1::StructuredQuery::from(query),
             )
             .await?;
         let query_document_snapshots = documents
@@ -66,6 +78,7 @@ impl Query {
             firestore: self.firestore.clone(),
             order_by: self.order_by.clone(),
             query: self.query.clone().limit(n),
+            where_: self.where_.clone(),
         }
     }
 
@@ -75,6 +88,7 @@ impl Query {
             firestore: self.firestore.clone(),
             order_by: self.order_by.clone(),
             query: self.query.clone().offset(n),
+            where_: self.where_.clone(),
         }
     }
 
@@ -103,6 +117,7 @@ impl Query {
             firestore: self.firestore.clone(),
             order_by,
             query: self.query.clone(),
+            where_: self.where_.clone(),
         })
     }
 
@@ -125,15 +140,19 @@ impl Query {
             firestore: self.firestore.clone(),
             order_by: self.order_by.clone(),
             query: self.query.clone().start_after(values),
+            where_: self.where_.clone(),
         })
     }
 
     pub fn r#where(&self, filter: crate::Filter) -> Query {
+        let mut where_ = self.where_.clone();
+        where_.push(filter.into_inner());
         Query {
             collection_path: self.collection_path.clone(),
             firestore: self.firestore.clone(),
             order_by: self.order_by.clone(),
-            query: self.query.clone().r#where(filter.into_inner()),
+            query: self.query.clone(),
+            where_,
         }
     }
 }
