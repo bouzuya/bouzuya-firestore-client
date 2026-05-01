@@ -12,3 +12,36 @@ fn test_collection_reference_start_after() {
         collection_reference.start_after(values)
     }
 }
+
+// since v2.2
+#[tokio::test]
+#[serial_test::serial]
+async fn test_collection_reference_start_after_get() -> anyhow::Result<()> {
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    use std::collections::HashMap;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let collection_reference =
+        firestore.collection("test-collection-reference-start-after")?;
+    for i in 1_i64..=3_i64 {
+        collection_reference
+            .add(
+                [("n".to_owned(), i)]
+                    .into_iter()
+                    .collect::<HashMap<String, i64>>(),
+            )
+            .await?;
+    }
+    let query_snapshot = collection_reference
+        .start_after(vec![2_i64])?
+        .order_by("n".to_string(), "asc")?
+        .get()
+        .await?;
+    assert!(!query_snapshot.docs().is_empty());
+    for doc in query_snapshot.docs() {
+        let data = doc.data::<HashMap<String, i64>>()?;
+        let n = data.get("n").copied();
+        assert!(matches!(n, Some(n) if n > 2), "expected n > 2, got {:?}", n);
+    }
+    Ok(())
+}
