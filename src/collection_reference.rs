@@ -2,7 +2,6 @@ use crate::DocumentReference;
 use crate::Error;
 use crate::Firestore;
 use crate::Query;
-use crate::QueryDocumentSnapshot;
 use crate::QuerySnapshot;
 
 #[derive(Clone)]
@@ -58,19 +57,8 @@ impl CollectionReference {
         &self.firestore
     }
 
-    /// Equivalent to Query::get.
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
-        // TODO: replace with query execution
-        let document_references = self.list_documents().await?;
-        let document_snapshots = self.firestore.get_all(document_references).await?;
-        Ok(QuerySnapshot::new(
-            Query::new(self.clone()),
-            document_snapshots
-                .into_iter()
-                .filter(|s| s.exists())
-                .map(QueryDocumentSnapshot::new)
-                .collect(),
-        ))
+        Query::new(self.clone()).get().await
     }
 
     pub fn id(&self) -> String {
