@@ -21,8 +21,7 @@ async fn test_collection_reference_start_after_get() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FirestoreOptions;
     use std::collections::HashMap;
     let firestore = Firestore::new(FirestoreOptions::default())?;
-    let collection_reference =
-        firestore.collection("test-collection-reference-start-after")?;
+    let collection_reference = firestore.collection("test-collection-reference-start-after")?;
     for i in 1_i64..=3_i64 {
         collection_reference
             .add(
