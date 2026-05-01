@@ -35,6 +35,10 @@ impl Query {
 }
 
 impl Query {
+    pub fn firestore(&self) -> &Firestore {
+        &self.firestore
+    }
+
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
         // collection query
         let firestore_client = self.firestore.firestore_client();
