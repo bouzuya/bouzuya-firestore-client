@@ -103,3 +103,24 @@ impl FieldPath {
         })
     }
 }
+
+impl FieldPath {
+    #[allow(dead_code)]
+    pub(crate) fn into_structured_query_field_path(self) -> firestore_structured_query::FieldPath {
+        firestore_structured_query::FieldPath::raw(self.to_string())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_into_structured_query_field_path() -> anyhow::Result<()> {
+        use super::FieldPath;
+        let field_path = FieldPath::new(["a"])?;
+        assert_eq!(
+            field_path.into_structured_query_field_path(),
+            firestore_structured_query::FieldPath::raw("a")
+        );
+        Ok(())
+    }
+}
