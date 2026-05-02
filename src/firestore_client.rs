@@ -231,6 +231,10 @@ impl FirestoreClient {
         }))
     }
 
+    pub(crate) fn database_id(&self) -> String {
+        self.database_name.database_id().to_string()
+    }
+
     pub(crate) fn document_name(&self, document_path: &firestore_path::DocumentPath) -> String {
         self.database_name
             .doc(document_path.to_string())
@@ -727,6 +731,17 @@ mod tests {
     use std::str::FromStr;
 
     use super::*;
+
+    #[tokio::test]
+    async fn test_database_id() -> anyhow::Result<()> {
+        let client = FirestoreClient::new(
+            "my-project".to_owned(),
+            "my-database".to_owned(),
+            Some("localhost:8080".to_owned()),
+        )?;
+        assert_eq!(client.database_id(), "my-database");
+        Ok(())
+    }
 
     #[tokio::test]
     async fn test_database_name() -> anyhow::Result<()> {

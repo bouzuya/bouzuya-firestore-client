@@ -49,6 +49,10 @@ impl Firestore {
 }
 
 impl Firestore {
+    pub fn database_id(&self) -> String {
+        self.firestore_client.database_id()
+    }
+
     pub fn collection(
         &self,
         collection_path: impl Into<String>,
