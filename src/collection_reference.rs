@@ -1,6 +1,8 @@
 use crate::DocumentReference;
 use crate::Error;
+use crate::Filter;
 use crate::Firestore;
+use crate::IntoFieldPath;
 use crate::Query;
 use crate::QuerySnapshot;
 
@@ -81,7 +83,7 @@ impl CollectionReference {
     #[allow(private_bounds)]
     pub fn order_by(
         &self,
-        field_path: impl crate::IntoFieldPath,
+        field_path: impl IntoFieldPath,
         direction: &str,
     ) -> Result<Query, Error> {
         Query::new(self.clone()).order_by(field_path, direction)
@@ -92,7 +94,7 @@ impl CollectionReference {
     pub fn select<I>(&self, fields: I) -> Result<Query, Error>
     where
         I: IntoIterator,
-        I::Item: crate::IntoFieldPath,
+        I::Item: IntoFieldPath,
     {
         Query::new(self.clone()).select(fields)
     }
@@ -107,7 +109,7 @@ impl CollectionReference {
     }
 
     /// Query::r#where
-    pub fn r#where(&self, filter: crate::Filter) -> Query {
+    pub fn r#where(&self, filter: Filter) -> Query {
         Query::new(self.clone()).r#where(filter)
     }
 

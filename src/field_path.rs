@@ -1,3 +1,5 @@
+use crate::Error;
+
 pub struct FieldPath {
     segments: Vec<String>,
 }
@@ -14,7 +16,7 @@ fn is_simple_segment(s: &str) -> bool {
 }
 
 impl std::str::FromStr for FieldPath {
-    type Err = crate::Error;
+    type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut segments = Vec::new();
@@ -28,18 +30,14 @@ impl std::str::FromStr for FieldPath {
                     loop {
                         match chars.next() {
                             None => {
-                                return Err(crate::Error::custom(
-                                    "unclosed backtick in field path",
-                                ));
+                                return Err(Error::custom("unclosed backtick in field path"));
                             }
                             Some('`') => break,
                             Some('\\') => match chars.next() {
                                 Some('`') => seg.push('`'),
                                 Some('\\') => seg.push('\\'),
                                 _ => {
-                                    return Err(crate::Error::custom(
-                                        "invalid escape in field path",
-                                    ));
+                                    return Err(Error::custom("invalid escape in field path"));
                                 }
                             },
                             Some(c) => seg.push(c),
@@ -49,7 +47,7 @@ impl std::str::FromStr for FieldPath {
                     match chars.next() {
                         None | Some('.') => {}
                         Some(_) => {
-                            return Err(crate::Error::custom("expected '.' after quoted segment"));
+                            return Err(Error::custom("expected '.' after quoted segment"));
                         }
                     }
                 }
@@ -62,9 +60,7 @@ impl std::str::FromStr for FieldPath {
                         seg.push(chars.next().unwrap());
                     }
                     if !is_simple_segment(&seg) {
-                        return Err(crate::Error::custom(
-                            "invalid unquoted segment in field path",
-                        ));
+                        return Err(Error::custom("invalid unquoted segment in field path"));
                     }
                     segments.push(seg);
                     if chars.peek() == Some(&'.') {
@@ -101,9 +97,7 @@ impl FieldPath {
         }
     }
 
-    pub fn new(
-        segments: impl IntoIterator<Item = impl Into<String>>,
-    ) -> Result<Self, crate::Error> {
+    pub fn new(segments: impl IntoIterator<Item = impl Into<String>>) -> Result<Self, Error> {
         Ok(Self {
             segments: segments.into_iter().map(Into::into).collect(),
         })

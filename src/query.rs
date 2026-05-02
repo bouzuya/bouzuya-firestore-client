@@ -2,7 +2,9 @@ use crate::CollectionReference;
 use crate::DocumentReference;
 use crate::DocumentSnapshot;
 use crate::Error;
+use crate::Filter;
 use crate::Firestore;
+use crate::IntoFieldPath;
 use crate::QueryDocumentSnapshot;
 use crate::QuerySnapshot;
 use crate::google;
@@ -99,7 +101,7 @@ impl Query {
     #[allow(private_bounds)]
     pub fn order_by(
         &self,
-        field_path: impl crate::IntoFieldPath,
+        field_path: impl IntoFieldPath,
         direction: &str,
     ) -> Result<Query, Error> {
         let field_path = field_path.into_field_path()?;
@@ -129,9 +131,8 @@ impl Query {
     pub fn select<I>(&self, fields: I) -> Result<Query, Error>
     where
         I: IntoIterator,
-        I::Item: crate::IntoFieldPath,
+        I::Item: IntoFieldPath,
     {
-        use crate::IntoFieldPath as _;
         let fields = fields
             .into_iter()
             .map(|f| {
@@ -173,7 +174,7 @@ impl Query {
         })
     }
 
-    pub fn r#where(&self, filter: crate::Filter) -> Query {
+    pub fn r#where(&self, filter: Filter) -> Query {
         let mut where_ = self.where_.clone();
         where_.push(filter.into_inner());
         Query {
