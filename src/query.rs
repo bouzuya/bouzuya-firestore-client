@@ -170,6 +170,29 @@ impl Query {
         })
     }
 
+    pub fn start_at<I>(&self, values: I) -> Result<Query, Error>
+    where
+        I: IntoIterator,
+        I::Item: serde::Serialize,
+    {
+        let values = values
+            .into_iter()
+            .map(|v| {
+                serde_firestore_value::to_value(&v).map_err(|e| Error::from_source(Box::new(e)))
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        if values.is_empty() {
+            return Err(Error::custom("start_at requires at least one value"));
+        }
+        Ok(Query {
+            collection_path: self.collection_path.clone(),
+            firestore: self.firestore.clone(),
+            order_by: self.order_by.clone(),
+            query: self.query.clone().start_at(values),
+            where_: self.where_.clone(),
+        })
+    }
+
     pub fn r#where(&self, filter: Filter) -> Query {
         let mut where_ = self.where_.clone();
         where_.push(filter.into_inner());
