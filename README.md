@@ -155,10 +155,10 @@
   - [ ] serverTimestamp
   - [ ] vector
   - [x] <del>isEqual</del>
-- [ ] Filter
-  - [ ] and
+- [x] Filter
+  - [x] and
   - [ ] or
-  - [ ] where
+  - [x] where
 - [x] Firestore
   - [ ] databaseId
   - [ ] batch

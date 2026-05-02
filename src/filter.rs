@@ -4,6 +4,15 @@ use crate::IntoFieldPath;
 pub struct Filter(firestore_structured_query::Filter);
 
 impl Filter {
+    pub fn and<I>(filters: I) -> Self
+    where
+        I: IntoIterator<Item = Filter>,
+    {
+        Self(firestore_structured_query::Filter::and(
+            filters.into_iter().map(|f| f.0),
+        ))
+    }
+
     #[allow(private_bounds)]
     pub fn r#where(
         field_path: impl IntoFieldPath,
