@@ -4,8 +4,9 @@ fn test_query_where_() {
     fn _check(
         query: bouzuya_firestore_client::Query,
         filter: bouzuya_firestore_client::Filter,
-    ) -> bouzuya_firestore_client::Query {
-        query.r#where(filter)
+    ) -> Result<bouzuya_firestore_client::Query, bouzuya_firestore_client::Error> {
+        query.r#where(filter)?;
+        query.r#where(("k", "==", 1_i64))
     }
 }
 
@@ -33,7 +34,7 @@ async fn test_query_where_append() -> anyhow::Result<()> {
     }
     let f1 = Filter::r#where("n", "==", 1_i64)?;
     let f2 = Filter::r#where("k", "==", "a".to_string())?;
-    let query_snapshot = collection_reference.r#where(f1).r#where(f2).get().await?;
+    let query_snapshot = collection_reference.r#where(f1)?.r#where(f2)?.get().await?;
     assert!(!query_snapshot.docs().is_empty());
     for query_document_snapshot in query_snapshot.docs() {
         let data = query_document_snapshot.data::<Doc>()?;
@@ -68,7 +69,7 @@ async fn test_query_where_get() -> anyhow::Result<()> {
         )
         .await?;
     let filter = Filter::r#where("k", "==", "target".to_string())?;
-    let query = collection_reference.r#where(filter);
+    let query = collection_reference.r#where(filter)?;
     let query_snapshot = query.get().await?;
     assert!(!query_snapshot.docs().is_empty());
     for query_document_snapshot in query_snapshot.docs() {

@@ -4,8 +4,9 @@ fn test_collection_reference_where_() {
     fn _check(
         collection_reference: bouzuya_firestore_client::CollectionReference,
         filter: bouzuya_firestore_client::Filter,
-    ) -> bouzuya_firestore_client::Query {
-        collection_reference.r#where(filter)
+    ) -> Result<bouzuya_firestore_client::Query, bouzuya_firestore_client::Error> {
+        collection_reference.r#where(filter)?;
+        collection_reference.r#where(("k", "==", 1_i64))
     }
 }
 
@@ -34,7 +35,7 @@ async fn test_collection_reference_where_get() -> anyhow::Result<()> {
         )
         .await?;
     let filter = Filter::r#where("k", "==", "target".to_string())?;
-    let query_snapshot = collection_reference.r#where(filter).get().await?;
+    let query_snapshot = collection_reference.r#where(filter)?.get().await?;
     assert!(!query_snapshot.docs().is_empty());
     for query_document_snapshot in query_snapshot.docs() {
         let data = query_document_snapshot.data::<HashMap<String, String>>()?;

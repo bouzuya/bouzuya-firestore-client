@@ -1,8 +1,8 @@
 use crate::DocumentReference;
 use crate::Error;
-use crate::Filter;
 use crate::Firestore;
 use crate::IntoFieldPath;
+use crate::IntoFilter;
 use crate::Query;
 use crate::QuerySnapshot;
 
@@ -118,7 +118,8 @@ impl CollectionReference {
     }
 
     /// Query::r#where
-    pub fn r#where(&self, filter: Filter) -> Query {
+    #[allow(private_bounds)]
+    pub fn r#where(&self, filter: impl IntoFilter) -> Result<Query, Error> {
         Query::new(self.clone()).r#where(filter)
     }
 

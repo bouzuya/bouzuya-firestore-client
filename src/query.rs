@@ -2,9 +2,9 @@ use crate::CollectionReference;
 use crate::DocumentReference;
 use crate::DocumentSnapshot;
 use crate::Error;
-use crate::Filter;
 use crate::Firestore;
 use crate::IntoFieldPath;
+use crate::IntoFilter;
 use crate::QueryDocumentSnapshot;
 use crate::QuerySnapshot;
 use crate::google;
@@ -193,16 +193,18 @@ impl Query {
         })
     }
 
-    pub fn r#where(&self, filter: Filter) -> Query {
+    #[allow(private_bounds)]
+    pub fn r#where(&self, filter: impl IntoFilter) -> Result<Query, Error> {
+        let filter = filter.into_filter()?;
         let mut where_ = self.where_.clone();
         where_.push(filter.into_inner());
-        Query {
+        Ok(Query {
             collection_path: self.collection_path.clone(),
             firestore: self.firestore.clone(),
             order_by: self.order_by.clone(),
             query: self.query.clone(),
             where_,
-        }
+        })
     }
 }
 
