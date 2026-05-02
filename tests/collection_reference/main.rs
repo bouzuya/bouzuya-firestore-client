@@ -9,5 +9,6 @@ mod offset;
 mod order_by;
 mod parent;
 mod path;
+mod select;
 mod start_after;
 mod where_;

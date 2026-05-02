@@ -87,6 +87,16 @@ impl CollectionReference {
         Query::new(self.clone()).order_by(field_path, direction)
     }
 
+    /// Query::select
+    #[allow(private_bounds)]
+    pub fn select<I>(&self, fields: I) -> Result<Query, Error>
+    where
+        I: IntoIterator,
+        I::Item: crate::IntoFieldPath,
+    {
+        Query::new(self.clone()).select(fields)
+    }
+
     /// Query::start_after
     pub fn start_after<I>(&self, values: I) -> Result<Query, Error>
     where
