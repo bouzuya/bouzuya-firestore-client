@@ -43,3 +43,38 @@ async fn test_collection_reference_where_get() -> anyhow::Result<()> {
     }
     Ok(())
 }
+
+// since v2.2
+#[tokio::test]
+#[serial_test::serial]
+async fn test_collection_reference_where_tuple() -> anyhow::Result<()> {
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    use std::collections::HashMap;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let collection_reference = firestore.collection("test-collection-reference-where-tuple")?;
+    collection_reference
+        .add(
+            [("k".to_owned(), "target".to_owned())]
+                .into_iter()
+                .collect::<HashMap<String, String>>(),
+        )
+        .await?;
+    collection_reference
+        .add(
+            [("k".to_owned(), "other".to_owned())]
+                .into_iter()
+                .collect::<HashMap<String, String>>(),
+        )
+        .await?;
+    let query_snapshot = collection_reference
+        .r#where(("k", "==", "target".to_string()))?
+        .get()
+        .await?;
+    assert!(!query_snapshot.docs().is_empty());
+    for query_document_snapshot in query_snapshot.docs() {
+        let data = query_document_snapshot.data::<HashMap<String, String>>()?;
+        assert_eq!(data.get("k").map(String::as_str), Some("target"));
+    }
+    Ok(())
+}
