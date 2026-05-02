@@ -21,7 +21,13 @@ async fn test_firestore_get_all_multiple() -> anyhow::Result<()> {
     let document_reference1 = firestore.doc("rooms/room1")?;
     let document_reference2 = firestore.doc("rooms/room2")?;
     let document_reference3 = firestore.doc("rooms/room3")?;
-    let document_snapshots = firestore.get_all([document_reference1, document_reference2, document_reference3]).await?;
+    let document_snapshots = firestore
+        .get_all([
+            document_reference1,
+            document_reference2,
+            document_reference3,
+        ])
+        .await?;
     assert_eq!(document_snapshots.len(), 3);
     Ok(())
 }
