@@ -13,6 +13,15 @@ impl Filter {
         ))
     }
 
+    pub fn or<I>(filters: I) -> Self
+    where
+        I: IntoIterator<Item = Filter>,
+    {
+        Self(firestore_structured_query::Filter::or(
+            filters.into_iter().map(|f| f.0),
+        ))
+    }
+
     #[allow(private_bounds)]
     pub fn r#where(
         field_path: impl IntoFieldPath,

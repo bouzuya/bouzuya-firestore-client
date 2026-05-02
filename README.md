@@ -157,7 +157,7 @@
   - [x] <del>isEqual</del>
 - [x] Filter
   - [x] and
-  - [ ] or
+  - [x] or
   - [x] where
 - [x] Firestore
   - [ ] databaseId
