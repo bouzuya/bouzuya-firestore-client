@@ -53,10 +53,12 @@ impl CollectionReference {
         ))
     }
 
+    /// Query::firestore
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
     }
 
+    /// Query::get
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
         Query::new(self.clone()).get().await
     }
@@ -65,14 +67,17 @@ impl CollectionReference {
         self.collection_path.collection_id().to_string()
     }
 
+    /// Query::limit
     pub fn limit(&self, n: i32) -> Query {
         Query::new(self.clone()).limit(n)
     }
 
+    /// Query::offset
     pub fn offset(&self, n: i32) -> Query {
         Query::new(self.clone()).offset(n)
     }
 
+    /// Query::order_by
     #[allow(private_bounds)]
     pub fn order_by(
         &self,
@@ -82,6 +87,7 @@ impl CollectionReference {
         Query::new(self.clone()).order_by(field_path, direction)
     }
 
+    /// Query::start_after
     pub fn start_after<I>(&self, values: I) -> Result<Query, Error>
     where
         I: IntoIterator,
@@ -90,6 +96,7 @@ impl CollectionReference {
         Query::new(self.clone()).start_after(values)
     }
 
+    /// Query::r#where
     pub fn r#where(&self, filter: crate::Filter) -> Query {
         Query::new(self.clone()).r#where(filter)
     }
