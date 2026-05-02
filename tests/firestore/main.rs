@@ -1,4 +1,5 @@
 mod collection;
+mod database_id;
 mod doc;
 mod get_all;
 mod impl_debug;
