@@ -89,18 +89,18 @@
   - [ ] (Query) explain
   - [ ] (Query) explainStream
   - [ ] (Query) findNearest
-  - [ ] (Query) get
+  - [x] (Query) get
   - [x] (Query) <del>isEqual</del>
   - [x] (Query) limit
   - [ ] (Query) limitToLast
   - [x] (Query) offset
   - [ ] (Query) onSnapshot
-  - [ ] (Query) orderBy
-  - [ ] (Query) select
-  - [ ] (Query) startAfter
+  - [x] (Query) orderBy
+  - [x] (Query) select
+  - [x] (Query) startAfter
   - [ ] (Query) startAt
   - [ ] (Query) stream
-  - [ ] (Query) where
+  - [x] (Query) where
   - [ ] (Query) withConverter
 - [ ] DocumentChange
   - [ ] doc
@@ -182,7 +182,7 @@
 - [ ] PlanSummary
   - [ ] indexesUsed
 - [ ] Query
-  - [ ] firestore
+  - [x] firestore
   - [ ] aggregate
   - [ ] count
   - [ ] endAt
@@ -190,18 +190,18 @@
   - [ ] explain
   - [ ] explainStream
   - [ ] findNearest
-  - [ ] get
+  - [x] get
   - [x] <del>isEqual</del>
   - [x] limit
   - [ ] limitToLast
   - [x] offset
   - [ ] onSnapshot
-  - [ ] orderBy
-  - [ ] select
-  - [ ] startAfter
+  - [x] orderBy
+  - [x] select
+  - [x] startAfter
   - [ ] startAt
   - [ ] stream
-  - [ ] where
+  - [x] where
   - [ ] withConverter
 - [ ] QueryDocumentSnapshot : DocumentSnapshot
   - [x] createTime
