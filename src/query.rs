@@ -104,8 +104,9 @@ impl Query {
         field_path: impl IntoFieldPath,
         direction: &str,
     ) -> Result<Query, Error> {
-        let field_path = field_path.into_field_path()?;
-        let field_path = firestore_structured_query::FieldPath::raw(field_path.to_string());
+        let field_path = field_path
+            .into_field_path()?
+            .into_structured_query_field_path();
         let order = match direction {
             "asc" => field_path.ascending(),
             "desc" => field_path.descending(),
@@ -135,12 +136,7 @@ impl Query {
     {
         let fields = fields
             .into_iter()
-            .map(|f| {
-                let field_path = f.into_field_path()?;
-                Ok(firestore_structured_query::FieldPath::raw(
-                    field_path.to_string(),
-                ))
-            })
+            .map(|f| Ok(f.into_field_path()?.into_structured_query_field_path()))
             .collect::<Result<Vec<_>, Error>>()?;
         Ok(Query {
             collection_path: self.collection_path.clone(),

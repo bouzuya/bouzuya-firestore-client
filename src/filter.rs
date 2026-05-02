@@ -10,8 +10,9 @@ impl Filter {
         op: &str,
         value: impl serde::Serialize,
     ) -> Result<Self, Error> {
-        let field_path = field_path.into_field_path()?;
-        let field_path = firestore_structured_query::FieldPath::raw(field_path.to_string());
+        let field_path = field_path
+            .into_field_path()?
+            .into_structured_query_field_path();
         let value =
             serde_firestore_value::to_value(&value).map_err(|e| Error::from_source(Box::new(e)))?;
         match op {

@@ -105,7 +105,6 @@ impl FieldPath {
 }
 
 impl FieldPath {
-    #[allow(dead_code)]
     pub(crate) fn into_structured_query_field_path(self) -> firestore_structured_query::FieldPath {
         firestore_structured_query::FieldPath::raw(self.to_string())
     }
