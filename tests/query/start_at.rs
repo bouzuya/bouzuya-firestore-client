@@ -20,7 +20,7 @@ async fn test_query_start_at_empty() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FirestoreOptions;
     let firestore = Firestore::new(FirestoreOptions::default())?;
     let collection_reference = firestore.collection("rooms")?;
-    let query = collection_reference.limit(1);
+    let query = collection_reference.limit(1)?;
     let result = query.start_at(Vec::<i32>::new());
     assert!(result.is_err());
     Ok(())
@@ -74,7 +74,7 @@ async fn test_query_start_at_multiple_types() -> anyhow::Result<()> {
     }
     let firestore = Firestore::new(FirestoreOptions::default())?;
     let collection_reference = firestore.collection("rooms")?;
-    let query = collection_reference.limit(1);
+    let query = collection_reference.limit(1)?;
     let _query = query.start_at(vec![Mixed::S("Alice".to_string()), Mixed::I(30)])?;
     Ok(())
 }

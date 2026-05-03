@@ -78,14 +78,17 @@ impl Query {
         Ok(QuerySnapshot::new(self.clone(), query_document_snapshots))
     }
 
-    pub fn limit(&self, n: i32) -> Query {
-        Query {
+    pub fn limit(&self, n: i32) -> Result<Query, Error> {
+        if n < 0 {
+            return Err(Error::custom("limit must be non-negative"));
+        }
+        Ok(Query {
             collection_path: self.collection_path.clone(),
             firestore: self.firestore.clone(),
             order_by: self.order_by.clone(),
             query: self.query.clone().limit(n),
             where_: self.where_.clone(),
-        }
+        })
     }
 
     pub fn offset(&self, n: i32) -> Query {

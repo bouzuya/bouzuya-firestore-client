@@ -70,7 +70,7 @@ impl CollectionReference {
     }
 
     /// Query::limit
-    pub fn limit(&self, n: i32) -> Query {
+    pub fn limit(&self, n: i32) -> Result<Query, Error> {
         Query::new(self.clone()).limit(n)
     }
 

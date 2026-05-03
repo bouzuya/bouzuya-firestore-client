@@ -21,7 +21,7 @@ async fn test_query_get() -> anyhow::Result<()> {
                 .collect::<std::collections::HashMap<String, String>>(),
         )
         .await?;
-    let query = collection_reference.limit(1);
+    let query = collection_reference.limit(1)?;
     let query_snapshot: QuerySnapshot = query.get().await?;
     assert!(query_snapshot.docs().len() <= 1);
     Ok(())

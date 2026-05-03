@@ -16,7 +16,7 @@ async fn test_query_order_by_invalid_direction() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FirestoreOptions;
     let firestore = Firestore::new(FirestoreOptions::default())?;
     let collection_reference = firestore.collection("rooms")?;
-    let query = collection_reference.limit(1);
+    let query = collection_reference.limit(1)?;
     let result = query.order_by("n", "ascending");
     assert!(result.is_err());
     Ok(())

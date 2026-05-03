@@ -27,7 +27,7 @@ async fn test_query_select_get() -> anyhow::Result<()> {
             )
             .await?;
     }
-    let query = collection_reference.limit(10);
+    let query = collection_reference.limit(10)?;
     let query_snapshot = query.select(["a"])?.get().await?;
     assert!(!query_snapshot.docs().is_empty());
     for query_document_snapshot in query_snapshot.docs() {

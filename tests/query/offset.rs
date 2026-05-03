@@ -15,10 +15,10 @@ async fn test_query_offset() -> anyhow::Result<()> {
     collection_reference
         .add(HashMap::<String, String>::new())
         .await?;
-    let all = collection_reference.limit(1000).get().await?;
+    let all = collection_reference.limit(1000)?.get().await?;
     let total = all.docs().len();
     let with_offset = collection_reference
-        .limit(1000)
+        .limit(1000)?
         .offset(total as i32 - 1)
         .get()
         .await?;

@@ -1,4 +1,4 @@
-// since v2.1
+// since v2.1 -> v3.0 (breaking change)
 #[tokio::test]
 async fn test_collection_reference_limit() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
@@ -15,7 +15,7 @@ async fn test_collection_reference_limit() -> anyhow::Result<()> {
     collection_reference
         .add(std::collections::HashMap::<String, String>::new())
         .await?;
-    let query: Query = collection_reference.limit(2);
+    let query: Query = collection_reference.limit(2)?;
     assert_eq!(query.get().await?.size(), 2);
     Ok(())
 }
