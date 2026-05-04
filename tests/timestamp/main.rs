@@ -5,5 +5,6 @@ mod impl_debug;
 mod impl_eq;
 mod impl_hash;
 mod impl_ord;
+mod nanoseconds;
 mod seconds;
 mod to_millis;

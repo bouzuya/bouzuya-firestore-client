@@ -15,6 +15,10 @@ impl Timestamp {
 }
 
 impl Timestamp {
+    pub fn nanoseconds(&self) -> i32 {
+        self.0.nanos
+    }
+
     pub fn seconds(&self) -> i64 {
         self.0.seconds
     }
