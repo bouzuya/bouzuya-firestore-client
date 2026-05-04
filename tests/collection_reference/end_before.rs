@@ -36,8 +36,8 @@ async fn test_collection_reference_end_before_get() -> anyhow::Result<()> {
         .order_by("n", "asc")?
         .get()
         .await?;
-    assert!(!query_snapshot.docs().is_empty());
-    for query_document_snapshot in query_snapshot.docs() {
+    assert!(!query_snapshot.empty());
+    for query_document_snapshot in query_snapshot {
         let data = query_document_snapshot.data::<HashMap<String, i64>>()?;
         let n = data.get("n").copied();
         assert!(matches!(n, Some(n) if n < 2), "expected n < 2, got {:?}", n);

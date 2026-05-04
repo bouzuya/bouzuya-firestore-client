@@ -36,8 +36,8 @@ async fn test_collection_reference_where_get() -> anyhow::Result<()> {
         .await?;
     let filter = Filter::r#where("k", "==", "target".to_string())?;
     let query_snapshot = collection_reference.r#where(filter)?.get().await?;
-    assert!(!query_snapshot.docs().is_empty());
-    for query_document_snapshot in query_snapshot.docs() {
+    assert!(!query_snapshot.empty());
+    for query_document_snapshot in query_snapshot {
         let data = query_document_snapshot.data::<HashMap<String, String>>()?;
         assert_eq!(data.get("k").map(String::as_str), Some("target"));
     }
@@ -71,8 +71,8 @@ async fn test_collection_reference_where_tuple() -> anyhow::Result<()> {
         .r#where(("k", "==", "target".to_string()))?
         .get()
         .await?;
-    assert!(!query_snapshot.docs().is_empty());
-    for query_document_snapshot in query_snapshot.docs() {
+    assert!(!query_snapshot.empty());
+    for query_document_snapshot in query_snapshot {
         let data = query_document_snapshot.data::<HashMap<String, String>>()?;
         assert_eq!(data.get("k").map(String::as_str), Some("target"));
     }

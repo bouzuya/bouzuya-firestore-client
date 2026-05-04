@@ -28,8 +28,8 @@ async fn test_collection_reference_select_get() -> anyhow::Result<()> {
             .await?;
     }
     let query_snapshot = collection_reference.select(["a"])?.limit(10)?.get().await?;
-    assert!(!query_snapshot.docs().is_empty());
-    for query_document_snapshot in query_snapshot.docs() {
+    assert!(!query_snapshot.empty());
+    for query_document_snapshot in query_snapshot {
         let data = query_document_snapshot.data::<HashMap<String, i64>>()?;
         assert!(data.contains_key("a"));
         assert!(!data.contains_key("b"));

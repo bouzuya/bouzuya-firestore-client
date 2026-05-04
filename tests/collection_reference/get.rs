@@ -12,8 +12,8 @@ async fn test_collection_reference_get() -> Result<(), bouzuya_firestore_client:
         .add(HashMap::<String, String>::new())
         .await?;
     let query_snapshot: QuerySnapshot = collection_reference.get().await?;
-    assert!(!query_snapshot.docs().is_empty());
-    for snapshot in query_snapshot.docs() {
+    assert!(!query_snapshot.empty());
+    for snapshot in query_snapshot {
         assert!(snapshot.exists());
     }
     Ok(())

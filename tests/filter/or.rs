@@ -35,8 +35,8 @@ async fn test_filter_or_get() -> anyhow::Result<()> {
     let f2 = Filter::r#where("k", "==", "a".to_string())?;
     let filter = Filter::or([f1, f2]);
     let query_snapshot = collection_reference.r#where(filter)?.get().await?;
-    assert!(!query_snapshot.docs().is_empty());
-    for query_document_snapshot in query_snapshot.docs() {
+    assert!(!query_snapshot.empty());
+    for query_document_snapshot in query_snapshot {
         let data = query_document_snapshot.data::<Doc>()?;
         assert!(data.n == 1 || data.k == "a");
     }
