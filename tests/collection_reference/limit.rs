@@ -19,3 +19,14 @@ async fn test_collection_reference_limit() -> anyhow::Result<()> {
     assert_eq!(query.get().await?.size(), 2);
     Ok(())
 }
+
+// since v3.0
+#[tokio::test]
+async fn test_collection_reference_limit_negative() -> anyhow::Result<()> {
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let collection_reference = firestore.collection("rooms")?;
+    assert!(collection_reference.limit(-1).is_err());
+    Ok(())
+}
