@@ -60,6 +60,29 @@ impl Query {
         })
     }
 
+    pub fn end_before<I>(&self, values: I) -> Result<Query, Error>
+    where
+        I: IntoIterator,
+        I::Item: serde::Serialize,
+    {
+        let values = values
+            .into_iter()
+            .map(|v| {
+                serde_firestore_value::to_value(&v).map_err(|e| Error::from_source(Box::new(e)))
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        if values.is_empty() {
+            return Err(Error::custom("end_before requires at least one value"));
+        }
+        Ok(Query {
+            collection_path: self.collection_path.clone(),
+            firestore: self.firestore.clone(),
+            order_by: self.order_by.clone(),
+            query: self.query.clone().end_before(values),
+            where_: self.where_.clone(),
+        })
+    }
+
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
     }
