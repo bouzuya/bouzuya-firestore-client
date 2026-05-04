@@ -1,4 +1,4 @@
-// since v2.2
+// since v3.0
 #[test]
 fn test_query_where_() {
     fn _check(
@@ -10,7 +10,7 @@ fn test_query_where_() {
     }
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 #[serial_test::serial]
 async fn test_query_where_append() -> anyhow::Result<()> {
@@ -44,7 +44,7 @@ async fn test_query_where_append() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 #[serial_test::serial]
 async fn test_query_where_get() -> anyhow::Result<()> {
@@ -79,7 +79,7 @@ async fn test_query_where_get() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 #[serial_test::serial]
 async fn test_query_where_tuple() -> anyhow::Result<()> {

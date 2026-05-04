@@ -1,4 +1,4 @@
-// since v2.2
+// since v3.0
 #[tokio::test]
 async fn test_query_firestore() -> Result<(), bouzuya_firestore_client::Error> {
     use bouzuya_firestore_client::Firestore;

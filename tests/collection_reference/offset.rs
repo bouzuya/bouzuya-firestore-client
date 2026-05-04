@@ -25,3 +25,14 @@ async fn test_collection_reference_offset() -> anyhow::Result<()> {
     assert_eq!(with_offset.docs().len(), 1);
     Ok(())
 }
+
+// since v3.0
+#[tokio::test]
+async fn test_collection_reference_offset_negative() -> anyhow::Result<()> {
+    use bouzuya_firestore_client::Firestore;
+    use bouzuya_firestore_client::FirestoreOptions;
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let collection_reference = firestore.collection("rooms")?;
+    assert!(collection_reference.offset(-1).is_err());
+    Ok(())
+}

@@ -1,4 +1,4 @@
-// since v2.2
+// since v3.0
 #[test]
 fn test_query_select() {
     fn _check(
@@ -9,7 +9,7 @@ fn test_query_select() {
     }
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 #[serial_test::serial]
 async fn test_query_select_get() -> anyhow::Result<()> {

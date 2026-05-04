@@ -1,4 +1,4 @@
-// since v2.2
+// since v3.0
 #[test]
 fn test_filter_and() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -9,7 +9,7 @@ fn test_filter_and() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 #[serial_test::serial]
 async fn test_filter_and_get() -> anyhow::Result<()> {

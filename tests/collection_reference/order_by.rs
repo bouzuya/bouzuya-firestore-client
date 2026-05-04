@@ -1,4 +1,4 @@
-// since v2.2
+// since v3.0
 #[test]
 fn test_collection_reference_order_by() {
     fn _check(
@@ -9,7 +9,7 @@ fn test_collection_reference_order_by() {
     }
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 async fn test_collection_reference_order_by_invalid_direction() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
@@ -21,7 +21,7 @@ async fn test_collection_reference_order_by_invalid_direction() -> anyhow::Resul
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 #[serial_test::serial]
 async fn test_collection_reference_order_by_get_asc() -> anyhow::Result<()> {
@@ -54,7 +54,7 @@ async fn test_collection_reference_order_by_get_asc() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 #[serial_test::serial]
 async fn test_collection_reference_order_by_get_desc() -> anyhow::Result<()> {
@@ -87,7 +87,7 @@ async fn test_collection_reference_order_by_get_desc() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 #[serial_test::serial]
 async fn test_collection_reference_order_by_append() -> anyhow::Result<()> {

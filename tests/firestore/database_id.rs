@@ -1,4 +1,4 @@
-// since v2.2
+// since v3.0
 #[tokio::test]
 async fn test_firestore_database_id() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;

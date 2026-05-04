@@ -1,4 +1,4 @@
-// since v2.2
+// since v3.0
 #[test]
 fn test_collection_reference_start_after() {
     fn _check<I>(
@@ -13,7 +13,7 @@ fn test_collection_reference_start_after() {
     }
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 #[serial_test::serial]
 async fn test_collection_reference_start_after_get() -> anyhow::Result<()> {

@@ -1,4 +1,4 @@
-// since v2.2
+// since v3.0
 #[test]
 fn test_query_start_after() {
     fn _check<I>(
@@ -13,7 +13,7 @@ fn test_query_start_after() {
     }
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 async fn test_query_start_after_empty() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
@@ -26,7 +26,7 @@ async fn test_query_start_after_empty() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 #[serial_test::serial]
 async fn test_query_start_after_get() -> anyhow::Result<()> {
@@ -57,7 +57,7 @@ async fn test_query_start_after_get() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[tokio::test]
 async fn test_query_start_after_multiple_types() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;

@@ -1,4 +1,4 @@
-// since v2.2
+// since v3.0
 #[test]
 fn test_filter_where_() {
     fn _with_string(f: String, op: &str, v: i64) {
@@ -11,7 +11,7 @@ fn test_filter_where_() {
     }
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_less_than() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -21,7 +21,7 @@ fn test_where_less_than() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_less_than_or_equal() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -31,7 +31,7 @@ fn test_where_less_than_or_equal() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_equal() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -41,7 +41,7 @@ fn test_where_equal() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_not_equal() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -51,7 +51,7 @@ fn test_where_not_equal() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_greater_than_or_equal() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -61,7 +61,7 @@ fn test_where_greater_than_or_equal() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_greater_than() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -71,7 +71,7 @@ fn test_where_greater_than() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_array_contains() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -81,7 +81,7 @@ fn test_where_array_contains() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_in() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -91,7 +91,7 @@ fn test_where_in() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_not_in() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -101,7 +101,7 @@ fn test_where_not_in() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_array_contains_any() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
@@ -111,7 +111,7 @@ fn test_where_array_contains_any() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_with_string_field() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Filter;
@@ -119,7 +119,7 @@ fn test_where_with_string_field() -> anyhow::Result<()> {
     Ok(())
 }
 
-// since v2.2
+// since v3.0
 #[test]
 fn test_where_invalid_op() -> anyhow::Result<()> {
     use bouzuya_firestore_client::FieldPath;
