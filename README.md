@@ -84,8 +84,8 @@
   - [x] (Query) firestore
   - [ ] (Query) aggregate
   - [ ] (Query) count
-  - [ ] (Query) endAt
-  - [ ] (Query) endBefore
+  - [x] (Query) endAt
+  - [x] (Query) endBefore
   - [ ] (Query) explain
   - [ ] (Query) explainStream
   - [ ] (Query) findNearest
@@ -98,7 +98,7 @@
   - [x] (Query) orderBy
   - [x] (Query) select
   - [x] (Query) startAfter
-  - [ ] (Query) startAt
+  - [x] (Query) startAt
   - [ ] (Query) stream
   - [x] (Query) where
   - [ ] (Query) withConverter
@@ -144,8 +144,8 @@
 - [ ] ExplainResults
   - [ ] metrics
   - [ ] snapshot
-- [ ] FieldPath : Path
-  - [ ] documentId
+- [x] FieldPath : Path
+  - [x] documentId
   - [x] <del>isEqual</del>
 - [ ] FieldValue
   - [ ] arrayRemove
@@ -160,7 +160,7 @@
   - [x] or
   - [x] where
 - [x] Firestore
-  - [ ] databaseId
+  - [x] databaseId
   - [ ] batch
   - [ ] bulkWriter
   - [ ] bundle
@@ -185,7 +185,7 @@
   - [x] firestore
   - [ ] aggregate
   - [ ] count
-  - [ ] endAt
+  - [x] endAt
   - [ ] endBefore
   - [ ] explain
   - [ ] explainStream
@@ -199,7 +199,7 @@
   - [x] orderBy
   - [x] select
   - [x] startAfter
-  - [ ] startAt
+  - [x] startAt
   - [ ] stream
   - [x] where
   - [ ] withConverter
@@ -220,18 +220,18 @@
   - [ ] endBefore
   - [ ] startAt
   - [ ] toQuery
-- [ ] QuerySnapshot
-  - [ ] docs
-  - [ ] empty
-  - [ ] query
+- [x] QuerySnapshot
+  - [x] docs
+  - [x] empty
+  - [x] query
   - [ ] readTime
-  - [ ] size
+  - [x] size
   - [ ] docChanges
   - [ ] forEach
   - [x] <del>isEqual</del>
 - [x] Timestamp
-  - [ ] nanoseconds
-  - [ ] seconds
+  - [x] nanoseconds
+  - [x] seconds
   - [ ] fromDate
   - [x] fromMillis
   - [x] <del>isEqual</del>
