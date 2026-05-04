@@ -34,6 +34,15 @@ impl QuerySnapshot {
     }
 }
 
+impl IntoIterator for QuerySnapshot {
+    type Item = QueryDocumentSnapshot;
+    type IntoIter = std::vec::IntoIter<QueryDocumentSnapshot>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.query_document_snapshots.into_iter()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::CollectionReference;
