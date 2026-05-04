@@ -1,5 +1,6 @@
 use crate::Error;
 
+#[derive(Eq, PartialEq)]
 pub struct FieldPath {
     segments: Vec<String>,
 }
