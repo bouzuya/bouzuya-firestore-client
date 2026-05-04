@@ -1,4 +1,4 @@
-// since v2.1
+// since v2.1 -> v3.0 (breaking change)
 #[tokio::test]
 async fn test_collection_reference_offset() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Firestore;
@@ -18,7 +18,7 @@ async fn test_collection_reference_offset() -> anyhow::Result<()> {
     let all = collection_reference.limit(1000)?.get().await?;
     let total = all.docs().len();
     let with_offset = collection_reference
-        .offset(total as i32 - 1)
+        .offset(total as i32 - 1)?
         .limit(1000)?
         .get()
         .await?;

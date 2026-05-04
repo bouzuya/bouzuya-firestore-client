@@ -91,14 +91,17 @@ impl Query {
         })
     }
 
-    pub fn offset(&self, n: i32) -> Query {
-        Query {
+    pub fn offset(&self, n: i32) -> Result<Query, Error> {
+        if n < 0 {
+            return Err(Error::custom("offset must be non-negative"));
+        }
+        Ok(Query {
             collection_path: self.collection_path.clone(),
             firestore: self.firestore.clone(),
             order_by: self.order_by.clone(),
             query: self.query.clone().offset(n),
             where_: self.where_.clone(),
-        }
+        })
     }
 
     #[allow(private_bounds)]

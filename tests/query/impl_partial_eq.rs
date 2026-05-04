@@ -10,9 +10,9 @@ async fn test_query_impl_partial_eq() -> anyhow::Result<()> {
 
     let firestore = Firestore::new(FirestoreOptions::default())?;
     let collection_reference = firestore.collection("rooms")?;
-    let query: Query = collection_reference.offset(0);
+    let query: Query = collection_reference.offset(0)?;
     assert_eq!(query, query.clone());
-    let query2: Query = collection_reference.offset(1);
+    let query2: Query = collection_reference.offset(1)?;
     assert_ne!(query, query2);
     Ok(())
 }

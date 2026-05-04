@@ -75,7 +75,7 @@ impl CollectionReference {
     }
 
     /// Query::offset
-    pub fn offset(&self, n: i32) -> Query {
+    pub fn offset(&self, n: i32) -> Result<Query, Error> {
         Query::new(self.clone()).offset(n)
     }
 
