@@ -1,6 +1,7 @@
 mod add;
 mod doc;
 mod end_at;
+mod end_before;
 mod firestore;
 mod get;
 mod id;
