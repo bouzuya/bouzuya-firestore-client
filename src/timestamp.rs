@@ -15,6 +15,10 @@ impl Timestamp {
 }
 
 impl Timestamp {
+    pub fn seconds(&self) -> i64 {
+        self.0.seconds
+    }
+
     pub fn to_millis(&self) -> i64 {
         (self.0.seconds * 1_000) + (i64::from(self.0.nanos) / 1_000_000)
     }
