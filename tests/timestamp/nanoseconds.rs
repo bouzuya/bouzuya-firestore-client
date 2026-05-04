@@ -1,3 +1,4 @@
+// since v3.0
 #[test]
 fn test_timestamp_nanoseconds() {
     use bouzuya_firestore_client::Timestamp;
