@@ -55,6 +55,15 @@ impl CollectionReference {
         ))
     }
 
+    /// Query::end_at
+    pub fn end_at<I>(&self, values: I) -> Result<Query, Error>
+    where
+        I: IntoIterator,
+        I::Item: serde::Serialize,
+    {
+        Query::new(self.clone()).end_at(values)
+    }
+
     /// Query::firestore
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
