@@ -1,3 +1,4 @@
+mod collection_group;
 mod collection_reference;
 mod document_reference;
 mod document_snapshot;
@@ -18,6 +19,7 @@ mod transaction;
 mod transaction_options;
 mod write_result;
 
+pub use self::collection_group::CollectionGroup;
 pub use self::collection_reference::CollectionReference;
 pub use self::document_reference::DocumentReference;
 pub use self::document_snapshot::DocumentSnapshot;

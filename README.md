@@ -48,7 +48,7 @@
   - [ ] bundleId
   - [ ] add
   - [ ] build
-- [ ] CollectionGroup : Query
+- [x] CollectionGroup : Query
   - [ ] getPartitions
   - [ ] withConverter
   - [ ] (Query) firestore

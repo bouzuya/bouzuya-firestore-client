@@ -5,6 +5,13 @@ fn test_collection_reference_import() {
     let _: Option<CollectionReference> = None;
 }
 
+// since v3.1
+#[test]
+fn test_collection_group_import() {
+    use bouzuya_firestore_client::CollectionGroup;
+    let _: Option<CollectionGroup> = None;
+}
+
 // since v0.1
 #[test]
 fn test_document_reference_import() {
@@ -17,6 +24,20 @@ fn test_document_reference_import() {
 fn test_document_snapshot_import() {
     use bouzuya_firestore_client::DocumentSnapshot;
     let _: Option<DocumentSnapshot> = None;
+}
+
+// since v2.1
+#[test]
+fn test_field_path_import() {
+    use bouzuya_firestore_client::FieldPath;
+    let _: Option<FieldPath> = None;
+}
+
+// since v2.1
+#[test]
+fn test_filter_import() {
+    use bouzuya_firestore_client::Filter;
+    let _: Option<Filter> = None;
 }
 
 // since v0.1
@@ -87,18 +108,4 @@ fn test_query_document_snapshot_import() {
 fn test_write_result_import() {
     use bouzuya_firestore_client::WriteResult;
     let _: Option<WriteResult> = None;
-}
-
-// since v2.1
-#[test]
-fn test_field_path_import() {
-    use bouzuya_firestore_client::FieldPath;
-    let _: Option<FieldPath> = None;
-}
-
-// since v2.1
-#[test]
-fn test_filter_import() {
-    use bouzuya_firestore_client::Filter;
-    let _: Option<Filter> = None;
 }
