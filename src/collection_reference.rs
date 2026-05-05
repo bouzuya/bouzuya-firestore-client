@@ -61,7 +61,7 @@ impl CollectionReference {
         I: IntoIterator,
         I::Item: serde::Serialize,
     {
-        Query::new(self.clone()).end_at(values)
+        Query::collection(self.clone()).end_at(values)
     }
 
     /// Query::end_before
@@ -70,7 +70,7 @@ impl CollectionReference {
         I: IntoIterator,
         I::Item: serde::Serialize,
     {
-        Query::new(self.clone()).end_before(values)
+        Query::collection(self.clone()).end_before(values)
     }
 
     /// Query::firestore
@@ -80,7 +80,7 @@ impl CollectionReference {
 
     /// Query::get
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
-        Query::new(self.clone()).get().await
+        Query::collection(self.clone()).get().await
     }
 
     pub fn id(&self) -> String {
@@ -89,12 +89,12 @@ impl CollectionReference {
 
     /// Query::limit
     pub fn limit(&self, n: i32) -> Result<Query, Error> {
-        Query::new(self.clone()).limit(n)
+        Query::collection(self.clone()).limit(n)
     }
 
     /// Query::offset
     pub fn offset(&self, n: i32) -> Result<Query, Error> {
-        Query::new(self.clone()).offset(n)
+        Query::collection(self.clone()).offset(n)
     }
 
     /// Query::order_by
@@ -104,7 +104,7 @@ impl CollectionReference {
         field_path: impl IntoFieldPath,
         direction: &str,
     ) -> Result<Query, Error> {
-        Query::new(self.clone()).order_by(field_path, direction)
+        Query::collection(self.clone()).order_by(field_path, direction)
     }
 
     /// Query::select
@@ -114,7 +114,7 @@ impl CollectionReference {
         I: IntoIterator,
         I::Item: IntoFieldPath,
     {
-        Query::new(self.clone()).select(fields)
+        Query::collection(self.clone()).select(fields)
     }
 
     /// Query::start_after
@@ -123,7 +123,7 @@ impl CollectionReference {
         I: IntoIterator,
         I::Item: serde::Serialize,
     {
-        Query::new(self.clone()).start_after(values)
+        Query::collection(self.clone()).start_after(values)
     }
 
     /// Query::start_at
@@ -132,13 +132,13 @@ impl CollectionReference {
         I: IntoIterator,
         I::Item: serde::Serialize,
     {
-        Query::new(self.clone()).start_at(values)
+        Query::collection(self.clone()).start_at(values)
     }
 
     /// Query::r#where
     #[allow(private_bounds)]
     pub fn r#where(&self, filter: impl IntoFilter) -> Result<Query, Error> {
-        Query::new(self.clone()).r#where(filter)
+        Query::collection(self.clone()).r#where(filter)
     }
 
     pub async fn list_documents(&self) -> Result<Vec<DocumentReference>, Error> {

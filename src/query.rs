@@ -19,7 +19,7 @@ pub struct Query {
 }
 
 impl Query {
-    pub(crate) fn new(collection_reference: CollectionReference) -> Self {
+    pub(crate) fn collection(collection_reference: CollectionReference) -> Self {
         let firestore = collection_reference.firestore().clone();
         let collection_path = <firestore_path::CollectionPath as std::str::FromStr>::from_str(
             &collection_reference.path(),
@@ -263,7 +263,7 @@ impl Query {
 #[cfg(test)]
 mod tests {
     #[tokio::test]
-    async fn test_new() -> anyhow::Result<()> {
+    async fn test_collection() -> anyhow::Result<()> {
         use crate::CollectionReference;
         use crate::Firestore;
         use crate::FirestoreOptions;
@@ -273,7 +273,7 @@ mod tests {
         let collection_path = CollectionPath::from_str("rooms")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let collection_reference = CollectionReference::new(collection_path, firestore);
-        let _query = Query::new(collection_reference);
+        let _query = Query::collection(collection_reference);
         Ok(())
     }
 }
