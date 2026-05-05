@@ -32,6 +32,11 @@ impl CollectionGroup {
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
         Query::collection_group(self.clone()).get().await
     }
+
+    /// Query::limit
+    pub fn limit(&self, limit: i32) -> Result<Query, Error> {
+        Query::collection_group(self.clone()).limit(limit)
+    }
 }
 
 #[cfg(test)]

@@ -61,7 +61,7 @@
   - [ ] (Query) findNearest
   - [x] (Query) get
   - [x] (Query) <del>isEqual</del>
-  - [ ] (Query) limit
+  - [x] (Query) limit
   - [ ] (Query) limitToLast
   - [ ] (Query) offset
   - [ ] (Query) onSnapshot
