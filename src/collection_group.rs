@@ -1,5 +1,6 @@
 use crate::Firestore;
 
+#[derive(Clone)]
 pub struct CollectionGroup {
     collection_id: firestore_path::CollectionId,
     firestore: Firestore,
