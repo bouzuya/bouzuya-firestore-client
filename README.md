@@ -51,7 +51,7 @@
 - [x] CollectionGroup : Query
   - [ ] getPartitions
   - [ ] withConverter
-  - [ ] (Query) firestore
+  - [x] (Query) firestore
   - [ ] (Query) aggregate
   - [ ] (Query) count
   - [ ] (Query) endAt

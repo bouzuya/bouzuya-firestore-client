@@ -16,6 +16,13 @@ impl CollectionGroup {
     }
 }
 
+impl CollectionGroup {
+    /// Query::firestore
+    pub fn firestore(&self) -> &Firestore {
+        &self.firestore
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #[tokio::test]
