@@ -37,6 +37,11 @@ impl CollectionGroup {
     pub fn limit(&self, limit: i32) -> Result<Query, Error> {
         Query::collection_group(self.clone()).limit(limit)
     }
+
+    /// Query::offset
+    pub fn offset(&self, offset: i32) -> Result<Query, Error> {
+        Query::collection_group(self.clone()).offset(offset)
+    }
 }
 
 #[cfg(test)]

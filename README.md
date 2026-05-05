@@ -63,7 +63,7 @@
   - [x] (Query) <del>isEqual</del>
   - [x] (Query) limit
   - [ ] (Query) limitToLast
-  - [ ] (Query) offset
+  - [x] (Query) offset
   - [ ] (Query) onSnapshot
   - [ ] (Query) orderBy
   - [ ] (Query) select
