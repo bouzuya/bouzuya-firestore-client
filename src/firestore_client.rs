@@ -595,11 +595,11 @@ impl FirestoreClient {
 
     pub(crate) async fn run_query(
         &self,
-        collection_path: &firestore_path::CollectionPath,
+        collection_path: Option<&firestore_path::CollectionPath>,
         structured_query: google::firestore::v1::StructuredQuery,
     ) -> Result<Vec<google::firestore::v1::Document>, Error> {
         let root_document_name = self.database_name.root_document_name().to_string();
-        let parent = match collection_path.parent() {
+        let parent = match collection_path.and_then(|collection_path| collection_path.parent()) {
             Some(parent_document_path) => self
                 .database_name
                 .doc(parent_document_path.clone())

@@ -1,3 +1,4 @@
+use crate::CollectionGroup;
 use crate::CollectionReference;
 use crate::DocumentReference;
 use crate::DocumentSnapshot;
@@ -11,7 +12,8 @@ use crate::google;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Query {
-    collection_path: firestore_path::CollectionPath,
+    /// collection_path is None for collection group query
+    collection_path: Option<firestore_path::CollectionPath>,
     firestore: Firestore,
     order_by: Vec<firestore_structured_query::Order>,
     query: firestore_structured_query::Query,
@@ -27,7 +29,21 @@ impl Query {
         .expect("collection_reference has valid path");
         let query = firestore_structured_query::Query::collection(collection_reference.id());
         Self {
-            collection_path,
+            collection_path: Some(collection_path),
+            firestore,
+            order_by: Vec::new(),
+            query,
+            where_: Vec::new(),
+        }
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn collection_group(collection_group: CollectionGroup) -> Self {
+        let firestore = collection_group.firestore().clone();
+        let collection_id = collection_group.collection_id();
+        let query = firestore_structured_query::Query::collection_group(collection_id.to_string());
+        Self {
+            collection_path: None,
             firestore,
             order_by: Vec::new(),
             query,
@@ -88,7 +104,6 @@ impl Query {
     }
 
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
-        // collection query
         let firestore_client = self.firestore.firestore_client();
         let mut query = self.query.clone().order_by(self.order_by.clone());
         match self.where_.len() {
@@ -104,7 +119,7 @@ impl Query {
         }
         let documents = firestore_client
             .run_query(
-                &self.collection_path,
+                self.collection_path.as_ref(),
                 google::firestore::v1::StructuredQuery::from(query),
             )
             .await?;
@@ -274,6 +289,20 @@ mod tests {
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let collection_reference = CollectionReference::new(collection_path, firestore);
         let _query = Query::collection(collection_reference);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_collection_group() -> anyhow::Result<()> {
+        use crate::CollectionGroup;
+        use crate::Firestore;
+        use crate::FirestoreOptions;
+        use crate::Query;
+        use std::str::FromStr as _;
+        let collection_id = firestore_path::CollectionId::from_str("rooms")?;
+        let firestore = Firestore::new(FirestoreOptions::default())?;
+        let collection_group = CollectionGroup::new(collection_id, firestore);
+        let _query = Query::collection_group(collection_group);
         Ok(())
     }
 }
