@@ -165,7 +165,7 @@
   - [ ] bulkWriter
   - [ ] bundle
   - [x] collection
-  - [ ] collectionGroup
+  - [x] collectionGroup
   - [x] doc
   - [x] getAll
   - [ ] listCollections

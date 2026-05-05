@@ -1,6 +1,7 @@
 use std::str::FromStr;
 use std::sync::atomic::AtomicU64;
 
+use crate::CollectionGroup;
 use crate::CollectionReference;
 use crate::DocumentReference;
 use crate::DocumentSnapshot;
@@ -49,10 +50,6 @@ impl Firestore {
 }
 
 impl Firestore {
-    pub fn database_id(&self) -> String {
-        self.firestore_client.database_id()
-    }
-
     pub fn collection(
         &self,
         collection_path: impl Into<String>,
@@ -61,6 +58,20 @@ impl Firestore {
         let collection_path =
             firestore_path::CollectionPath::from_str(&s).map_err(Error::invalid_collection_path)?;
         Ok(CollectionReference::new(collection_path, self.clone()))
+    }
+
+    pub fn collection_group(
+        &self,
+        collection_id: impl Into<String>,
+    ) -> Result<CollectionGroup, Error> {
+        let collection_id: String = collection_id.into();
+        let collection_id = firestore_path::CollectionId::from_str(&collection_id)
+            .map_err(Error::invalid_collection_id)?;
+        Ok(CollectionGroup::new(collection_id, self.clone()))
+    }
+
+    pub fn database_id(&self) -> String {
+        self.firestore_client.database_id()
     }
 
     pub async fn get_all(
