@@ -17,6 +17,11 @@ impl CollectionGroup {
 }
 
 impl CollectionGroup {
+    #[allow(dead_code)]
+    pub(crate) fn collection_id(&self) -> &firestore_path::CollectionId {
+        &self.collection_id
+    }
+
     /// Query::firestore
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
@@ -26,6 +31,19 @@ impl CollectionGroup {
 #[cfg(test)]
 mod tests {
     #[tokio::test]
+    async fn test_collection_id() -> anyhow::Result<()> {
+        use crate::CollectionGroup;
+        use crate::Firestore;
+        use crate::FirestoreOptions;
+        use std::str::FromStr as _;
+        let collection_id = firestore_path::CollectionId::from_str("rooms")?;
+        let firestore = Firestore::new(FirestoreOptions::default())?;
+        let collection_group = CollectionGroup::new(collection_id, firestore);
+        assert_eq!(collection_group.collection_id().to_string(), "rooms");
+        Ok(())
+    }
+
+    #[tokio::test]
     async fn test_new() -> anyhow::Result<()> {
         use crate::CollectionGroup;
         use crate::Firestore;
@@ -33,8 +51,8 @@ mod tests {
         use std::str::FromStr as _;
         let collection_id = firestore_path::CollectionId::from_str("rooms")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
-        let _collection_group = CollectionGroup::new(collection_id, firestore);
-        // NOTE: can't test CollectionGroup::collection_id() because it's private
+        let collection_group = CollectionGroup::new(collection_id, firestore);
+        assert_eq!(collection_group.collection_id().to_string(), "rooms");
         Ok(())
     }
 }
