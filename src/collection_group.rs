@@ -1,9 +1,7 @@
 use crate::Firestore;
 
 pub struct CollectionGroup {
-    #[allow(dead_code)]
     collection_id: firestore_path::CollectionId,
-    #[allow(dead_code)]
     firestore: Firestore,
 }
 
@@ -17,7 +15,6 @@ impl CollectionGroup {
 }
 
 impl CollectionGroup {
-    #[allow(dead_code)]
     pub(crate) fn collection_id(&self) -> &firestore_path::CollectionId {
         &self.collection_id
     }

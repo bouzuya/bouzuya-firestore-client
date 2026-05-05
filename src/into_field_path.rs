@@ -2,7 +2,6 @@ use crate::Error;
 use crate::FieldPath;
 
 pub(crate) trait IntoFieldPath {
-    #[allow(dead_code)]
     fn into_field_path(self) -> Result<FieldPath, Error>;
 }
 

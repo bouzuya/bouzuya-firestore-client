@@ -3,7 +3,6 @@ use crate::Filter;
 use crate::IntoFieldPath;
 
 pub(crate) trait IntoFilter {
-    #[allow(dead_code)]
     fn into_filter(self) -> Result<Filter, Error>;
 }
 

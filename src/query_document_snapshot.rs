@@ -7,7 +7,6 @@ use crate::Timestamp;
 pub struct QueryDocumentSnapshot(DocumentSnapshot);
 
 impl QueryDocumentSnapshot {
-    #[allow(dead_code)]
     pub(crate) fn new(document_snapshot: DocumentSnapshot) -> Self {
         assert!(document_snapshot.exists());
         Self(document_snapshot)
