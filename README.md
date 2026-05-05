@@ -59,7 +59,7 @@
   - [ ] (Query) explain
   - [ ] (Query) explainStream
   - [ ] (Query) findNearest
-  - [ ] (Query) get
+  - [x] (Query) get
   - [x] (Query) <del>isEqual</del>
   - [ ] (Query) limit
   - [ ] (Query) limitToLast

@@ -1,4 +1,7 @@
+use crate::Error;
 use crate::Firestore;
+use crate::Query;
+use crate::QuerySnapshot;
 
 #[derive(Clone)]
 pub struct CollectionGroup {
@@ -23,6 +26,11 @@ impl CollectionGroup {
     /// Query::firestore
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
+    }
+
+    /// Query::get
+    pub async fn get(&self) -> Result<QuerySnapshot, Error> {
+        Query::collection_group(self.clone()).get().await
     }
 }
 
