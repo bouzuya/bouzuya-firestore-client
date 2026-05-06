@@ -54,7 +54,7 @@
   - [x] (Query) firestore
   - [ ] (Query) aggregate
   - [ ] (Query) count
-  - [ ] (Query) endAt
+  - [x] (Query) endAt
   - [ ] (Query) endBefore
   - [ ] (Query) explain
   - [ ] (Query) explainStream
