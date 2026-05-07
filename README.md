@@ -55,7 +55,7 @@
   - [ ] (Query) aggregate
   - [ ] (Query) count
   - [x] (Query) endAt
-  - [ ] (Query) endBefore
+  - [x] (Query) endBefore
   - [ ] (Query) explain
   - [ ] (Query) explainStream
   - [ ] (Query) findNearest
