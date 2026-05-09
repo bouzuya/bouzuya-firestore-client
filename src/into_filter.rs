@@ -2,14 +2,23 @@ use crate::Error;
 use crate::Filter;
 use crate::IntoFieldPath;
 
-pub(crate) trait IntoFilter {
+pub trait IntoFilter: crate::private::Sealed {
     fn into_filter(self) -> Result<Filter, Error>;
 }
+
+impl crate::private::Sealed for Filter {}
 
 impl IntoFilter for Filter {
     fn into_filter(self) -> Result<Filter, Error> {
         Ok(self)
     }
+}
+
+impl<P, V> crate::private::Sealed for (P, &str, V)
+where
+    P: IntoFieldPath,
+    V: serde::Serialize,
+{
 }
 
 impl<P, V> IntoFilter for (P, &str, V)

@@ -98,7 +98,6 @@ impl CollectionReference {
     }
 
     /// Query::order_by
-    #[allow(private_bounds)]
     pub fn order_by(
         &self,
         field_path: impl IntoFieldPath,
@@ -108,7 +107,6 @@ impl CollectionReference {
     }
 
     /// Query::select
-    #[allow(private_bounds)]
     pub fn select<I>(&self, fields: I) -> Result<Query, Error>
     where
         I: IntoIterator,
@@ -136,7 +134,6 @@ impl CollectionReference {
     }
 
     /// Query::r#where
-    #[allow(private_bounds)]
     pub fn r#where(&self, filter: impl IntoFilter) -> Result<Query, Error> {
         Query::collection(self.clone()).r#where(filter)
     }

@@ -22,7 +22,6 @@ impl Filter {
         ))
     }
 
-    #[allow(private_bounds)]
     pub fn r#where(
         field_path: impl IntoFieldPath,
         op: &str,

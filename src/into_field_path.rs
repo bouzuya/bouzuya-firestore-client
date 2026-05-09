@@ -1,9 +1,11 @@
 use crate::Error;
 use crate::FieldPath;
 
-pub(crate) trait IntoFieldPath {
+pub trait IntoFieldPath: crate::private::Sealed {
     fn into_field_path(self) -> Result<FieldPath, Error>;
 }
+
+impl crate::private::Sealed for FieldPath {}
 
 impl IntoFieldPath for FieldPath {
     fn into_field_path(self) -> Result<FieldPath, Error> {
@@ -11,11 +13,15 @@ impl IntoFieldPath for FieldPath {
     }
 }
 
+impl crate::private::Sealed for &str {}
+
 impl IntoFieldPath for &str {
     fn into_field_path(self) -> Result<FieldPath, Error> {
         <FieldPath as std::str::FromStr>::from_str(self)
     }
 }
+
+impl crate::private::Sealed for String {}
 
 impl IntoFieldPath for String {
     fn into_field_path(self) -> Result<FieldPath, Error> {

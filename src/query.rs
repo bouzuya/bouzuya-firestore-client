@@ -165,7 +165,6 @@ impl Query {
         })
     }
 
-    #[allow(private_bounds)]
     pub fn order_by(
         &self,
         field_path: impl IntoFieldPath,
@@ -195,7 +194,6 @@ impl Query {
         })
     }
 
-    #[allow(private_bounds)]
     pub fn select<I>(&self, fields: I) -> Result<Query, Error>
     where
         I: IntoIterator,
@@ -260,7 +258,6 @@ impl Query {
         })
     }
 
-    #[allow(private_bounds)]
     pub fn r#where(&self, filter: impl IntoFilter) -> Result<Query, Error> {
         let filter = filter.into_filter()?;
         let mut where_ = self.where_.clone();
