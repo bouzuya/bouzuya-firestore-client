@@ -65,7 +65,7 @@
   - [ ] (Query) limitToLast
   - [x] (Query) offset
   - [ ] (Query) onSnapshot
-  - [ ] (Query) orderBy
+  - [x] (Query) orderBy
   - [ ] (Query) select
   - [ ] (Query) startAfter
   - [ ] (Query) startAt

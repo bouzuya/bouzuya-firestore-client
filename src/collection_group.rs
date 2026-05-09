@@ -1,5 +1,6 @@
 use crate::Error;
 use crate::Firestore;
+use crate::IntoFieldPath;
 use crate::Query;
 use crate::QuerySnapshot;
 
@@ -59,6 +60,15 @@ impl CollectionGroup {
     /// Query::offset
     pub fn offset(&self, offset: i32) -> Result<Query, Error> {
         Query::collection_group(self.clone()).offset(offset)
+    }
+
+    /// Query::order_by
+    pub fn order_by(
+        &self,
+        field_path: impl IntoFieldPath,
+        direction: &str,
+    ) -> Result<Query, Error> {
+        Query::collection_group(self.clone()).order_by(field_path, direction)
     }
 }
 
