@@ -1,6 +1,7 @@
 use crate::Error;
 use crate::Firestore;
 use crate::IntoFieldPath;
+use crate::IntoFilter;
 use crate::Query;
 use crate::QuerySnapshot;
 
@@ -96,6 +97,11 @@ impl CollectionGroup {
         I::Item: serde::Serialize,
     {
         Query::collection_group(self.clone()).start_at(values)
+    }
+
+    /// Query::r#where
+    pub fn r#where(&self, filter: impl IntoFilter) -> Result<Query, Error> {
+        Query::collection_group(self.clone()).r#where(filter)
     }
 }
 

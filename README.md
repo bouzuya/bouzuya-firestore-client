@@ -70,7 +70,7 @@
   - [x] (Query) startAfter
   - [x] (Query) startAt
   - [ ] (Query) stream
-  - [ ] (Query) where
+  - [x] (Query) where
   - [ ] (Query) withConverter
 - [x] CollectionReference : Query
   - [x] id
