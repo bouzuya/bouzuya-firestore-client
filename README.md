@@ -67,7 +67,7 @@
   - [ ] (Query) onSnapshot
   - [x] (Query) orderBy
   - [x] (Query) select
-  - [ ] (Query) startAfter
+  - [x] (Query) startAfter
   - [ ] (Query) startAt
   - [ ] (Query) stream
   - [ ] (Query) where
