@@ -88,6 +88,15 @@ impl CollectionGroup {
     {
         Query::collection_group(self.clone()).start_after(values)
     }
+
+    /// Query::start_at
+    pub fn start_at<I>(&self, values: I) -> Result<Query, Error>
+    where
+        I: IntoIterator,
+        I::Item: serde::Serialize,
+    {
+        Query::collection_group(self.clone()).start_at(values)
+    }
 }
 
 #[cfg(test)]

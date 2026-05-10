@@ -68,7 +68,7 @@
   - [x] (Query) orderBy
   - [x] (Query) select
   - [x] (Query) startAfter
-  - [ ] (Query) startAt
+  - [x] (Query) startAt
   - [ ] (Query) stream
   - [ ] (Query) where
   - [ ] (Query) withConverter
