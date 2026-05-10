@@ -70,6 +70,15 @@ impl CollectionGroup {
     ) -> Result<Query, Error> {
         Query::collection_group(self.clone()).order_by(field_path, direction)
     }
+
+    /// Query::select
+    pub fn select<I>(&self, fields: I) -> Result<Query, Error>
+    where
+        I: IntoIterator,
+        I::Item: IntoFieldPath,
+    {
+        Query::collection_group(self.clone()).select(fields)
+    }
 }
 
 #[cfg(test)]

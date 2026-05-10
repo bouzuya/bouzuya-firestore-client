@@ -6,3 +6,4 @@ mod impl_clone;
 mod limit;
 mod offset;
 mod order_by;
+mod select;
