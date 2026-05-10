@@ -181,12 +181,12 @@
   - [x] <del>isEqual</del>
 - [ ] PlanSummary
   - [ ] indexesUsed
-- [ ] Query
+- [x] Query
   - [x] firestore
   - [ ] aggregate
   - [ ] count
   - [x] endAt
-  - [ ] endBefore
+  - [x] endBefore
   - [ ] explain
   - [ ] explainStream
   - [ ] findNearest
@@ -227,7 +227,7 @@
   - [ ] readTime
   - [x] size
   - [ ] docChanges
-  - [ ] forEach
+  - [x] <del>forEach</del>
   - [x] <del>isEqual</del>
 - [x] Timestamp
   - [x] nanoseconds
