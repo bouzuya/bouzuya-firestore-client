@@ -78,7 +78,7 @@ mod tests {
             seconds: 1234567890,
             nanos: 123456789,
         };
-        let timestamp = Timestamp::from_prost_timestamp(prost_typestamp.clone());
+        let timestamp = Timestamp::from_prost_timestamp(prost_typestamp);
         assert_eq!(timestamp.into_prost_timestamp(), prost_typestamp);
     }
 
@@ -88,7 +88,7 @@ mod tests {
             seconds: 1234567890,
             nanos: 123456789,
         };
-        let timestamp = Timestamp::from_prost_timestamp(prost_typestamp.clone());
+        let timestamp = Timestamp::from_prost_timestamp(prost_typestamp);
         assert_eq!(timestamp.into_prost_timestamp(), prost_typestamp);
     }
 }
