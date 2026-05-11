@@ -80,8 +80,11 @@ impl DocumentReference {
         let document = self
             .firestore
             .firestore_client()
-            .get_document(&self.document_path)
-            .await?;
+            .batch_get(std::slice::from_ref(&self.document_path))
+            .await?
+            .into_iter()
+            .next()
+            .flatten();
         Ok(DocumentSnapshot::new(document, self.clone()))
     }
 

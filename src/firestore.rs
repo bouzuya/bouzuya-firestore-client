@@ -205,7 +205,7 @@ mod tests {
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let firestore_client = firestore.firestore_client();
         firestore_client
-            .get_document(&DocumentPath::from_str("test-collection/test-document")?)
+            .batch_get(&[DocumentPath::from_str("test-collection/test-document")?])
             .await?;
         Ok(())
     }

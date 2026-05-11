@@ -314,30 +314,6 @@ impl FirestoreClient {
         Ok(response)
     }
 
-    pub(crate) async fn get_document(
-        &self,
-        document_path: &firestore_path::DocumentPath,
-    ) -> Result<Option<google::firestore::v1::Document>, Error> {
-        let mut client = self.client().await?;
-        let request = google::firestore::v1::GetDocumentRequest {
-            name: self
-                .database_name
-                .doc(document_path.to_string())
-                .expect("invalid document path")
-                .to_string(),
-            mask: None,
-            consistency_selector: None,
-        };
-        let result = client.get_document(request).await;
-        match result {
-            Ok(response) => Ok(Some(response.into_inner())),
-            Err(status) => match status.code() {
-                tonic::Code::NotFound => Ok(None),
-                _ => Err(Error::from(E::from(status))),
-            },
-        }
-    }
-
     pub(crate) async fn get_document_in_transaction(
         &self,
         document_path: &firestore_path::DocumentPath,
