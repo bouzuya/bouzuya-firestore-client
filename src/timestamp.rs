@@ -12,6 +12,18 @@ impl Timestamp {
     pub(crate) fn from_prost_timestamp(timestamp: prost_types::Timestamp) -> Self {
         Self(timestamp)
     }
+
+    pub fn now() -> Self {
+        Self::from_millis(
+            i64::try_from(
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .expect("SystemTime before UNIX epoch")
+                    .as_millis(),
+            )
+            .expect("millis overflow"),
+        )
+    }
 }
 
 impl Timestamp {

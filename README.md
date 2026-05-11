@@ -235,7 +235,7 @@
   - [ ] fromDate
   - [x] fromMillis
   - [x] <del>isEqual</del>
-  - [ ] now
+  - [x] now
   - [ ] toDate
   - [x] toMillis
   - [ ] valueOf
