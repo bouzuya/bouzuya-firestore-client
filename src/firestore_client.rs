@@ -573,7 +573,7 @@ impl FirestoreClient {
         &self,
         collection_path: Option<&firestore_path::CollectionPath>,
         structured_query: google::firestore::v1::StructuredQuery,
-    ) -> Result<Vec<google::firestore::v1::Document>, Error> {
+    ) -> Result<Vec<(google::firestore::v1::Document, prost_types::Timestamp)>, Error> {
         let root_document_name = self.database_name.root_document_name().to_string();
         let parent = match collection_path.and_then(|collection_path| collection_path.parent()) {
             Some(parent_document_path) => self
@@ -601,9 +601,30 @@ impl FirestoreClient {
             .map_err(E::from)?
             .into_inner();
         let mut documents = vec![];
-        while let Some(response) = stream.message().await.map_err(E::from)? {
-            if let Some(document) = response.document {
-                documents.push(document);
+        while let Some(google::firestore::v1::RunQueryResponse {
+            transaction: _,
+            document,
+            read_time,
+            skipped_results: _,
+            explain_metrics: _,
+            continuation_selector: _,
+        }) = stream.message().await.map_err(E::from)?
+        {
+            match (read_time, document) {
+                (None, None) => {
+                    // This should never happen, but if it does, we just ignore it.
+                }
+                (None, Some(_)) => {
+                    return Err(Error::from_source(
+                        "run query response is missing read_time".into(),
+                    ));
+                }
+                (Some(_), None) => {
+                    // Empty result / progress message without a document; ignore.
+                }
+                (Some(read_time), Some(document)) => {
+                    documents.push((document, read_time));
+                }
             }
         }
         Ok(documents)

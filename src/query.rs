@@ -125,7 +125,8 @@ impl Query {
             .await?;
         let query_document_snapshots = documents
             .into_iter()
-            .map(|document| {
+            // FIXME: Use read_time
+            .map(|(document, _read_time)| {
                 let document_name =
                     <firestore_path::DocumentName as std::str::FromStr>::from_str(&document.name)
                         .map_err(|e| Error::from_source(Box::new(e)))?;
