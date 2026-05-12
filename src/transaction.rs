@@ -89,10 +89,7 @@ impl Transaction {
         let (document, _read_time) = document_reference
             .firestore()
             .firestore_client()
-            .get_document_in_transaction(
-                document_reference.document_path(),
-                self.transaction.clone(),
-            )
+            .batch_get_in_transaction(document_reference.document_path(), self.transaction.clone())
             .await?;
         Ok(DocumentSnapshot::new(document, document_reference.clone()))
     }

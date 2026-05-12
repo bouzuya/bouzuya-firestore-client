@@ -121,6 +121,54 @@ impl FirestoreClient {
             .collect())
     }
 
+    pub(crate) async fn batch_get_in_transaction(
+        &self,
+        document_path: &firestore_path::DocumentPath,
+        transaction: Vec<u8>,
+    ) -> Result<
+        (
+            Option<google::firestore::v1::Document>,
+            ::prost_types::Timestamp,
+        ),
+        Error,
+    > {
+        let mut client = self.client().await?;
+        let document_name = self.document_name(document_path);
+        let request = google::firestore::v1::BatchGetDocumentsRequest {
+            database: self.database_name.to_string(),
+            documents: vec![document_name.clone()],
+            mask: None,
+            consistency_selector: Some(
+                google::firestore::v1::batch_get_documents_request::ConsistencySelector::Transaction(
+                    transaction,
+                ),
+            ),
+        };
+        let mut stream = client
+            .batch_get_documents(request)
+            .await
+            .map_err(E::from)?
+            .into_inner();
+        let google::firestore::v1::BatchGetDocumentsResponse {
+            transaction: _,
+            read_time,
+            result,
+        } =
+            stream.message().await.map_err(E::from)?.ok_or_else(|| {
+                Error::from_source("batch get documents response is missing".into())
+            })?;
+        let read_time = read_time.ok_or_else(|| {
+            Error::from_source("batch get documents response is missing read_time".into())
+        })?;
+        Ok(match result {
+            Some(google::firestore::v1::batch_get_documents_response::Result::Found(document)) => {
+                (Some(document), read_time)
+            }
+            Some(google::firestore::v1::batch_get_documents_response::Result::Missing(_))
+            | None => (None, read_time),
+        })
+    }
+
     pub(crate) async fn begin_transaction(
         &self,
         TransactionOptions {
@@ -157,6 +205,64 @@ impl FirestoreClient {
         let response = client.begin_transaction(request).await.map_err(E::from)?;
         let google::firestore::v1::BeginTransactionResponse { transaction } = response.into_inner();
         Ok(transaction)
+    }
+
+    async fn client(
+        &self,
+    ) -> Result<
+        google::firestore::v1::firestore_client::FirestoreClient<
+            tonic::service::interceptor::InterceptedService<
+                tonic::transport::Channel,
+                impl FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
+            >,
+        >,
+        E,
+    > {
+        let header_map = match self.credentials {
+            None => {
+                let mut header_map = http::HeaderMap::new();
+                header_map.insert(
+                    http::header::AUTHORIZATION,
+                    http::HeaderValue::from_static("Bearer owner"),
+                );
+                header_map
+            }
+            Some(ref credentials) => {
+                let cacheable_headers = credentials.headers(http::Extensions::new()).await?;
+                match cacheable_headers {
+                    google_cloud_auth::credentials::CacheableResource::New { data, .. } => data,
+                    google_cloud_auth::credentials::CacheableResource::NotModified => {
+                        todo!()
+                    }
+                }
+            }
+        };
+        let metadata = tonic::metadata::MetadataMap::from_headers(header_map);
+        let request_params = self.request_params();
+        let firestore_client =
+            google::firestore::v1::firestore_client::FirestoreClient::with_interceptor(
+                self.channel.clone(),
+                move |mut request: tonic::Request<()>| {
+                    for key_and_value in metadata.iter() {
+                        match key_and_value {
+                            tonic::metadata::KeyAndValueRef::Ascii(key, value) => {
+                                request.metadata_mut().insert(key, value.clone());
+                            }
+                            tonic::metadata::KeyAndValueRef::Binary(key, value) => {
+                                request.metadata_mut().insert_bin(key, value.clone());
+                            }
+                        }
+                    }
+                    request.metadata_mut().insert(
+                        "x-goog-request-params",
+                        tonic::metadata::MetadataValue::try_from(request_params.as_str())
+                            .expect("valid ascii"),
+                    );
+                    Ok(request)
+                },
+            );
+
+        Ok(firestore_client)
     }
 
     pub(crate) async fn commit(
@@ -235,13 +341,6 @@ impl FirestoreClient {
         self.database_name.database_id().to_string()
     }
 
-    pub(crate) fn document_name(&self, document_path: &firestore_path::DocumentPath) -> String {
-        self.database_name
-            .doc(document_path.to_string())
-            .expect("invalid document path")
-            .to_string()
-    }
-
     pub(crate) async fn delete_document(
         &self,
         document_path: &firestore_path::DocumentPath,
@@ -302,6 +401,13 @@ impl FirestoreClient {
         }))
     }
 
+    pub(crate) fn document_name(&self, document_path: &firestore_path::DocumentPath) -> String {
+        self.database_name
+            .doc(document_path.to_string())
+            .expect("invalid document path")
+            .to_string()
+    }
+
     // NOTE: No tests are written for this method (requires a real project).
     #[allow(dead_code)]
     pub(crate) async fn execute_pipeline(
@@ -312,77 +418,6 @@ impl FirestoreClient {
         let request = tonic::Request::new(request);
         let response = client.execute_pipeline(request).await.map_err(E::from)?;
         Ok(response)
-    }
-
-    pub(crate) async fn get_document_in_transaction(
-        &self,
-        document_path: &firestore_path::DocumentPath,
-        transaction: Vec<u8>,
-    ) -> Result<
-        (
-            Option<google::firestore::v1::Document>,
-            ::prost_types::Timestamp,
-        ),
-        Error,
-    > {
-        let mut client = self.client().await?;
-        let document_name = self.document_name(document_path);
-        let request = google::firestore::v1::BatchGetDocumentsRequest {
-            database: self.database_name.to_string(),
-            documents: vec![document_name.clone()],
-            mask: None,
-            consistency_selector: Some(
-                google::firestore::v1::batch_get_documents_request::ConsistencySelector::Transaction(
-                    transaction,
-                ),
-            ),
-        };
-        let mut stream = client
-            .batch_get_documents(request)
-            .await
-            .map_err(E::from)?
-            .into_inner();
-        let google::firestore::v1::BatchGetDocumentsResponse {
-            transaction: _,
-            read_time,
-            result,
-        } =
-            stream.message().await.map_err(E::from)?.ok_or_else(|| {
-                Error::from_source("batch get documents response is missing".into())
-            })?;
-        let read_time = read_time.ok_or_else(|| {
-            Error::from_source("batch get documents response is missing read_time".into())
-        })?;
-        Ok(match result {
-            Some(google::firestore::v1::batch_get_documents_response::Result::Found(document)) => {
-                (Some(document), read_time)
-            }
-            Some(google::firestore::v1::batch_get_documents_response::Result::Missing(_))
-            | None => (None, read_time),
-        })
-    }
-
-    pub(crate) async fn list_root_collection_ids(&self) -> Result<Vec<String>, Error> {
-        let parent = self.database_name.root_document_name().to_string();
-        let mut result = Vec::new();
-        let mut page_token = String::new();
-        loop {
-            let mut client = self.client().await?;
-            let request = google::firestore::v1::ListCollectionIdsRequest {
-                parent: parent.clone(),
-                page_size: 0,
-                page_token: page_token.clone(),
-                consistency_selector: None,
-            };
-            let response = client.list_collection_ids(request).await.map_err(E::from)?;
-            let list_response = response.into_inner();
-            result.extend(list_response.collection_ids);
-            page_token = list_response.next_page_token;
-            if page_token.is_empty() {
-                break;
-            }
-        }
-        Ok(result)
     }
 
     pub(crate) async fn list_collection_ids(
@@ -468,6 +503,109 @@ impl FirestoreClient {
             }
         }
         Ok(result)
+    }
+
+    pub(crate) async fn list_root_collection_ids(&self) -> Result<Vec<String>, Error> {
+        let parent = self.database_name.root_document_name().to_string();
+        let mut result = Vec::new();
+        let mut page_token = String::new();
+        loop {
+            let mut client = self.client().await?;
+            let request = google::firestore::v1::ListCollectionIdsRequest {
+                parent: parent.clone(),
+                page_size: 0,
+                page_token: page_token.clone(),
+                consistency_selector: None,
+            };
+            let response = client.list_collection_ids(request).await.map_err(E::from)?;
+            let list_response = response.into_inner();
+            result.extend(list_response.collection_ids);
+            page_token = list_response.next_page_token;
+            if page_token.is_empty() {
+                break;
+            }
+        }
+        Ok(result)
+    }
+
+    pub(crate) fn request_params(&self) -> String {
+        format!(
+            "project_id={}&database_id={}",
+            self.database_name.project_id(),
+            self.database_name.database_id(),
+        )
+    }
+
+    pub(crate) async fn rollback(&self, transaction: Vec<u8>) -> Result<(), Error> {
+        let mut client = self.client().await?;
+        let request = google::firestore::v1::RollbackRequest {
+            database: self.database_name.to_string(),
+            transaction,
+        };
+        let response = client.rollback(request).await.map_err(E::from)?;
+        let _: () = response.into_inner();
+        Ok(())
+    }
+
+    pub(crate) async fn run_query(
+        &self,
+        collection_path: Option<&firestore_path::CollectionPath>,
+        structured_query: google::firestore::v1::StructuredQuery,
+    ) -> Result<Vec<(google::firestore::v1::Document, prost_types::Timestamp)>, Error> {
+        let root_document_name = self.database_name.root_document_name().to_string();
+        let parent = match collection_path.and_then(|collection_path| collection_path.parent()) {
+            Some(parent_document_path) => self
+                .database_name
+                .doc(parent_document_path.clone())
+                // FIXME
+                .unwrap()
+                .to_string(),
+            None => root_document_name,
+        };
+        let mut client = self.client().await?;
+        let request = google::firestore::v1::RunQueryRequest {
+            parent,
+            explain_options: None,
+            query_type: Some(
+                google::firestore::v1::run_query_request::QueryType::StructuredQuery(
+                    structured_query,
+                ),
+            ),
+            consistency_selector: None,
+        };
+        let mut stream = client
+            .run_query(request)
+            .await
+            .map_err(E::from)?
+            .into_inner();
+        let mut documents = vec![];
+        while let Some(google::firestore::v1::RunQueryResponse {
+            transaction: _,
+            document,
+            read_time,
+            skipped_results: _,
+            explain_metrics: _,
+            continuation_selector: _,
+        }) = stream.message().await.map_err(E::from)?
+        {
+            match (read_time, document) {
+                (None, None) => {
+                    // This should never happen, but if it does, we just ignore it.
+                }
+                (None, Some(_)) => {
+                    return Err(Error::from_source(
+                        "run query response is missing read_time".into(),
+                    ));
+                }
+                (Some(_), None) => {
+                    // Empty result / progress message without a document; ignore.
+                }
+                (Some(read_time), Some(document)) => {
+                    documents.push((document, read_time));
+                }
+            }
+        }
+        Ok(documents)
     }
 
     pub(crate) async fn set_document(
@@ -587,144 +725,6 @@ impl FirestoreClient {
                 .expect("commit_time should be set")
         }))
     }
-
-    pub(crate) async fn run_query(
-        &self,
-        collection_path: Option<&firestore_path::CollectionPath>,
-        structured_query: google::firestore::v1::StructuredQuery,
-    ) -> Result<Vec<(google::firestore::v1::Document, prost_types::Timestamp)>, Error> {
-        let root_document_name = self.database_name.root_document_name().to_string();
-        let parent = match collection_path.and_then(|collection_path| collection_path.parent()) {
-            Some(parent_document_path) => self
-                .database_name
-                .doc(parent_document_path.clone())
-                // FIXME
-                .unwrap()
-                .to_string(),
-            None => root_document_name,
-        };
-        let mut client = self.client().await?;
-        let request = google::firestore::v1::RunQueryRequest {
-            parent,
-            explain_options: None,
-            query_type: Some(
-                google::firestore::v1::run_query_request::QueryType::StructuredQuery(
-                    structured_query,
-                ),
-            ),
-            consistency_selector: None,
-        };
-        let mut stream = client
-            .run_query(request)
-            .await
-            .map_err(E::from)?
-            .into_inner();
-        let mut documents = vec![];
-        while let Some(google::firestore::v1::RunQueryResponse {
-            transaction: _,
-            document,
-            read_time,
-            skipped_results: _,
-            explain_metrics: _,
-            continuation_selector: _,
-        }) = stream.message().await.map_err(E::from)?
-        {
-            match (read_time, document) {
-                (None, None) => {
-                    // This should never happen, but if it does, we just ignore it.
-                }
-                (None, Some(_)) => {
-                    return Err(Error::from_source(
-                        "run query response is missing read_time".into(),
-                    ));
-                }
-                (Some(_), None) => {
-                    // Empty result / progress message without a document; ignore.
-                }
-                (Some(read_time), Some(document)) => {
-                    documents.push((document, read_time));
-                }
-            }
-        }
-        Ok(documents)
-    }
-
-    pub(crate) fn request_params(&self) -> String {
-        format!(
-            "project_id={}&database_id={}",
-            self.database_name.project_id(),
-            self.database_name.database_id(),
-        )
-    }
-
-    pub(crate) async fn rollback(&self, transaction: Vec<u8>) -> Result<(), Error> {
-        let mut client = self.client().await?;
-        let request = google::firestore::v1::RollbackRequest {
-            database: self.database_name.to_string(),
-            transaction,
-        };
-        let response = client.rollback(request).await.map_err(E::from)?;
-        let _: () = response.into_inner();
-        Ok(())
-    }
-
-    async fn client(
-        &self,
-    ) -> Result<
-        google::firestore::v1::firestore_client::FirestoreClient<
-            tonic::service::interceptor::InterceptedService<
-                tonic::transport::Channel,
-                impl FnMut(tonic::Request<()>) -> Result<tonic::Request<()>, tonic::Status>,
-            >,
-        >,
-        E,
-    > {
-        let header_map = match self.credentials {
-            None => {
-                let mut header_map = http::HeaderMap::new();
-                header_map.insert(
-                    http::header::AUTHORIZATION,
-                    http::HeaderValue::from_static("Bearer owner"),
-                );
-                header_map
-            }
-            Some(ref credentials) => {
-                let cacheable_headers = credentials.headers(http::Extensions::new()).await?;
-                match cacheable_headers {
-                    google_cloud_auth::credentials::CacheableResource::New { data, .. } => data,
-                    google_cloud_auth::credentials::CacheableResource::NotModified => {
-                        todo!()
-                    }
-                }
-            }
-        };
-        let metadata = tonic::metadata::MetadataMap::from_headers(header_map);
-        let request_params = self.request_params();
-        let firestore_client =
-            google::firestore::v1::firestore_client::FirestoreClient::with_interceptor(
-                self.channel.clone(),
-                move |mut request: tonic::Request<()>| {
-                    for key_and_value in metadata.iter() {
-                        match key_and_value {
-                            tonic::metadata::KeyAndValueRef::Ascii(key, value) => {
-                                request.metadata_mut().insert(key, value.clone());
-                            }
-                            tonic::metadata::KeyAndValueRef::Binary(key, value) => {
-                                request.metadata_mut().insert_bin(key, value.clone());
-                            }
-                        }
-                    }
-                    request.metadata_mut().insert(
-                        "x-goog-request-params",
-                        tonic::metadata::MetadataValue::try_from(request_params.as_str())
-                            .expect("valid ascii"),
-                    );
-                    Ok(request)
-                },
-            );
-
-        Ok(firestore_client)
-    }
 }
 
 impl std::fmt::Debug for FirestoreClient {
@@ -828,7 +828,7 @@ mod tests {
 
     #[tokio::test]
     #[serial_test::serial]
-    async fn test_get_document_in_transaction() -> anyhow::Result<()> {
+    async fn test_batch_get_in_transaction() -> anyhow::Result<()> {
         use crate::TransactionOptions;
         use firestore_path::DocumentPath;
         use std::str::FromStr as _;
@@ -837,9 +837,9 @@ mod tests {
         let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
         let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
-        let document_path = DocumentPath::from_str("rooms/test-get-document-in-transaction")?;
+        let document_path = DocumentPath::from_str("rooms/test-batch-get-in-transaction")?;
         let (document, _read_time) = client
-            .get_document_in_transaction(&document_path, transaction.clone())
+            .batch_get_in_transaction(&document_path, transaction.clone())
             .await?;
         assert!(document.is_none());
         client.rollback(transaction).await?;
