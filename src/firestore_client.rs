@@ -318,29 +318,48 @@ impl FirestoreClient {
         &self,
         document_path: &firestore_path::DocumentPath,
         transaction: Vec<u8>,
-    ) -> Result<Option<google::firestore::v1::Document>, Error> {
+    ) -> Result<
+        (
+            Option<google::firestore::v1::Document>,
+            ::prost_types::Timestamp,
+        ),
+        Error,
+    > {
         let mut client = self.client().await?;
-        let request = google::firestore::v1::GetDocumentRequest {
-            name: self
-                .database_name
-                .doc(document_path.to_string())
-                .expect("invalid document path")
-                .to_string(),
+        let document_name = self.document_name(document_path);
+        let request = google::firestore::v1::BatchGetDocumentsRequest {
+            database: self.database_name.to_string(),
+            documents: vec![document_name.clone()],
             mask: None,
             consistency_selector: Some(
-                google::firestore::v1::get_document_request::ConsistencySelector::Transaction(
+                google::firestore::v1::batch_get_documents_request::ConsistencySelector::Transaction(
                     transaction,
                 ),
             ),
         };
-        let result = client.get_document(request).await;
-        match result {
-            Ok(response) => Ok(Some(response.into_inner())),
-            Err(status) => match status.code() {
-                tonic::Code::NotFound => Ok(None),
-                _ => Err(Error::from(E::from(status))),
-            },
-        }
+        let mut stream = client
+            .batch_get_documents(request)
+            .await
+            .map_err(E::from)?
+            .into_inner();
+        let google::firestore::v1::BatchGetDocumentsResponse {
+            transaction: _,
+            read_time,
+            result,
+        } =
+            stream.message().await.map_err(E::from)?.ok_or_else(|| {
+                Error::from_source("batch get documents response is missing".into())
+            })?;
+        let read_time = read_time.ok_or_else(|| {
+            Error::from_source("batch get documents response is missing read_time".into())
+        })?;
+        Ok(match result {
+            Some(google::firestore::v1::batch_get_documents_response::Result::Found(document)) => {
+                (Some(document), read_time)
+            }
+            Some(google::firestore::v1::batch_get_documents_response::Result::Missing(_))
+            | None => (None, read_time),
+        })
     }
 
     pub(crate) async fn list_root_collection_ids(&self) -> Result<Vec<String>, Error> {
@@ -819,10 +838,10 @@ mod tests {
         let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
         let document_path = DocumentPath::from_str("rooms/test-get-document-in-transaction")?;
-        let result = client
+        let (document, _read_time) = client
             .get_document_in_transaction(&document_path, transaction.clone())
             .await?;
-        assert!(result.is_none());
+        assert!(document.is_none());
         client.rollback(transaction).await?;
         Ok(())
     }

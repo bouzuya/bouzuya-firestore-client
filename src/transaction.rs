@@ -85,7 +85,8 @@ impl Transaction {
         &self,
         document_reference: &DocumentReference,
     ) -> Result<DocumentSnapshot, Error> {
-        let document = document_reference
+        // FIXME: Use read_time
+        let (document, _read_time) = document_reference
             .firestore()
             .firestore_client()
             .get_document_in_transaction(
