@@ -79,10 +79,17 @@ impl FirestoreClient {
         })
     }
 
-    pub(crate) async fn batch_get(
+    pub(crate) async fn batch_get_documents(
         &self,
         document_paths: &[firestore_path::DocumentPath],
-    ) -> Result<Vec<Option<google::firestore::v1::Document>>, Error> {
+        transaction: Option<Vec<u8>>,
+    ) -> Result<
+        Vec<(
+            Option<google::firestore::v1::Document>,
+            ::prost_types::Timestamp,
+        )>,
+        Error,
+    > {
         let mut client = self.client().await?;
         let documents = document_paths
             .iter()
@@ -92,56 +99,8 @@ impl FirestoreClient {
             database: self.database_name.to_string(),
             documents,
             mask: None,
-            consistency_selector: None,
-        };
-        let mut stream = client
-            .batch_get_documents(request)
-            .await
-            .map_err(E::from)?
-            .into_inner();
-        let mut map = std::collections::HashMap::new();
-        while let Some(response) = stream.message().await.map_err(E::from)? {
-            match response.result {
-                Some(google::firestore::v1::batch_get_documents_response::Result::Found(
-                    document,
-                )) => {
-                    map.insert(document.name.clone(), Some(document));
-                }
-                Some(google::firestore::v1::batch_get_documents_response::Result::Missing(
-                    name,
-                )) => {
-                    map.insert(name, None);
-                }
-                None => {}
-            }
-        }
-        Ok(document_paths
-            .iter()
-            .map(|p| map.remove(&self.document_name(p)).unwrap_or(None))
-            .collect())
-    }
-
-    pub(crate) async fn batch_get_in_transaction(
-        &self,
-        document_path: &firestore_path::DocumentPath,
-        transaction: Vec<u8>,
-    ) -> Result<
-        (
-            Option<google::firestore::v1::Document>,
-            ::prost_types::Timestamp,
-        ),
-        Error,
-    > {
-        let mut client = self.client().await?;
-        let document_name = self.document_name(document_path);
-        let request = google::firestore::v1::BatchGetDocumentsRequest {
-            database: self.database_name.to_string(),
-            documents: vec![document_name.clone()],
-            mask: None,
-            consistency_selector: Some(
-                google::firestore::v1::batch_get_documents_request::ConsistencySelector::Transaction(
-                    transaction,
-                ),
+            consistency_selector: transaction.map(
+                google::firestore::v1::batch_get_documents_request::ConsistencySelector::Transaction,
             ),
         };
         let mut stream = client
@@ -149,24 +108,40 @@ impl FirestoreClient {
             .await
             .map_err(E::from)?
             .into_inner();
-        let google::firestore::v1::BatchGetDocumentsResponse {
+        let mut map = std::collections::HashMap::new();
+        while let Some(google::firestore::v1::BatchGetDocumentsResponse {
             transaction: _,
             read_time,
             result,
-        } =
-            stream.message().await.map_err(E::from)?.ok_or_else(|| {
-                Error::from_source("batch get documents response is missing".into())
+        }) = stream.message().await.map_err(E::from)?
+        {
+            let read_time = read_time.ok_or_else(|| {
+                Error::from_source("batch get documents response is missing read_time".into())
             })?;
-        let read_time = read_time.ok_or_else(|| {
-            Error::from_source("batch get documents response is missing read_time".into())
-        })?;
-        Ok(match result {
-            Some(google::firestore::v1::batch_get_documents_response::Result::Found(document)) => {
-                (Some(document), read_time)
+            match result {
+                Some(google::firestore::v1::batch_get_documents_response::Result::Found(
+                    document,
+                )) => {
+                    map.insert(document.name.clone(), (Some(document), read_time));
+                }
+                Some(google::firestore::v1::batch_get_documents_response::Result::Missing(
+                    name,
+                )) => {
+                    map.insert(name, (None, read_time));
+                }
+                None => {}
             }
-            Some(google::firestore::v1::batch_get_documents_response::Result::Missing(_))
-            | None => (None, read_time),
-        })
+        }
+        document_paths
+            .iter()
+            .map(|p| {
+                map.remove(&self.document_name(p)).ok_or_else(|| {
+                    Error::from_source(
+                        format!("batch get documents response is missing for {}", p).into(),
+                    )
+                })
+            })
+            .collect()
     }
 
     pub(crate) async fn begin_transaction(
@@ -828,7 +803,7 @@ mod tests {
 
     #[tokio::test]
     #[serial_test::serial]
-    async fn test_batch_get_in_transaction() -> anyhow::Result<()> {
+    async fn test_batch_get_documents_in_transaction() -> anyhow::Result<()> {
         use crate::TransactionOptions;
         use firestore_path::DocumentPath;
         use std::str::FromStr as _;
@@ -837,10 +812,13 @@ mod tests {
         let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
         let options = TransactionOptions::default();
         let transaction = client.begin_transaction(&options).await?;
-        let document_path = DocumentPath::from_str("rooms/test-batch-get-in-transaction")?;
-        let (document, _read_time) = client
-            .batch_get_in_transaction(&document_path, transaction.clone())
+        let document_path =
+            DocumentPath::from_str("rooms/test-batch-get-documents-in-transaction")?;
+        let results = client
+            .batch_get_documents(&[document_path], Some(transaction.clone()))
             .await?;
+        assert_eq!(results.len(), 1);
+        let (document, _read_time) = &results[0];
         assert!(document.is_none());
         client.rollback(transaction).await?;
         Ok(())
@@ -917,16 +895,17 @@ mod tests {
 
     #[tokio::test]
     #[serial_test::serial]
-    async fn test_batch_get() -> anyhow::Result<()> {
+    async fn test_batch_get_documents() -> anyhow::Result<()> {
         use firestore_path::DocumentPath;
         use std::str::FromStr as _;
         let project_id = std::env::var("GOOGLE_CLOUD_PROJECT")?;
         let emulator_host = std::env::var("FIRESTORE_EMULATOR_HOST").ok();
         let client = FirestoreClient::new(project_id, "(default)".to_owned(), emulator_host)?;
-        let document_path = DocumentPath::from_str("rooms/test-batch-get")?;
-        let result = client.batch_get(&[document_path]).await?;
+        let document_path = DocumentPath::from_str("rooms/test-batch-get-documents")?;
+        let result = client.batch_get_documents(&[document_path], None).await?;
         assert_eq!(result.len(), 1);
-        assert!(result[0].is_none());
+        let (document, _read_time) = &result[0];
+        assert!(document.is_none());
         Ok(())
     }
 

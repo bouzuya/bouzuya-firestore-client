@@ -89,8 +89,14 @@ impl Transaction {
         let (document, _read_time) = document_reference
             .firestore()
             .firestore_client()
-            .batch_get_in_transaction(document_reference.document_path(), self.transaction.clone())
-            .await?;
+            .batch_get_documents(
+                std::slice::from_ref(document_reference.document_path()),
+                Some(self.transaction.clone()),
+            )
+            .await?
+            .into_iter()
+            .next()
+            .ok_or_else(|| Error::from_source("batch get documents response is missing".into()))?;
         Ok(DocumentSnapshot::new(document, document_reference.clone()))
     }
 

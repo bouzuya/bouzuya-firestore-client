@@ -83,11 +83,14 @@ impl Firestore {
             .iter()
             .map(|r| r.document_path().clone())
             .collect();
-        let documents = self.firestore_client.batch_get(&document_paths).await?;
+        let documents = self
+            .firestore_client
+            .batch_get_documents(&document_paths, None)
+            .await?;
         Ok(documents
             .into_iter()
             .zip(document_references)
-            .map(|(document, document_reference)| {
+            .map(|((document, _read_time), document_reference)| {
                 DocumentSnapshot::new(document, document_reference)
             })
             .collect())
@@ -205,7 +208,10 @@ mod tests {
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let firestore_client = firestore.firestore_client();
         firestore_client
-            .batch_get(&[DocumentPath::from_str("test-collection/test-document")?])
+            .batch_get_documents(
+                &[DocumentPath::from_str("test-collection/test-document")?],
+                None,
+            )
             .await?;
         Ok(())
     }
