@@ -203,14 +203,14 @@
   - [ ] stream
   - [x] where
   - [ ] withConverter
-- [ ] QueryDocumentSnapshot : DocumentSnapshot
+- [x] QueryDocumentSnapshot : DocumentSnapshot
   - [x] createTime
   - [x] updateTime
   - [x] data
   - [x] (DocumentSnapshot) createTime
   - [x] (DocumentSnapshot) exists
   - [x] (DocumentSnapshot) id
-  - [ ] (DocumentSnapshot) readTime
+  - [x] (DocumentSnapshot) readTime
   - [x] (DocumentSnapshot) ref
   - [x] (DocumentSnapshot) updateTime
   - [x] (DocumentSnapshot) data

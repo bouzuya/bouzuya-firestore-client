@@ -30,6 +30,10 @@ impl QueryDocumentSnapshot {
         self.0.id()
     }
 
+    pub fn read_time(&self) -> Timestamp {
+        self.0.read_time()
+    }
+
     pub fn r#ref(&self) -> DocumentReference {
         self.0.r#ref()
     }
