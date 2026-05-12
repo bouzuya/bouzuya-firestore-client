@@ -77,15 +77,19 @@ impl DocumentReference {
     }
 
     pub async fn get(&self) -> Result<DocumentSnapshot, Error> {
-        let document = self
+        let (document, read_time) = self
             .firestore
             .firestore_client()
             .batch_get_documents(std::slice::from_ref(&self.document_path), None)
             .await?
             .into_iter()
             .next()
-            .and_then(|(document, _read_time)| document);
-        Ok(DocumentSnapshot::new(document, self.clone()))
+            .expect("batch get documents response is missing document");
+        Ok(DocumentSnapshot::new(
+            document,
+            self.clone(),
+            Timestamp::from_prost_timestamp(read_time),
+        ))
     }
 
     pub async fn list_collections(&self) -> Result<Vec<CollectionReference>, Error> {

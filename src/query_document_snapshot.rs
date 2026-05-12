@@ -45,6 +45,7 @@ mod tests {
     use crate::DocumentSnapshot;
     use crate::Firestore;
     use crate::FirestoreOptions;
+    use crate::Timestamp;
     use firestore_path::DocumentPath;
     use std::str::FromStr as _;
 
@@ -59,7 +60,7 @@ mod tests {
             create_time: None,
             update_time: None,
         };
-        let snapshot = DocumentSnapshot::new(Some(document), document_reference);
+        let snapshot = DocumentSnapshot::new(Some(document), document_reference, Timestamp::now());
         assert!(snapshot.exists());
         let qds = super::QueryDocumentSnapshot::new(snapshot);
         assert!(qds.exists());

@@ -8,6 +8,7 @@ use crate::DocumentSnapshot;
 use crate::Error;
 use crate::FirestoreClient;
 use crate::FirestoreOptions;
+use crate::Timestamp;
 use crate::Transaction;
 use crate::TransactionOptions;
 
@@ -90,8 +91,12 @@ impl Firestore {
         Ok(documents
             .into_iter()
             .zip(document_references)
-            .map(|((document, _read_time), document_reference)| {
-                DocumentSnapshot::new(document, document_reference)
+            .map(|((document, read_time), document_reference)| {
+                DocumentSnapshot::new(
+                    document,
+                    document_reference,
+                    Timestamp::from_prost_timestamp(read_time),
+                )
             })
             .collect())
     }

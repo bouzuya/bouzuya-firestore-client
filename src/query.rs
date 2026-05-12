@@ -8,6 +8,7 @@ use crate::IntoFieldPath;
 use crate::IntoFilter;
 use crate::QueryDocumentSnapshot;
 use crate::QuerySnapshot;
+use crate::Timestamp;
 use crate::google;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -125,15 +126,18 @@ impl Query {
             .await?;
         let query_document_snapshots = documents
             .into_iter()
-            // FIXME: Use read_time
-            .map(|(document, _read_time)| {
+            .map(|(document, read_time)| {
                 let document_name =
                     <firestore_path::DocumentName as std::str::FromStr>::from_str(&document.name)
                         .map_err(|e| Error::from_source(Box::new(e)))?;
                 let document_path = firestore_path::DocumentPath::from(document_name);
                 let document_reference =
                     DocumentReference::new(document_path, self.firestore.clone());
-                let document_snapshot = DocumentSnapshot::new(Some(document), document_reference);
+                let document_snapshot = DocumentSnapshot::new(
+                    Some(document),
+                    document_reference,
+                    Timestamp::from_prost_timestamp(read_time),
+                );
                 Ok(QueryDocumentSnapshot::new(document_snapshot))
             })
             .collect::<Result<Vec<QueryDocumentSnapshot>, Error>>()?;

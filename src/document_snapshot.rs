@@ -18,16 +18,19 @@ impl From<E> for Error {
 pub struct DocumentSnapshot {
     document: Option<serde_firestore_value::google::firestore::v1::Document>,
     document_reference: DocumentReference,
+    read_time: Timestamp,
 }
 
 impl DocumentSnapshot {
     pub(crate) fn new(
         document: Option<serde_firestore_value::google::firestore::v1::Document>,
         document_reference: DocumentReference,
+        read_time: Timestamp,
     ) -> Self {
         Self {
             document,
             document_reference,
+            read_time,
         }
     }
 
@@ -76,6 +79,10 @@ impl DocumentSnapshot {
         self.document_reference.clone()
     }
 
+    pub fn read_time(&self) -> Timestamp {
+        self.read_time
+    }
+
     pub fn update_time(&self) -> Option<Timestamp> {
         self.document
             .as_ref()
@@ -92,12 +99,14 @@ mod tests {
         use crate::DocumentSnapshot;
         use crate::Firestore;
         use crate::FirestoreOptions;
+        use crate::Timestamp;
         use firestore_path::DocumentPath;
         use std::str::FromStr as _;
         let document_path = DocumentPath::from_str("rooms/roomA")?;
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let document_reference = DocumentReference::new(document_path, firestore);
-        let snapshot = DocumentSnapshot::new(None, document_reference);
+        let read_time = Timestamp::now();
+        let snapshot = DocumentSnapshot::new(None, document_reference, read_time);
         assert!(!snapshot.exists());
         assert_eq!(snapshot.id().to_string(), "roomA");
         Ok(())

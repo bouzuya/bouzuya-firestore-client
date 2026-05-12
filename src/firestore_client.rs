@@ -132,7 +132,7 @@ impl FirestoreClient {
                 None => {}
             }
         }
-        document_paths
+        let ret = document_paths
             .iter()
             .map(|p| {
                 map.remove(&self.document_name(p)).ok_or_else(|| {
@@ -141,7 +141,15 @@ impl FirestoreClient {
                     )
                 })
             })
-            .collect()
+            .collect::<Result<
+                Vec<(
+                    Option<google::firestore::v1::Document>,
+                    ::prost_types::Timestamp,
+                )>,
+                Error,
+            >>()?;
+        assert_eq!(ret.len(), document_paths.len());
+        Ok(ret)
     }
 
     pub(crate) async fn begin_transaction(

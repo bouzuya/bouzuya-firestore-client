@@ -2,6 +2,7 @@ use crate::DocumentReference;
 use crate::DocumentSnapshot;
 use crate::Error;
 use crate::Precondition;
+use crate::Timestamp;
 use crate::google;
 
 pub struct Transaction {
@@ -85,8 +86,7 @@ impl Transaction {
         &self,
         document_reference: &DocumentReference,
     ) -> Result<DocumentSnapshot, Error> {
-        // FIXME: Use read_time
-        let (document, _read_time) = document_reference
+        let (document, read_time) = document_reference
             .firestore()
             .firestore_client()
             .batch_get_documents(
@@ -97,7 +97,11 @@ impl Transaction {
             .into_iter()
             .next()
             .ok_or_else(|| Error::from_source("batch get documents response is missing".into()))?;
-        Ok(DocumentSnapshot::new(document, document_reference.clone()))
+        Ok(DocumentSnapshot::new(
+            document,
+            document_reference.clone(),
+            Timestamp::from_prost_timestamp(read_time),
+        ))
     }
 
     pub fn set(

@@ -127,7 +127,7 @@
   - [x] createTime
   - [x] exists
   - [x] id
-  - [ ] readTime
+  - [x] readTime
   - [x] ref
   - [x] updateTime
   - [x] data
