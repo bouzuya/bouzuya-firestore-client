@@ -1,17 +1,24 @@
 use crate::Query;
 use crate::QueryDocumentSnapshot;
+use crate::Timestamp;
 
 #[derive(Clone)]
 pub struct QuerySnapshot {
     query: Query,
     query_document_snapshots: Vec<QueryDocumentSnapshot>,
+    read_time: Timestamp,
 }
 
 impl QuerySnapshot {
-    pub(crate) fn new(query: Query, query_document_snapshots: Vec<QueryDocumentSnapshot>) -> Self {
+    pub(crate) fn new(
+        query: Query,
+        query_document_snapshots: Vec<QueryDocumentSnapshot>,
+        read_time: Timestamp,
+    ) -> Self {
         Self {
             query,
             query_document_snapshots,
+            read_time,
         }
     }
 }
@@ -27,6 +34,10 @@ impl QuerySnapshot {
 
     pub fn query(&self) -> Query {
         self.query.clone()
+    }
+
+    pub fn read_time(&self) -> Timestamp {
+        self.read_time
     }
 
     pub fn size(&self) -> usize {
@@ -50,6 +61,7 @@ mod tests {
     use crate::FirestoreOptions;
     use crate::Query;
     use crate::QuerySnapshot;
+    use crate::Timestamp;
     use firestore_path::CollectionPath;
     use std::str::FromStr as _;
 
@@ -59,7 +71,7 @@ mod tests {
         let firestore = Firestore::new(FirestoreOptions::default())?;
         let collection_reference = CollectionReference::new(collection_path, firestore);
         let query = Query::collection(collection_reference);
-        let _qs = QuerySnapshot::new(query, vec![]);
+        let _qs = QuerySnapshot::new(query, vec![], Timestamp::now());
         Ok(())
     }
 }

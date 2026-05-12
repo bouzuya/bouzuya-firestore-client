@@ -118,7 +118,7 @@ impl Query {
                 ));
             }
         }
-        let documents = firestore_client
+        let (documents, read_time) = firestore_client
             .run_query(
                 self.collection_path.as_ref(),
                 google::firestore::v1::StructuredQuery::from(query),
@@ -126,7 +126,7 @@ impl Query {
             .await?;
         let query_document_snapshots = documents
             .into_iter()
-            .map(|(document, read_time)| {
+            .map(|(document, document_read_time)| {
                 let document_name =
                     <firestore_path::DocumentName as std::str::FromStr>::from_str(&document.name)
                         .map_err(|e| Error::from_source(Box::new(e)))?;
@@ -136,12 +136,16 @@ impl Query {
                 let document_snapshot = DocumentSnapshot::new(
                     Some(document),
                     document_reference,
-                    Timestamp::from_prost_timestamp(read_time),
+                    Timestamp::from_prost_timestamp(document_read_time),
                 );
                 Ok(QueryDocumentSnapshot::new(document_snapshot))
             })
             .collect::<Result<Vec<QueryDocumentSnapshot>, Error>>()?;
-        Ok(QuerySnapshot::new(self.clone(), query_document_snapshots))
+        Ok(QuerySnapshot::new(
+            self.clone(),
+            query_document_snapshots,
+            Timestamp::from_prost_timestamp(read_time),
+        ))
     }
 
     pub fn limit(&self, n: i32) -> Result<Query, Error> {

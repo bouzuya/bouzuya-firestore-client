@@ -224,7 +224,7 @@
   - [x] docs
   - [x] empty
   - [x] query
-  - [ ] readTime
+  - [x] readTime
   - [x] size
   - [ ] docChanges
   - [x] <del>forEach</del>

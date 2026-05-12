@@ -534,7 +534,14 @@ impl FirestoreClient {
         &self,
         collection_path: Option<&firestore_path::CollectionPath>,
         structured_query: google::firestore::v1::StructuredQuery,
-    ) -> Result<Vec<(google::firestore::v1::Document, prost_types::Timestamp)>, Error> {
+    ) -> Result<
+        (
+            Vec<(google::firestore::v1::Document, prost_types::Timestamp)>,
+            // last document read time, or read time of empty result
+            prost_types::Timestamp,
+        ),
+        Error,
+    > {
         let root_document_name = self.database_name.root_document_name().to_string();
         let parent = match collection_path.and_then(|collection_path| collection_path.parent()) {
             Some(parent_document_path) => self
@@ -562,6 +569,7 @@ impl FirestoreClient {
             .map_err(E::from)?
             .into_inner();
         let mut documents = vec![];
+        let mut last_read_time: Option<prost_types::Timestamp> = None;
         while let Some(google::firestore::v1::RunQueryResponse {
             transaction: _,
             document,
@@ -580,15 +588,19 @@ impl FirestoreClient {
                         "run query response is missing read_time".into(),
                     ));
                 }
-                (Some(_), None) => {
-                    // Empty result / progress message without a document; ignore.
+                (Some(read_time), None) => {
+                    // Empty result / progress message without a document.
+                    last_read_time = Some(read_time);
                 }
                 (Some(read_time), Some(document)) => {
+                    last_read_time = Some(read_time);
                     documents.push((document, read_time));
                 }
             }
         }
-        Ok(documents)
+        let read_time = last_read_time
+            .ok_or_else(|| Error::from_source("run query response is missing read_time".into()))?;
+        Ok((documents, read_time))
     }
 
     pub(crate) async fn set_document(
