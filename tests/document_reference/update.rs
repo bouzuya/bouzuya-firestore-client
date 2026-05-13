@@ -51,7 +51,7 @@ async fn test_document_reference_update_with_precondition_last_update_time_error
             update_data,
             Precondition {
                 exists: None,
-                last_update_time: Some(Timestamp::from_millis(0)),
+                last_update_time: Some(Timestamp::from_millis(0)?),
             },
         )
         .await;

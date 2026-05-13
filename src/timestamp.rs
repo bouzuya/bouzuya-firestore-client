@@ -1,12 +1,24 @@
+use crate::Error;
+
+/// 0001-01-01T00:00:00Z as seconds since UNIX epoch.
+const MIN_SECONDS: i64 = -62_135_596_800;
+/// 9999-12-31T23:59:59Z as seconds since UNIX epoch.
+const MAX_SECONDS: i64 = 253_402_300_799;
+
 #[derive(Clone, Copy, Eq, Hash, PartialEq)]
 pub struct Timestamp(prost_types::Timestamp);
 
 impl Timestamp {
-    pub fn from_millis(millis: i64) -> Self {
-        Self(prost_types::Timestamp {
-            seconds: millis.div_euclid(1_000),
-            nanos: (millis.rem_euclid(1_000) * 1_000_000) as i32,
-        })
+    pub fn from_millis(millis: i64) -> Result<Self, Error> {
+        let seconds = millis.div_euclid(1_000);
+        let nanos = (millis.rem_euclid(1_000) * 1_000_000) as i32;
+        if !(MIN_SECONDS..=MAX_SECONDS).contains(&seconds) {
+            return Err(Error::custom(format!(
+                "millis out of range: {}",
+                millis
+            )));
+        }
+        Ok(Self(prost_types::Timestamp { seconds, nanos }))
     }
 
     pub(crate) fn from_prost_timestamp(timestamp: prost_types::Timestamp) -> Self {
@@ -23,6 +35,7 @@ impl Timestamp {
             )
             .expect("millis overflow"),
         )
+        .expect("now is in valid range")
     }
 }
 

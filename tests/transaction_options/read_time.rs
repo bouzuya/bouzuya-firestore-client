@@ -1,13 +1,14 @@
 // since v0.1
 #[test]
-fn test_transaction_options_read_time() {
+fn test_transaction_options_read_time() -> anyhow::Result<()> {
     use bouzuya_firestore_client::Timestamp;
     use bouzuya_firestore_client::TransactionOptions;
-    let read_time = Timestamp::from_millis(1_000);
+    let read_time = Timestamp::from_millis(1_000)?;
     let options = TransactionOptions {
         max_attempts: None,
         read_only: None,
         read_time: Some(read_time),
     };
     assert_eq!(options.read_time, Some(read_time));
+    Ok(())
 }

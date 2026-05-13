@@ -21,7 +21,7 @@ async fn test_precondition_last_update_time() -> anyhow::Result<()> {
     // wrong last_update_time should fail
     let precondition = Precondition {
         exists: None,
-        last_update_time: Some(Timestamp::from_millis(0)),
+        last_update_time: Some(Timestamp::from_millis(0)?),
     };
     assert!(document_reference.delete(precondition).await.is_err());
 
