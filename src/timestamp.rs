@@ -12,17 +12,27 @@ impl Timestamp {
     pub fn from_millis(millis: i64) -> Result<Self, Error> {
         let seconds = millis.div_euclid(1_000);
         let nanos = (millis.rem_euclid(1_000) * 1_000_000) as i32;
-        if !(MIN_SECONDS..=MAX_SECONDS).contains(&seconds) {
-            return Err(Error::custom(format!(
-                "millis out of range: {}",
-                millis
-            )));
-        }
-        Ok(Self(prost_types::Timestamp { seconds, nanos }))
+        Self::new(seconds, nanos)
     }
 
     pub(crate) fn from_prost_timestamp(timestamp: prost_types::Timestamp) -> Self {
         Self(timestamp)
+    }
+
+    pub fn new(seconds: i64, nanoseconds: i32) -> Result<Self, Error> {
+        if !(MIN_SECONDS..=MAX_SECONDS).contains(&seconds) {
+            return Err(Error::custom(format!("seconds out of range: {}", seconds)));
+        }
+        if !(0..=999_999_999).contains(&nanoseconds) {
+            return Err(Error::custom(format!(
+                "nanoseconds out of range: {}",
+                nanoseconds
+            )));
+        }
+        Ok(Self(prost_types::Timestamp {
+            seconds,
+            nanos: nanoseconds,
+        }))
     }
 
     pub fn now() -> Self {

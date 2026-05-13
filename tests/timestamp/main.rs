@@ -6,6 +6,7 @@ mod impl_eq;
 mod impl_hash;
 mod impl_ord;
 mod nanoseconds;
+mod new;
 mod now;
 mod seconds;
 mod to_millis;
