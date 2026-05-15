@@ -35,10 +35,10 @@ impl Firestore {
     /// # Examples
     ///
     /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// use bouzuya_firestore_client::Firestore;
     /// use bouzuya_firestore_client::FirestoreOptions;
     ///
-    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// let firestore = Firestore::new(FirestoreOptions::default())?;
     /// let firestore = Firestore::new(FirestoreOptions {
     ///     database_id: Some("my-database".to_owned()),
@@ -77,6 +77,25 @@ impl Firestore {
 }
 
 impl Firestore {
+    /// Returns a [`CollectionReference`] for the collection at the given path.
+    ///
+    /// `collection_path` is a slash-separated path that must point to a
+    /// collection (i.e. it must have an odd number of segments), such as
+    /// `"users"` or `"users/alice/posts"`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let users = firestore.collection("users")?;
+    /// let posts = firestore.collection("users/alice/posts")?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn collection(
         &self,
         collection_path: impl Into<String>,
