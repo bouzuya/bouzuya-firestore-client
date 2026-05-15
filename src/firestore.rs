@@ -274,6 +274,44 @@ impl Firestore {
             .collect()
     }
 
+    /// Runs `update_function` inside a Firestore transaction.
+    ///
+    /// A transaction is started before `update_function` is called. The
+    /// function receives a [`Transaction`] on which reads and writes can be
+    /// staged. When `update_function` returns:
+    ///
+    /// - `Ok(value)`: the staged writes are committed and `value` is returned.
+    /// - `Err(e)`: the transaction is rolled back and `e` is returned.
+    ///
+    /// See [`TransactionOptions`] for available options (e.g. read-only vs.
+    /// read-write).
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use bouzuya_firestore_client::TransactionOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("users/alice")?;
+    /// let exists = firestore
+    ///     .run_transaction(
+    ///         |transaction| {
+    ///             let document_reference = document_reference.clone();
+    ///             Box::pin(async move {
+    ///                 let snapshot = transaction.get(&document_reference).await?;
+    ///                 Ok::<_, bouzuya_firestore_client::Error>(snapshot.exists())
+    ///             })
+    ///         },
+    ///         TransactionOptions::default(),
+    ///     )
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn run_transaction<'a, T, F>(
         &'a self,
         update_function: F,
