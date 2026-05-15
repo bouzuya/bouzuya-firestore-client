@@ -14,6 +14,30 @@ use crate::TransactionOptions;
 
 static NEXT_ID: AtomicU64 = AtomicU64::new(0);
 
+/// A client for a single Cloud Firestore database.
+///
+/// This is the entry point of the crate. Create one with [`Firestore::new`],
+/// then obtain [`CollectionReference`]s, [`DocumentReference`]s, or
+/// [`CollectionGroup`]s from it to read and write data. Use
+/// [`Firestore::run_transaction`] to perform reads and writes atomically.
+///
+/// `Firestore` is cheap to [`Clone`]; the underlying connection is shared
+/// between clones. Two clones of the same instance compare equal via
+/// [`PartialEq`].
+///
+/// # Examples
+///
+/// ```no_run
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use bouzuya_firestore_client::Firestore;
+/// use bouzuya_firestore_client::FirestoreOptions;
+///
+/// let firestore = Firestore::new(FirestoreOptions::default())?;
+/// let snapshot = firestore.doc("users/alice")?.get().await?;
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Clone)]
 pub struct Firestore {
     firestore_client: FirestoreClient,
