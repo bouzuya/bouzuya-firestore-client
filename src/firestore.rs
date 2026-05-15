@@ -135,6 +135,26 @@ impl Firestore {
         Ok(CollectionGroup::new(collection_id, self.clone()))
     }
 
+    /// Returns the database ID this client is bound to.
+    ///
+    /// This is the value resolved from [`FirestoreOptions::database_id`] when
+    /// the client was created; if it was `None`, `"(default)"` is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions {
+    ///     database_id: Some("my-database".to_owned()),
+    ///     project_id: Some("my-project".to_owned()),
+    /// })?;
+    /// assert_eq!(firestore.database_id(), "my-database");
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn database_id(&self) -> String {
         self.firestore_client.database_id()
     }
