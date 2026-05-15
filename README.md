@@ -168,7 +168,7 @@
   - [x] collectionGroup
   - [x] doc
   - [x] getAll
-  - [ ] listCollections
+  - [x] listCollections
   - [ ] recursiveDelete
   - [x] runTransaction
   - [ ] settings
