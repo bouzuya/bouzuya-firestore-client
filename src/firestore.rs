@@ -159,6 +159,32 @@ impl Firestore {
         self.firestore_client.database_id()
     }
 
+    /// Returns a [`DocumentReference`] for the document at the given path.
+    ///
+    /// `document_path` is a slash-separated path that must point to a document
+    /// (i.e. it must have an even number of segments), such as `"users/alice"`
+    /// or `"users/alice/posts/post-1"`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference1 = firestore.doc("users/alice")?;
+    /// let document_reference2 = firestore.doc("users/alice/posts/post-1")?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn doc(&self, document_path: impl Into<String>) -> Result<DocumentReference, Error> {
+        let s: String = document_path.into();
+        let document_path =
+            firestore_path::DocumentPath::from_str(&s).map_err(Error::invalid_document_path)?;
+        Ok(DocumentReference::new(document_path, self.clone()))
+    }
+
     pub async fn get_all(
         &self,
         document_references: impl IntoIterator<Item = DocumentReference>,
@@ -196,13 +222,6 @@ impl Firestore {
                 Ok(CollectionReference::new(collection_path, self.clone()))
             })
             .collect()
-    }
-
-    pub fn doc(&self, document_path: impl Into<String>) -> Result<DocumentReference, Error> {
-        let s: String = document_path.into();
-        let document_path =
-            firestore_path::DocumentPath::from_str(&s).map_err(Error::invalid_document_path)?;
-        Ok(DocumentReference::new(document_path, self.clone()))
     }
 
     pub async fn run_transaction<'a, T, F>(
