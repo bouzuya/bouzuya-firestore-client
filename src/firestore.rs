@@ -91,8 +91,8 @@ impl Firestore {
     /// use bouzuya_firestore_client::FirestoreOptions;
     ///
     /// let firestore = Firestore::new(FirestoreOptions::default())?;
-    /// let users = firestore.collection("users")?;
-    /// let posts = firestore.collection("users/alice/posts")?;
+    /// let collection_reference1 = firestore.collection("users")?;
+    /// let collection_reference2 = firestore.collection("users/alice/posts")?;
     /// # Ok(())
     /// # }
     /// ```
@@ -106,6 +106,25 @@ impl Firestore {
         Ok(CollectionReference::new(collection_path, self.clone()))
     }
 
+    /// Returns a [`CollectionGroup`] that includes all collections with the
+    /// given ID, regardless of their parent document.
+    ///
+    /// `collection_id` is a single collection ID without any slashes, such as
+    /// `"posts"`. It matches every collection named `posts` anywhere in the
+    /// database (e.g. `users/alice/posts`, `users/bob/posts`, ...).
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let collection_group = firestore.collection_group("posts")?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn collection_group(
         &self,
         collection_id: impl Into<String>,
