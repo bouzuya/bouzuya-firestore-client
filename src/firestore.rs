@@ -185,6 +185,37 @@ impl Firestore {
         Ok(DocumentReference::new(document_path, self.clone()))
     }
 
+    /// Fetches multiple documents in a single batch request.
+    ///
+    /// Returns one [`DocumentSnapshot`] per input [`DocumentReference`], in the
+    /// same order as the input. A snapshot is returned even if the referenced
+    /// document does not exist; check [`DocumentSnapshot::exists`] to tell the
+    /// two cases apart.
+    ///
+    /// Unlike the Node.js Firestore client's [`getAll`], this method does not
+    /// accept a `ReadOptions` argument (e.g. for specifying a field mask). All
+    /// fields of each document are always returned.
+    ///
+    /// [`getAll`]: https://docs.cloud.google.com/nodejs/docs/reference/firestore/latest/firestore/firestore#_google_cloud_firestore_Firestore_getAll_member_1_
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let snapshots = firestore
+    ///     .get_all([
+    ///         firestore.doc("users/alice")?,
+    ///         firestore.doc("users/bob")?,
+    ///     ])
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn get_all(
         &self,
         document_references: impl IntoIterator<Item = DocumentReference>,
