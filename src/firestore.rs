@@ -242,6 +242,25 @@ impl Firestore {
             .collect())
     }
 
+    /// Lists the root-level collections of the database.
+    ///
+    /// Returns a [`CollectionReference`] for every top-level collection. To
+    /// list subcollections of a document, use
+    /// [`DocumentReference::list_collections`] instead.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let collection_references = firestore.list_collections().await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn list_collections(&self) -> Result<Vec<CollectionReference>, Error> {
         use std::str::FromStr as _;
         let collection_ids = self.firestore_client.list_root_collection_ids().await?;
