@@ -3,6 +3,7 @@ mod collection_group;
 mod database_id;
 mod doc;
 mod get_all;
+mod impl_clone;
 mod impl_debug;
 mod impl_eq;
 mod impl_partial_eq;
