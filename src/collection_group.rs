@@ -5,6 +5,39 @@ use crate::IntoFilter;
 use crate::Query;
 use crate::QuerySnapshot;
 
+/// A query target that spans every collection with a given ID.
+///
+/// Unlike a [`CollectionReference`], which points at one collection under a
+/// specific parent, a `CollectionGroup` matches every collection named
+/// `collection_id` anywhere in the database, regardless of its parent
+/// document. Obtain one with [`Firestore::collection_group`].
+///
+/// `CollectionGroup` exposes query-builder methods that mirror [`Query`]
+/// (e.g. [`r#where`](Self::r#where), [`order_by`](Self::order_by),
+/// [`limit`](Self::limit)) and resolve to a [`Query`] internally.
+///
+/// `CollectionGroup` is cheap to [`Clone`]; the underlying [`Firestore`] is
+/// shared between clones.
+///
+/// [`CollectionReference`]: crate::CollectionReference
+///
+/// # Examples
+///
+/// ```no_run
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use bouzuya_firestore_client::Firestore;
+/// use bouzuya_firestore_client::FirestoreOptions;
+///
+/// let firestore = Firestore::new(FirestoreOptions::default())?;
+/// let query_snapshot = firestore
+///     .collection_group("messages")?
+///     .r#where(("k", "==", "target".to_string()))?
+///     .get()
+///     .await?;
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Clone)]
 pub struct CollectionGroup {
     collection_id: firestore_path::CollectionId,
