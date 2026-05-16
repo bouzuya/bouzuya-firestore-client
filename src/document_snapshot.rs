@@ -71,10 +71,6 @@ impl DocumentSnapshot {
         self.document_reference.id()
     }
 
-    // pub fn read_time(&self) -> DateTime {
-    //     todo!()
-    // }
-
     pub fn r#ref(&self) -> DocumentReference {
         self.document_reference.clone()
     }
