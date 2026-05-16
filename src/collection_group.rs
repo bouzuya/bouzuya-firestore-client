@@ -176,7 +176,28 @@ impl CollectionGroup {
         Query::collection_group(self.clone()).limit(limit)
     }
 
-    /// Query::offset
+    /// Returns a [`Query`] that skips the first `offset` documents.
+    ///
+    /// This is a convenience for [`Query::collection_group`] followed by
+    /// [`Query::offset`]; it returns an error if `offset` is negative.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore
+    ///     .collection_group("messages")?
+    ///     .offset(2)?
+    ///     .get()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn offset(&self, offset: i32) -> Result<Query, Error> {
         Query::collection_group(self.clone()).offset(offset)
     }
