@@ -101,7 +101,24 @@ impl CollectionGroup {
         Query::collection_group(self.clone()).end_before(values)
     }
 
-    /// Query::firestore
+    /// Returns the [`Firestore`] this collection group belongs to.
+    ///
+    /// This is the same instance from which the [`CollectionGroup`] was
+    /// obtained via [`Firestore::collection_group`].
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let collection_group = firestore.collection_group("rooms")?;
+    /// assert_eq!(collection_group.firestore(), &firestore);
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
     }
