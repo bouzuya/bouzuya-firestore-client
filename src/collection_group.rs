@@ -123,7 +123,29 @@ impl CollectionGroup {
         &self.firestore
     }
 
-    /// Query::get
+    /// Executes the collection-group query and returns its [`QuerySnapshot`].
+    ///
+    /// Every document in any collection whose ID matches this group is
+    /// returned, regardless of its parent document. Without further filtering
+    /// (e.g. [`Query::r#where`] or [`Query::limit`]) this can return a large
+    /// number of documents.
+    ///
+    /// This is a convenience for [`Query::collection_group`] followed by
+    /// [`Query::get`].
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection_group("messages")?.get().await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
         Query::collection_group(self.clone()).get().await
     }
