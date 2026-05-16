@@ -202,7 +202,33 @@ impl CollectionGroup {
         Query::collection_group(self.clone()).offset(offset)
     }
 
-    /// Query::order_by
+    /// Returns a [`Query`] ordered by `field_path` in the given `direction`.
+    ///
+    /// `direction` must be `"asc"` or `"desc"`; any other value returns an
+    /// error. Chain multiple `order_by` calls to build a compound ordering;
+    /// later calls become secondary sort keys.
+    ///
+    /// This is a convenience for [`Query::collection_group`] followed by
+    /// [`Query::order_by`].
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore
+    ///     .collection_group("messages")?
+    ///     .order_by("a", "asc")?
+    ///     .order_by("b", "desc")?
+    ///     .get()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn order_by(
         &self,
         field_path: impl IntoFieldPath,
