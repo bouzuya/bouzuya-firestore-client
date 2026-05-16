@@ -150,7 +150,28 @@ impl CollectionGroup {
         Query::collection_group(self.clone()).get().await
     }
 
-    /// Query::limit
+    /// Returns a [`Query`] that returns at most `limit` documents.
+    ///
+    /// This is a convenience for [`Query::collection_group`] followed by
+    /// [`Query::limit`]; it returns an error if `limit` is negative.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore
+    ///     .collection_group("messages")?
+    ///     .limit(2)?
+    ///     .get()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn limit(&self, limit: i32) -> Result<Query, Error> {
         Query::collection_group(self.clone()).limit(limit)
     }
