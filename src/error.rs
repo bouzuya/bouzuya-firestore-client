@@ -59,8 +59,8 @@ mod tests {
     #[test]
     fn test_invalid_collection_id() {
         use crate::error::Error;
-        let firestore_path_error =
-            <firestore_path::CollectionId as std::str::FromStr>::from_str("").unwrap_err();
+        use std::str::FromStr as _;
+        let firestore_path_error = firestore_path::CollectionId::from_str("").unwrap_err();
         let error = Error::invalid_collection_id(firestore_path_error);
         assert_eq!(error.to_string(), "firestore error: invalid collection id");
     }
@@ -68,8 +68,8 @@ mod tests {
     #[test]
     fn test_invalid_collection_path() {
         use crate::error::Error;
-        let firestore_path_error =
-            <firestore_path::CollectionPath as std::str::FromStr>::from_str("").unwrap_err();
+        use std::str::FromStr as _;
+        let firestore_path_error = firestore_path::CollectionPath::from_str("").unwrap_err();
         let error = Error::invalid_collection_path(firestore_path_error);
         assert_eq!(
             error.to_string(),
@@ -80,8 +80,8 @@ mod tests {
     #[test]
     fn test_invalid_document_id() {
         use crate::error::Error;
-        let firestore_path_error =
-            <firestore_path::DocumentId as std::str::FromStr>::from_str("").unwrap_err();
+        use std::str::FromStr as _;
+        let firestore_path_error = firestore_path::DocumentId::from_str("").unwrap_err();
         let error = Error::invalid_document_id(firestore_path_error);
         assert_eq!(error.to_string(), "firestore error: invalid document id");
     }
@@ -89,8 +89,8 @@ mod tests {
     #[test]
     fn test_invalid_document_path() {
         use crate::error::Error;
-        let firestore_path_error =
-            <firestore_path::DocumentPath as std::str::FromStr>::from_str("").unwrap_err();
+        use std::str::FromStr as _;
+        let firestore_path_error = firestore_path::DocumentPath::from_str("").unwrap_err();
         let error = Error::invalid_document_path(firestore_path_error);
         assert_eq!(error.to_string(), "firestore error: invalid document path");
     }

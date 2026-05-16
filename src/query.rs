@@ -23,11 +23,11 @@ pub struct Query {
 
 impl Query {
     pub(crate) fn collection(collection_reference: CollectionReference) -> Self {
+        use std::str::FromStr as _;
         let firestore = collection_reference.firestore().clone();
-        let collection_path = <firestore_path::CollectionPath as std::str::FromStr>::from_str(
-            &collection_reference.path(),
-        )
-        .expect("collection_reference has valid path");
+        let collection_path =
+            firestore_path::CollectionPath::from_str(&collection_reference.path())
+                .expect("collection_reference has valid path");
         let query = firestore_structured_query::Query::collection(collection_reference.id());
         Self {
             collection_path: Some(collection_path),
@@ -105,6 +105,7 @@ impl Query {
     }
 
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
+        use std::str::FromStr as _;
         let firestore_client = self.firestore.firestore_client();
         let mut query = self.query.clone().order_by(self.order_by.clone());
         match self.where_.len() {
@@ -127,9 +128,8 @@ impl Query {
         let query_document_snapshots = documents
             .into_iter()
             .map(|(document, document_read_time)| {
-                let document_name =
-                    <firestore_path::DocumentName as std::str::FromStr>::from_str(&document.name)
-                        .map_err(|e| Error::from_source(Box::new(e)))?;
+                let document_name = firestore_path::DocumentName::from_str(&document.name)
+                    .map_err(|e| Error::from_source(Box::new(e)))?;
                 let document_path = firestore_path::DocumentPath::from(document_name);
                 let document_reference =
                     DocumentReference::new(document_path, self.firestore.clone());

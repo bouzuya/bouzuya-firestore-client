@@ -26,12 +26,13 @@ impl CollectionReference {
 
 impl CollectionReference {
     pub async fn add(&self, data: impl serde::ser::Serialize) -> Result<DocumentReference, Error> {
+        use std::str::FromStr as _;
         let s = rand::distr::SampleString::sample_string(
             &rand::distr::Alphanumeric,
             &mut rand::rand_core::UnwrapErr(rand::rngs::SysRng),
             20,
         );
-        let document_id = <firestore_path::DocumentId as std::str::FromStr>::from_str(&s)
+        let document_id = firestore_path::DocumentId::from_str(&s)
             .expect("generated document id should be valid");
         let document_path = self
             .collection_path

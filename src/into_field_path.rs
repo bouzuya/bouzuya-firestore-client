@@ -1,3 +1,5 @@
+use std::str::FromStr as _;
+
 use crate::Error;
 use crate::FieldPath;
 
@@ -17,7 +19,7 @@ impl crate::private::Sealed for &str {}
 
 impl IntoFieldPath for &str {
     fn into_field_path(self) -> Result<FieldPath, Error> {
-        <FieldPath as std::str::FromStr>::from_str(self)
+        FieldPath::from_str(self)
     }
 }
 
@@ -25,7 +27,7 @@ impl crate::private::Sealed for String {}
 
 impl IntoFieldPath for String {
     fn into_field_path(self) -> Result<FieldPath, Error> {
-        <FieldPath as std::str::FromStr>::from_str(&self)
+        FieldPath::from_str(&self)
     }
 }
 
