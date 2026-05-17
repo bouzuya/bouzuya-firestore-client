@@ -203,7 +203,30 @@ impl CollectionReference {
         &self.firestore
     }
 
-    /// Query::get
+    /// Fetches every document in this collection and returns the
+    /// [`QuerySnapshot`].
+    ///
+    /// Only documents directly under this collection are returned; documents
+    /// in subcollections are not. Without further filtering (e.g.
+    /// [`Query::r#where`] or [`Query::limit`]) this can return a large number
+    /// of documents.
+    ///
+    /// This is a convenience for [`Query::collection`] followed by
+    /// [`Query::get`].
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
         Query::collection(self.clone()).get().await
     }
