@@ -377,6 +377,36 @@ impl CollectionReference {
         Query::collection(self.clone()).order_by(field_path, direction)
     }
 
+    /// Returns the parent [`DocumentReference`] of this collection, or
+    /// [`None`] for a top-level collection.
+    ///
+    /// A top-level collection (e.g. `rooms`) has no parent document and
+    /// returns [`None`]. A subcollection (e.g. `rooms/roomA/messages`) returns
+    /// a reference to the document it lives under (`rooms/roomA`).
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// assert!(firestore.collection("rooms")?.parent().is_none());
+    /// let parent = firestore
+    ///     .collection("rooms/roomA/messages")?
+    ///     .parent()
+    ///     .expect("parent document reference should exist");
+    /// assert_eq!(parent.id(), "roomA");
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn parent(&self) -> Option<DocumentReference> {
+        self.collection_path.parent().map(|parent_document_path| {
+            DocumentReference::new(parent_document_path.clone(), self.firestore.clone())
+        })
+    }
+
     /// Query::select
     pub fn select<I>(&self, fields: I) -> Result<Query, Error>
     where
@@ -407,12 +437,6 @@ impl CollectionReference {
     /// Query::r#where
     pub fn r#where(&self, filter: impl IntoFilter) -> Result<Query, Error> {
         Query::collection(self.clone()).r#where(filter)
-    }
-
-    pub fn parent(&self) -> Option<DocumentReference> {
-        self.collection_path.parent().map(|parent_document_path| {
-            DocumentReference::new(parent_document_path.clone(), self.firestore.clone())
-        })
     }
 
     pub fn path(&self) -> String {
