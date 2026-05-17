@@ -407,6 +407,34 @@ impl CollectionReference {
         })
     }
 
+    /// Returns the full path of this collection, relative to the database
+    /// root.
+    ///
+    /// For a top-level collection this is just the collection ID (e.g.
+    /// `"rooms"`); for a subcollection it is the full slash-separated path
+    /// (e.g. `"rooms/roomA/messages"`). Use [`id`](Self::id) for just the
+    /// last segment.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// assert_eq!(firestore.collection("rooms")?.path(), "rooms");
+    /// assert_eq!(
+    ///     firestore.collection("rooms/roomA/messages")?.path(),
+    ///     "rooms/roomA/messages",
+    /// );
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn path(&self) -> String {
+        self.collection_path.to_string()
+    }
+
     /// Query::select
     pub fn select<I>(&self, fields: I) -> Result<Query, Error>
     where
@@ -437,10 +465,6 @@ impl CollectionReference {
     /// Query::r#where
     pub fn r#where(&self, filter: impl IntoFilter) -> Result<Query, Error> {
         Query::collection(self.clone()).r#where(filter)
-    }
-
-    pub fn path(&self) -> String {
-        self.collection_path.to_string()
     }
 }
 
