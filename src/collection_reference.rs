@@ -25,6 +25,34 @@ impl CollectionReference {
 }
 
 impl CollectionReference {
+    /// Creates a new document in this collection with an auto-generated ID.
+    ///
+    /// A 20-character alphanumeric document ID is generated, `data` is
+    /// serialized with [`serde`], and the document is created via
+    /// [`DocumentReference::create`]. The returned [`DocumentReference`]
+    /// points at the newly created document.
+    ///
+    /// Because the ID is generated client-side, calling `add` on the same
+    /// collection from concurrent tasks creates distinct documents.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use std::collections::HashMap;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore
+    ///     .collection("rooms")?
+    ///     .add(HashMap::<String, String>::new())
+    ///     .await?;
+    /// assert!(document_reference.path().starts_with("rooms/"));
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn add(&self, data: impl serde::ser::Serialize) -> Result<DocumentReference, Error> {
         use std::str::FromStr as _;
         let s = rand::distr::SampleString::sample_string(
