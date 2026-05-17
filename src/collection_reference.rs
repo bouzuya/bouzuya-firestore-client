@@ -470,7 +470,36 @@ impl CollectionReference {
         Query::collection(self.clone()).select(fields)
     }
 
-    /// Query::start_after
+    /// Returns a [`Query`] that starts after the given cursor (exclusive).
+    ///
+    /// `values` is matched positionally against the query's [`order_by`]
+    /// clauses, so the call is typically chained with [`Query::order_by`]. The
+    /// resulting query excludes the document whose order-by fields equal
+    /// `values`.
+    ///
+    /// This is a convenience for [`Query::collection`] followed by
+    /// [`Query::start_after`]; it returns an error if `values` is empty.
+    ///
+    /// [`order_by`]: Query::order_by
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore
+    ///     .collection("posts")?
+    ///     .start_after(vec![2_i64])?
+    ///     .order_by("n", "asc")?
+    ///     .get()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn start_after<I>(&self, values: I) -> Result<Query, Error>
     where
         I: IntoIterator,
