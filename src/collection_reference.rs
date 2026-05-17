@@ -280,6 +280,42 @@ impl CollectionReference {
         Query::collection(self.clone()).limit(n)
     }
 
+    /// Lists every document reference under this collection.
+    ///
+    /// Returns a [`DocumentReference`] for each document directly under this
+    /// collection. Unlike [`get`](Self::get), the document data is not
+    /// fetched; this is useful when only the document IDs or paths are
+    /// needed, or to enumerate documents that exist solely as parents of a
+    /// subcollection.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_references = firestore.collection("rooms")?.list_documents().await?;
+    /// for document_reference in &document_references {
+    ///     assert!(document_reference.path().starts_with("rooms/"));
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub async fn list_documents(&self) -> Result<Vec<DocumentReference>, Error> {
+        let document_ids = self
+            .firestore
+            .firestore_client()
+            .list_documents(&self.collection_path)
+            .await?;
+        Ok(document_ids
+            .into_iter()
+            .map(|it| DocumentReference::new(it, self.firestore.clone()))
+            .collect())
+    }
+
     /// Query::offset
     pub fn offset(&self, n: i32) -> Result<Query, Error> {
         Query::collection(self.clone()).offset(n)
@@ -324,18 +360,6 @@ impl CollectionReference {
     /// Query::r#where
     pub fn r#where(&self, filter: impl IntoFilter) -> Result<Query, Error> {
         Query::collection(self.clone()).r#where(filter)
-    }
-
-    pub async fn list_documents(&self) -> Result<Vec<DocumentReference>, Error> {
-        let document_ids = self
-            .firestore
-            .firestore_client()
-            .list_documents(&self.collection_path)
-            .await?;
-        Ok(document_ids
-            .into_iter()
-            .map(|it| DocumentReference::new(it, self.firestore.clone()))
-            .collect())
     }
 
     pub fn parent(&self) -> Option<DocumentReference> {
