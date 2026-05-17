@@ -180,7 +180,25 @@ impl CollectionReference {
         Query::collection(self.clone()).end_before(values)
     }
 
-    /// Query::firestore
+    /// Returns the [`Firestore`] this collection belongs to.
+    ///
+    /// This is the same instance from which the [`CollectionReference`] was
+    /// obtained via [`Firestore::collection`] (or by navigating from another
+    /// reference within the same client).
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let collection_reference = firestore.collection("rooms")?;
+    /// assert_eq!(collection_reference.firestore(), &firestore);
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
     }
