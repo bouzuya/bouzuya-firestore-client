@@ -231,6 +231,25 @@ impl CollectionReference {
         Query::collection(self.clone()).get().await
     }
 
+    /// Returns the ID of this collection (the last segment of its path).
+    ///
+    /// For a nested collection such as `rooms/roomA/messages` this returns
+    /// `"messages"`, not the full path. Use [`path`](Self::path) for the full
+    /// path.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let collection_reference = firestore.collection("rooms")?;
+    /// assert_eq!(collection_reference.id(), "rooms");
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn id(&self) -> String {
         self.collection_path.collection_id().to_string()
     }
