@@ -435,7 +435,33 @@ impl CollectionReference {
         self.collection_path.to_string()
     }
 
-    /// Query::select
+    /// Returns a [`Query`] that fetches only the given fields of each document.
+    ///
+    /// `fields` is the projection: only these field paths are returned, and any
+    /// other field is omitted from the resulting documents. Use this to reduce
+    /// the amount of data transferred when the rest of the document is not
+    /// needed.
+    ///
+    /// This is a convenience for [`Query::collection`] followed by
+    /// [`Query::select`].
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore
+    ///     .collection("rooms")?
+    ///     .select(["a"])?
+    ///     .get()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn select<I>(&self, fields: I) -> Result<Query, Error>
     where
         I: IntoIterator,
