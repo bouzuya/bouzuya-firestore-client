@@ -254,7 +254,28 @@ impl CollectionReference {
         self.collection_path.collection_id().to_string()
     }
 
-    /// Query::limit
+    /// Returns a [`Query`] that returns at most `n` documents.
+    ///
+    /// This is a convenience for [`Query::collection`] followed by
+    /// [`Query::limit`]; it returns an error if `n` is negative.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore
+    ///     .collection("rooms")?
+    ///     .limit(2)?
+    ///     .get()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn limit(&self, n: i32) -> Result<Query, Error> {
         Query::collection(self.clone()).limit(n)
     }
