@@ -71,6 +71,26 @@ impl CollectionReference {
         Ok(document_reference)
     }
 
+    /// Returns a [`DocumentReference`] to the document with the given ID in
+    /// this collection.
+    ///
+    /// `document_id` is parsed as a Firestore document ID; invalid IDs (e.g.
+    /// containing `/`, or empty) return an error. The document is not fetched
+    /// or required to exist — this only constructs a reference.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.collection("rooms")?.doc("roomA")?;
+    /// assert_eq!(document_reference.id().to_string(), "roomA");
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn doc(&self, document_id: impl Into<String>) -> Result<DocumentReference, Error> {
         use std::str::FromStr as _;
         let s: String = document_id.into();
