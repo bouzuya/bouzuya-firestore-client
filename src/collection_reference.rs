@@ -6,6 +6,44 @@ use crate::IntoFilter;
 use crate::Query;
 use crate::QuerySnapshot;
 
+/// A reference to a single collection at a known path.
+///
+/// Unlike a [`CollectionGroup`], which spans every collection with a given
+/// ID, a `CollectionReference` points at one specific collection — a
+/// top-level one such as `rooms`, or a subcollection such as
+/// `rooms/roomA/messages`. Obtain one with [`Firestore::collection`] or by
+/// navigating from a [`DocumentReference`] via
+/// [`DocumentReference::collection`].
+///
+/// `CollectionReference` lets you write documents ([`add`](Self::add)),
+/// navigate to a specific child document ([`doc`](Self::doc)), and read the
+/// whole collection ([`get`](Self::get), [`list_documents`](Self::list_documents)).
+/// It also exposes query-builder methods that mirror [`Query`] (e.g.
+/// [`r#where`](Self::r#where), [`order_by`](Self::order_by),
+/// [`limit`](Self::limit)) and resolve to a [`Query`] internally.
+///
+/// `CollectionReference` is cheap to [`Clone`]; the underlying [`Firestore`]
+/// is shared between clones.
+///
+/// [`CollectionGroup`]: crate::CollectionGroup
+///
+/// # Examples
+///
+/// ```no_run
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use bouzuya_firestore_client::Firestore;
+/// use bouzuya_firestore_client::FirestoreOptions;
+///
+/// let firestore = Firestore::new(FirestoreOptions::default())?;
+/// let query_snapshot = firestore
+///     .collection("rooms")?
+///     .r#where(("k", "==", "target".to_string()))?
+///     .get()
+///     .await?;
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Clone)]
 pub struct CollectionReference {
     collection_path: firestore_path::CollectionPath,
