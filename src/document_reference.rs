@@ -6,6 +6,43 @@ use crate::Precondition;
 use crate::Timestamp;
 use crate::WriteResult;
 
+/// A reference to a single document at a known path.
+///
+/// A `DocumentReference` points at one specific document — a top-level one
+/// such as `rooms/roomA`, or a nested one such as
+/// `rooms/roomA/messages/message1`. Obtain one with [`Firestore::doc`], by
+/// navigating from a [`CollectionReference`] via
+/// [`CollectionReference::doc`] or [`CollectionReference::add`], or by
+/// taking the [`parent`](Self::parent) of a child.
+///
+/// `DocumentReference` lets you read this document
+/// ([`get`](Self::get)) and write it as a whole document
+/// ([`create`](Self::create), [`set`](Self::set), [`update`](Self::update),
+/// [`delete`](Self::delete)). It also lets you navigate to a subcollection
+/// ([`collection`](Self::collection)) or list every direct subcollection
+/// ([`list_collections`](Self::list_collections)).
+///
+/// `DocumentReference` is cheap to [`Clone`]; the underlying [`Firestore`]
+/// is shared between clones. Two references compare equal via
+/// [`PartialEq`] when they point at the same path within the same
+/// [`Firestore`].
+///
+/// # Examples
+///
+/// ```no_run
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use bouzuya_firestore_client::Firestore;
+/// use bouzuya_firestore_client::FirestoreOptions;
+///
+/// let firestore = Firestore::new(FirestoreOptions::default())?;
+/// let document_snapshot = firestore.doc("rooms/roomA")?.get().await?;
+/// if document_snapshot.exists() {
+///     // ...
+/// }
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DocumentReference {
     document_path: firestore_path::DocumentPath,
