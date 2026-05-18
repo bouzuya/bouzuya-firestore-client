@@ -175,6 +175,28 @@ impl DocumentReference {
         &self.firestore
     }
 
+    /// Fetches this document and returns its [`DocumentSnapshot`].
+    ///
+    /// The returned snapshot reports whether the document exists via
+    /// [`DocumentSnapshot::exists`] and carries the server-side read time;
+    /// fetching a nonexistent document is not an error.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_snapshot = firestore.doc("rooms/roomA")?.get().await?;
+    /// if document_snapshot.exists() {
+    ///     // ...
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn get(&self) -> Result<DocumentSnapshot, Error> {
         let (document, read_time) = self
             .firestore
