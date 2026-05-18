@@ -236,6 +236,29 @@ impl DocumentReference {
         self.document_path.document_id().to_string()
     }
 
+    /// Lists every direct subcollection of this document.
+    ///
+    /// Returns a [`CollectionReference`] for each subcollection that exists
+    /// directly under this document; nested subcollections deeper than one
+    /// level are not included. A document with no subcollections returns an
+    /// empty list, even if the document itself does not exist.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let collection_references = firestore.doc("rooms/roomA")?.list_collections().await?;
+    /// for collection_reference in &collection_references {
+    ///     assert!(collection_reference.path().starts_with("rooms/roomA/"));
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn list_collections(&self) -> Result<Vec<CollectionReference>, Error> {
         let collection_ids = self
             .firestore
