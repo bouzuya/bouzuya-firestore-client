@@ -325,6 +325,33 @@ impl DocumentReference {
         self.document_path.to_string()
     }
 
+    /// Writes this document, creating it or overwriting it entirely.
+    ///
+    /// `data` is serialized with [`serde`] and stored at this document's path,
+    /// replacing the whole document — fields that exist on the previous
+    /// document but not in `data` are removed. Use [`create`](Self::create) to
+    /// fail when the document already exists, or [`update`](Self::update) to
+    /// modify only the fields you pass.
+    ///
+    /// The returned [`WriteResult`] carries the server-side commit time.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use std::collections::HashMap;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// let _write_result = document_reference
+    ///     .set(HashMap::from([("a".to_string(), "1".to_string())]))
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn set(&self, data: impl serde::ser::Serialize) -> Result<WriteResult, Error> {
         let value =
             serde_firestore_value::to_value(&data).map_err(|e| Error::from_source(Box::new(e)))?;
