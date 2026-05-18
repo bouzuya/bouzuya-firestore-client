@@ -98,6 +98,39 @@ impl DocumentReference {
         )))
     }
 
+    /// Deletes this document, subject to the given [`Precondition`].
+    ///
+    /// `precondition` lets the caller require that the document exist
+    /// (`exists`) or that its last update time match (`last_update_time`);
+    /// pass an empty precondition (both fields `None`) to delete
+    /// unconditionally. Deleting a nonexistent document with an empty
+    /// precondition succeeds without error.
+    ///
+    /// Subcollections of the deleted document are not deleted automatically
+    /// and continue to exist independently.
+    ///
+    /// The returned [`WriteResult`] carries the server-side commit time.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use bouzuya_firestore_client::Precondition;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// let _write_result = document_reference
+    ///     .delete(Precondition {
+    ///         exists: None,
+    ///         last_update_time: None,
+    ///     })
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn delete(&self, precondition: Precondition) -> Result<WriteResult, Error> {
         let write_time = self
             .firestore
