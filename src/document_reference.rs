@@ -213,6 +213,29 @@ impl DocumentReference {
         ))
     }
 
+    /// Returns the ID of this document (the last segment of its path).
+    ///
+    /// For a nested document such as `rooms/roomA/messages/msg1` this
+    /// returns `"msg1"`, not the full path. Use [`path`](Self::path) for the
+    /// full path.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// assert_eq!(document_reference.id(), "roomA");
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn id(&self) -> String {
+        self.document_path.document_id().to_string()
+    }
+
     pub async fn list_collections(&self) -> Result<Vec<CollectionReference>, Error> {
         let collection_ids = self
             .firestore
@@ -223,10 +246,6 @@ impl DocumentReference {
             .into_iter()
             .map(|id| self.collection(id))
             .collect()
-    }
-
-    pub fn id(&self) -> String {
-        self.document_path.document_id().to_string()
     }
 
     pub fn parent(&self) -> CollectionReference {
