@@ -152,6 +152,25 @@ impl DocumentReference {
         &self.document_path
     }
 
+    /// Returns the [`Firestore`] this document belongs to.
+    ///
+    /// This is the same instance from which the [`DocumentReference`] was
+    /// obtained via [`Firestore::doc`] (or by navigating from another
+    /// reference within the same client).
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// assert_eq!(document_reference.firestore(), &firestore);
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
     }
