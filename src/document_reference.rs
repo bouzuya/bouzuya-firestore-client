@@ -22,6 +22,27 @@ impl DocumentReference {
 }
 
 impl DocumentReference {
+    /// Returns a [`CollectionReference`] to the subcollection with the given
+    /// ID under this document.
+    ///
+    /// `collection_id` is parsed as a Firestore collection ID; invalid IDs
+    /// (e.g. containing `/`, or empty) return an error. The subcollection is
+    /// not fetched or required to exist — this only constructs a reference
+    /// whose path is this document's path followed by `collection_id`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let collection_reference = firestore.doc("rooms/roomA")?.collection("messages")?;
+    /// assert_eq!(collection_reference.path(), "rooms/roomA/messages");
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn collection(
         &self,
         collection_id: impl Into<String>,
