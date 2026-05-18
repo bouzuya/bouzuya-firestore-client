@@ -271,6 +271,28 @@ impl DocumentReference {
             .collect()
     }
 
+    /// Returns the [`CollectionReference`] this document lives in.
+    ///
+    /// Every document has exactly one parent collection: for `rooms/roomA`
+    /// that is `rooms`, and for a nested document such as
+    /// `rooms/roomA/messages/message1` it is `rooms/roomA/messages`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// assert_eq!(firestore.doc("rooms/roomA")?.parent().path(), "rooms");
+    /// assert_eq!(
+    ///     firestore.doc("rooms/roomA/messages/message1")?.parent().path(),
+    ///     "rooms/roomA/messages",
+    /// );
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn parent(&self) -> CollectionReference {
         CollectionReference::new(self.document_path.parent().clone(), self.firestore.clone())
     }
