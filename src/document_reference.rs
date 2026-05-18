@@ -365,6 +365,51 @@ impl DocumentReference {
         )))
     }
 
+    /// Writes this document with the given `data`, subject to the given
+    /// [`Precondition`].
+    ///
+    /// `precondition` lets the caller require that the document exist
+    /// (`exists`) or that its last update time match (`last_update_time`);
+    /// pass [`Precondition::default`] for no precondition.
+    ///
+    /// The returned [`WriteResult`] carries the server-side commit time.
+    ///
+    /// # Behavior in v4.0 (known bug)
+    ///
+    /// In the current implementation, `data` is serialized with [`serde`]
+    /// and the whole document is overwritten — fields that exist on the
+    /// previous document but not in `data` are removed. This makes `update`
+    /// equivalent to [`set`](Self::set) with an added [`Precondition`].
+    ///
+    /// The intended behavior is partial update (merge), matching the
+    /// `DocumentReference.update` method in the Firebase Admin SDK for
+    /// Node.js: only fields present in `data` should be written, and other
+    /// fields should be left untouched. The current behavior is a bug and
+    /// will be fixed in a future release; until then, callers that need
+    /// merge semantics should fetch the document with [`get`](Self::get) and
+    /// merge client-side before calling this method.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use bouzuya_firestore_client::Precondition;
+    /// use std::collections::HashMap;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// let _write_result = document_reference
+    ///     .update(
+    ///         HashMap::from([("a".to_string(), "updated".to_string())]),
+    ///         Precondition::default(),
+    ///     )
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn update(
         &self,
         data: impl serde::ser::Serialize,
