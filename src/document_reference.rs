@@ -297,6 +297,30 @@ impl DocumentReference {
         CollectionReference::new(self.document_path.parent().clone(), self.firestore.clone())
     }
 
+    /// Returns the full path of this document, relative to the database
+    /// root.
+    ///
+    /// For a top-level document this is `"<collection>/<id>"` (e.g.
+    /// `"rooms/roomA"`); for a nested document it is the full slash-separated
+    /// path (e.g. `"rooms/roomA/messages/message1"`). Use [`id`](Self::id) for
+    /// just the last segment.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// assert_eq!(firestore.doc("rooms/roomA")?.path(), "rooms/roomA");
+    /// assert_eq!(
+    ///     firestore.doc("rooms/roomA/messages/message1")?.path(),
+    ///     "rooms/roomA/messages/message1",
+    /// );
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn path(&self) -> String {
         self.document_path.to_string()
     }
