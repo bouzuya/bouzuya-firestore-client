@@ -34,6 +34,32 @@ impl DocumentSnapshot {
         }
     }
 
+    /// Returns the server-side time at which this document was created, or
+    /// [`None`] if it does not exist.
+    ///
+    /// A snapshot taken of a nonexistent document (see [`exists`](Self::exists))
+    /// has no create time and returns [`None`]. For an existing document, the
+    /// returned [`Timestamp`] is the commit time of the original
+    /// [`DocumentReference::create`] or [`DocumentReference::set`] that brought
+    /// the document into being, not the time of the most recent write — use
+    /// [`update_time`](Self::update_time) for that.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let snapshot = firestore.doc("rooms/roomA")?.get().await?;
+    /// if let Some(create_time) = snapshot.create_time() {
+    ///     let _ = create_time;
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn create_time(&self) -> Option<Timestamp> {
         self.document
             .as_ref()
