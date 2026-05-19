@@ -111,6 +111,31 @@ impl DocumentSnapshot {
         })
     }
 
+    /// Returns whether the document existed at the time this snapshot was
+    /// taken.
+    ///
+    /// Fetching a nonexistent document with [`DocumentReference::get`] is not
+    /// an error — it returns a snapshot whose `exists` is `false`. Such a
+    /// snapshot has no [`data`](Self::data), no [`create_time`](Self::create_time),
+    /// and no [`update_time`](Self::update_time); only [`id`](Self::id),
+    /// [`ref`](Self::ref) and [`read_time`](Self::read_time) are meaningful.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let snapshot = firestore.doc("rooms/roomA")?.get().await?;
+    /// if snapshot.exists() {
+    ///     // ...
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn exists(&self) -> bool {
         self.document.is_some()
     }
