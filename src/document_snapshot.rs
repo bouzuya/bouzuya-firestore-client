@@ -14,6 +14,46 @@ impl From<E> for Error {
     }
 }
 
+/// A point-in-time snapshot of a single document.
+///
+/// A `DocumentSnapshot` captures the state of one document at the moment it
+/// was read from the server (see [`read_time`](Self::read_time)). Obtain one
+/// with [`DocumentReference::get`], [`Transaction::get`], or
+/// [`Firestore::get_all`]; a [`QuerySnapshot`] is made up of
+/// [`QueryDocumentSnapshot`]s, each of which carries a `DocumentSnapshot`'s
+/// view of its document.
+///
+/// Reading a nonexistent document is not an error — it produces a snapshot
+/// whose [`exists`](Self::exists) is `false`. Such a snapshot has no
+/// [`data`](Self::data), no [`create_time`](Self::create_time), and no
+/// [`update_time`](Self::update_time); only [`id`](Self::id),
+/// [`ref`](Self::r#ref), and [`read_time`](Self::read_time) are meaningful.
+/// When the document does exist, [`data`](Self::data) deserializes its
+/// fields into a user type.
+///
+/// [`Clone`] performs a deep copy of the document's fields, so it is *not*
+/// free for documents with substantial payloads (a Firestore document can
+/// be up to ~1 MiB). Prefer borrowing the snapshot, or extracting only the
+/// pieces you need (e.g. via [`data`](Self::data)), when working with
+/// large documents.
+///
+/// # Examples
+///
+/// ```no_run
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use bouzuya_firestore_client::Firestore;
+/// use bouzuya_firestore_client::FirestoreOptions;
+/// use std::collections::HashMap;
+///
+/// let firestore = Firestore::new(FirestoreOptions::default())?;
+/// let snapshot = firestore.doc("rooms/roomA")?.get().await?;
+/// if let Some(data) = snapshot.data::<HashMap<String, String>>() {
+///     let _data = data?;
+/// }
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Clone)]
 pub struct DocumentSnapshot {
     document: Option<serde_firestore_value::google::firestore::v1::Document>,
