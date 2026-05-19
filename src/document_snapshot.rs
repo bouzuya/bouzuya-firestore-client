@@ -67,6 +67,32 @@ impl DocumentSnapshot {
             .map(Timestamp::from_prost_timestamp)
     }
 
+    /// Deserializes this document's fields into `T`, or returns [`None`] if
+    /// the document does not exist.
+    ///
+    /// A snapshot taken of a nonexistent document (see [`exists`](Self::exists))
+    /// has no data and returns [`None`]. For an existing document, its fields
+    /// are deserialized with [`serde`] as a map into `T`; if deserialization
+    /// fails (for example because `T`'s shape does not match the document's),
+    /// the inner [`Result`] is [`Err`].
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use std::collections::HashMap;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let snapshot = firestore.doc("rooms/roomA")?.get().await?;
+    /// if let Some(data) = snapshot.data::<HashMap<String, String>>() {
+    ///     let _data = data?;
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn data<T: serde::de::DeserializeOwned>(&self) -> Option<Result<T, Error>> {
         self.document.as_ref().map(|document| {
             serde_firestore_value::from_value::<T>(
