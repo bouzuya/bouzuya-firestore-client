@@ -144,6 +144,29 @@ impl DocumentSnapshot {
     //     todo!()
     // }
 
+    /// Returns the ID of this document (the last segment of its path).
+    ///
+    /// This is the same as the ID of the [`DocumentReference`] this snapshot
+    /// was taken from (see [`ref`](Self::ref) and [`DocumentReference::id`]).
+    /// The ID is available even when the document does not
+    /// [`exists`](Self::exists), because it comes from the reference, not the
+    /// fetched document. For a nested document such as
+    /// `rooms/roomA/messages/msg1` this returns `"msg1"`, not the full path.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let snapshot = firestore.doc("rooms/roomA")?.get().await?;
+    /// assert_eq!(snapshot.id(), "roomA");
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn id(&self) -> String {
         self.document_reference.id()
     }
