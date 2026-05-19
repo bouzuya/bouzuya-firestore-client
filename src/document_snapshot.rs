@@ -171,6 +171,28 @@ impl DocumentSnapshot {
         self.document_reference.id()
     }
 
+    /// Returns the [`DocumentReference`] this snapshot was taken from.
+    ///
+    /// The returned reference is a clone of the one passed to
+    /// [`DocumentReference::get`] (or the equivalent inside a transaction or
+    /// query); use it to re-read the document, write it, or navigate to a
+    /// subcollection. The reference is available even when the document does
+    /// not [`exists`](Self::exists).
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let snapshot = firestore.doc("rooms/roomA")?.get().await?;
+    /// assert_eq!(snapshot.r#ref().path(), "rooms/roomA");
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn r#ref(&self) -> DocumentReference {
         self.document_reference.clone()
     }
