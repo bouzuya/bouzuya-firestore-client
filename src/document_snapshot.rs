@@ -197,6 +197,31 @@ impl DocumentSnapshot {
         self.document_reference.clone()
     }
 
+    /// Returns the time at which this snapshot was read from the server.
+    ///
+    /// Unlike [`create_time`](Self::create_time) and
+    /// [`update_time`](Self::update_time), the read time is always available —
+    /// even for a snapshot of a nonexistent document (see
+    /// [`exists`](Self::exists)) — because it describes the read itself, not
+    /// the document. Two snapshots of the same document taken in succession
+    /// will share a [`create_time`](Self::create_time) and
+    /// [`update_time`](Self::update_time) (assuming no intervening write) but
+    /// will have different read times.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let snapshot = firestore.doc("rooms/roomA")?.get().await?;
+    /// let _read_time = snapshot.read_time();
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn read_time(&self) -> Timestamp {
         self.read_time
     }
