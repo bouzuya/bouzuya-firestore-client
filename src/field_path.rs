@@ -92,6 +92,22 @@ impl std::fmt::Display for FieldPath {
 }
 
 impl FieldPath {
+    /// Returns a special [`FieldPath`] value that refers to a document's ID.
+    ///
+    /// Firestore exposes a document's identity as the reserved field
+    /// `__name__`. Use this where a regular field path is accepted — for
+    /// example, to sort or filter a query by the document ID — rather than
+    /// constructing a `FieldPath` containing the literal `"__name__"`
+    /// yourself.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::FieldPath;
+    ///
+    /// let field_path = FieldPath::document_id();
+    /// # let _ = field_path;
+    /// ```
     pub fn document_id() -> Self {
         Self {
             segments: vec!["__name__".to_string()],
