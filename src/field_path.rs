@@ -114,6 +114,34 @@ impl FieldPath {
         }
     }
 
+    /// Creates a [`FieldPath`] from the given field name segments.
+    ///
+    /// Each segment is one field name; passing more than one segment points
+    /// at a nested field in the document (e.g. `["user", "name"]` refers to
+    /// the `name` field of the `user` map). Segments may contain any
+    /// character — special characters that are not valid in an unquoted
+    /// field path (anything besides ASCII letters, digits, and `_`, or a
+    /// leading digit) are automatically backtick-quoted by
+    /// [`Display`](std::fmt::Display); see also [`FromStr`](std::str::FromStr).
+    ///
+    /// To refer to a document's ID instead of a stored field, use
+    /// [`FieldPath::document_id`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::FieldPath;
+    ///
+    /// let top_level = FieldPath::new(["age"])?;
+    /// assert_eq!(top_level.to_string(), "age");
+    ///
+    /// let nested = FieldPath::new(["user", "name"])?;
+    /// assert_eq!(nested.to_string(), "user.name");
+    ///
+    /// let needs_quoting = FieldPath::new(["x&y"])?;
+    /// assert_eq!(needs_quoting.to_string(), "`x&y`");
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     pub fn new(segments: impl IntoIterator<Item = impl Into<String>>) -> Result<Self, Error> {
         Ok(Self {
             segments: segments.into_iter().map(Into::into).collect(),
