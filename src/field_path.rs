@@ -113,6 +113,30 @@ impl std::str::FromStr for FieldPath {
 }
 
 impl std::fmt::Display for FieldPath {
+    /// Formats the field path in its textual form.
+    ///
+    /// Segments are joined by `.`. A segment matching
+    /// `[A-Za-z_][A-Za-z0-9_]*` is written as-is; any other segment is
+    /// wrapped in backticks, with embedded `` ` `` and `\` escaped as
+    /// `` \` `` and `\\`. The result round-trips through
+    /// [`FromStr`](std::str::FromStr).
+    ///
+    /// Unlike the informational [`Display`](std::fmt::Display) of
+    /// [`Error`](crate::Error), this format is part of the public contract:
+    /// it is the textual encoding consumed by Firestore's structured
+    /// queries.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::FieldPath;
+    ///
+    /// assert_eq!(FieldPath::new(["age"])?.to_string(), "age");
+    /// assert_eq!(FieldPath::new(["user", "name"])?.to_string(), "user.name");
+    /// assert_eq!(FieldPath::new(["x&y"])?.to_string(), "`x&y`");
+    /// assert_eq!(FieldPath::new(["a`b"])?.to_string(), r"`a\`b`");
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let parts: Vec<String> = self
             .segments
