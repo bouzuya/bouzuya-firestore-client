@@ -19,6 +19,44 @@ fn is_simple_segment(s: &str) -> bool {
 impl std::str::FromStr for FieldPath {
     type Err = Error;
 
+    /// Parses a textual field path.
+    ///
+    /// The textual form is the one produced by
+    /// [`Display`](std::fmt::Display): one or more segments joined by `.`.
+    /// An *unquoted* segment must match `[A-Za-z_][A-Za-z0-9_]*` (an ASCII
+    /// letter or `_` followed by ASCII letters, digits, or `_`). A *quoted*
+    /// segment is wrapped in backticks and may contain any character;
+    /// inside it, `` \` `` denotes a literal backtick and `\\` denotes a
+    /// literal backslash.
+    ///
+    /// To construct a `FieldPath` from segments programmatically without
+    /// parsing, use [`FieldPath::new`]; for a reference to the document's
+    /// ID, use [`FieldPath::document_id`].
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when:
+    ///
+    /// - a backtick-quoted segment is not closed,
+    /// - an invalid escape (anything other than `` \` `` or `\\`) appears
+    ///   inside a quoted segment,
+    /// - a quoted segment is not followed by `.` or end of input,
+    /// - an unquoted segment does not match the form above.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::FieldPath;
+    ///
+    /// let nested: FieldPath = "user.name".parse()?;
+    /// assert_eq!(nested.to_string(), "user.name");
+    ///
+    /// let quoted: FieldPath = "`x&y`".parse()?;
+    /// assert_eq!(quoted.to_string(), "`x&y`");
+    ///
+    /// assert!("1foo".parse::<FieldPath>().is_err());
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut segments = Vec::new();
         let mut chars = s.chars().peekable();
