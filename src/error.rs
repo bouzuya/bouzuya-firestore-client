@@ -19,6 +19,22 @@ enum E {
 pub struct Error(#[source] E);
 
 impl Error {
+    /// Wraps an arbitrary error or message into an [`Error`].
+    ///
+    /// This is the entry point for callers to surface their own failures
+    /// through this crate's [`Error`] type. The argument is anything that
+    /// can be converted into a boxed [`std::error::Error`] — including a
+    /// `&str`, a `String`, or any concrete error value — and is attached as
+    /// the [`source`](std::error::Error::source) of the returned [`Error`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::Error;
+    ///
+    /// let _: Error = Error::custom("something went wrong");
+    /// let _: Error = Error::custom(std::io::Error::other("boom"));
+    /// ```
     pub fn custom(e: impl Into<Box<dyn std::error::Error + Send + Sync>>) -> Self {
         Self(E::Custom(e.into()))
     }
