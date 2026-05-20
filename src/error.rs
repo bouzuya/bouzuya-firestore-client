@@ -14,6 +14,35 @@ enum E {
     Unknown(#[source] Box<dyn std::error::Error + Send + Sync>),
 }
 
+/// The error type returned by this crate's fallible operations.
+///
+/// `Error` is an opaque error: every failure surfaced by the crate —
+/// invalid paths, deserialization failures, transport errors,
+/// caller-supplied errors via [`Error::custom`] — is represented by this
+/// one type. Internal variants are deliberately not exposed, so callers
+/// cannot pattern-match on the cause; the [`Display`](std::fmt::Display)
+/// output is informational and may change between versions.
+///
+/// The underlying cause is exposed through
+/// [`source`](std::error::Error::source); walk the source chain (for
+/// example with [`anyhow`] or [`std::error::Error::sources`]) to recover
+/// detail.
+///
+/// Callers can construct an `Error` themselves with [`Error::custom`],
+/// typically to plumb their own failures through an API that returns
+/// `Result<_, Error>`.
+///
+/// # Examples
+///
+/// ```
+/// use bouzuya_firestore_client::Error;
+/// use std::error::Error as _;
+///
+/// let error = Error::custom("something went wrong");
+/// assert!(error.source().is_some());
+/// ```
+///
+/// [`anyhow`]: https://docs.rs/anyhow
 #[derive(Debug, thiserror::Error)]
 #[error("firestore error: {0}")]
 pub struct Error(#[source] E);
