@@ -4,6 +4,25 @@ use crate::IntoFieldPath;
 pub struct Filter(firestore_structured_query::Filter);
 
 impl Filter {
+    /// Combines the given filters with a logical AND.
+    ///
+    /// The returned [`Filter`] matches a document only when it matches
+    /// *every* filter in `filters`. The arguments are typically field
+    /// conditions built with [`Filter::where`](Self::r#where), but may also
+    /// be nested [`and`](Self::and)/[`or`](Self::or) filters. See
+    /// [`Filter::or`] for the disjunction.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::FieldPath;
+    /// use bouzuya_firestore_client::Filter;
+    ///
+    /// let f1 = Filter::r#where(FieldPath::new(["age"])?, "==", 30_i64)?;
+    /// let f2 = Filter::r#where(FieldPath::new(["name"])?, "==", "Alice")?;
+    /// let _: Filter = Filter::and([f1, f2]);
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     pub fn and<I>(filters: I) -> Self
     where
         I: IntoIterator<Item = Filter>,
