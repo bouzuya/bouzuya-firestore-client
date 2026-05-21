@@ -60,6 +60,46 @@ impl Filter {
         ))
     }
 
+    /// Builds a single field-condition [`Filter`].
+    ///
+    /// The condition tests `field_path` against `value` using the operator
+    /// `op`. `field_path` is anything implementing [`IntoFieldPath`] — a
+    /// [`FieldPath`](crate::FieldPath), or a `&str`/`String` that is parsed
+    /// as one (see [`FieldPath`](crate::FieldPath)'s
+    /// [`FromStr`](std::str::FromStr)). `value` is any [`serde::Serialize`]
+    /// value.
+    ///
+    /// `op` must be one of the following strings:
+    ///
+    /// - `"<"`, `"<="`, `"=="`, `"!="`, `">="`, `">"` — value comparisons,
+    /// - `"array-contains"` — the array field contains `value`,
+    /// - `"in"` — the field equals one of the elements of `value`,
+    /// - `"not-in"` — the field equals none of the elements of `value`,
+    /// - `"array-contains-any"` — the array field contains any element of
+    ///   `value`.
+    ///
+    /// Combine several conditions with [`Filter::and`] or [`Filter::or`].
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when `field_path` fails to parse, when `op` is
+    /// not one of the strings listed above, when `value` cannot be
+    /// serialized, or when the field/operator/value combination is rejected
+    /// as a query condition.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::FieldPath;
+    /// use bouzuya_firestore_client::Filter;
+    ///
+    /// let _ = Filter::r#where(FieldPath::new(["age"])?, "<", 30_i64)?;
+    /// let _ = Filter::r#where("name", "==", "Alice")?;
+    /// let _ = Filter::r#where("tags", "array-contains", "rust")?;
+    ///
+    /// assert!(Filter::r#where("age", "invalid", 30_i64).is_err());
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     pub fn r#where(
         field_path: impl IntoFieldPath,
         op: &str,
