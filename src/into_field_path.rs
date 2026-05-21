@@ -4,6 +4,19 @@ use crate::Error;
 use crate::FieldPath;
 
 pub trait IntoFieldPath: crate::private::Sealed {
+    /// Converts this value into a [`FieldPath`].
+    ///
+    /// This is the conversion behind APIs that accept
+    /// `impl IntoFieldPath` (such as
+    /// [`Filter::where`](crate::Filter::r#where)), letting callers pass a
+    /// [`FieldPath`] directly or a string to be parsed. It is implemented
+    /// for [`FieldPath`] (returned as-is), `&str`, and `String` (each
+    /// parsed via [`FieldPath`]'s [`FromStr`](std::str::FromStr)).
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when `self` is a string that is not a valid
+    /// field path; converting a [`FieldPath`] never fails.
     fn into_field_path(self) -> Result<FieldPath, Error>;
 }
 
