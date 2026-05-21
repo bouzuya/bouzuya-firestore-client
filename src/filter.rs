@@ -1,6 +1,28 @@
 use crate::Error;
 use crate::IntoFieldPath;
 
+/// A condition used to constrain the documents a query returns.
+///
+/// A `Filter` is either a single field condition — built with
+/// [`where`](Self::r#where), which tests a field against a value using an
+/// operator — or a composite of other filters joined by
+/// [`and`](Self::and) (conjunction) or [`or`](Self::or) (disjunction).
+/// Composites nest arbitrarily, so any boolean combination of conditions
+/// can be expressed.
+///
+/// Pass the resulting `Filter` to a query's `where` method to apply it.
+///
+/// # Examples
+///
+/// ```
+/// use bouzuya_firestore_client::FieldPath;
+/// use bouzuya_firestore_client::Filter;
+///
+/// let young = Filter::r#where(FieldPath::new(["age"])?, "<", 30_i64)?;
+/// let named = Filter::r#where(FieldPath::new(["name"])?, "==", "Alice")?;
+/// let _: Filter = Filter::and([young, named]);
+/// # Ok::<(), bouzuya_firestore_client::Error>(())
+/// ```
 pub struct Filter(firestore_structured_query::Filter);
 
 impl Filter {
