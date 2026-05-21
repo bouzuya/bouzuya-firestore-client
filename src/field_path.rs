@@ -1,5 +1,29 @@
 use crate::Error;
 
+/// A path identifying a field within a document.
+///
+/// A `FieldPath` is an ordered list of segments. A single segment names a
+/// top-level field; multiple segments descend into nested map fields (e.g.
+/// `["user", "name"]` is the `name` field of the `user` map). Use it
+/// wherever a query refers to a field — for example, to filter with
+/// [`Filter::where`](crate::Filter::r#where) or to sort or select results.
+///
+/// Construct one with [`new`](Self::new) from segment strings, parse one
+/// from its textual form with [`FromStr`](std::str::FromStr), or obtain
+/// the special path to a document's ID with [`document_id`](Self::document_id).
+/// [`Display`](std::fmt::Display) renders the textual form, which
+/// round-trips through [`FromStr`](std::str::FromStr).
+///
+/// # Examples
+///
+/// ```
+/// use bouzuya_firestore_client::FieldPath;
+///
+/// let from_segments = FieldPath::new(["user", "name"])?;
+/// let parsed: FieldPath = "user.name".parse()?;
+/// assert!(from_segments == parsed);
+/// # Ok::<(), bouzuya_firestore_client::Error>(())
+/// ```
 #[derive(Eq, PartialEq)]
 pub struct FieldPath {
     segments: Vec<String>,
