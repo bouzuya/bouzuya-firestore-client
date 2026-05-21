@@ -3,6 +3,15 @@ use std::str::FromStr as _;
 use crate::Error;
 use crate::FieldPath;
 
+/// A conversion into a [`FieldPath`].
+///
+/// This trait is used as a bound on APIs that accept a field reference
+/// — such as [`Filter::where`](crate::Filter::r#where) — so callers can
+/// pass a [`FieldPath`] directly or a string to be parsed into one. It is
+/// implemented for [`FieldPath`], `&str`, and `String`.
+///
+/// The trait is sealed: it cannot be implemented for types outside this
+/// crate.
 pub trait IntoFieldPath: crate::private::Sealed {
     /// Converts this value into a [`FieldPath`].
     ///
