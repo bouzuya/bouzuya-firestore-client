@@ -32,6 +32,25 @@ impl Filter {
         ))
     }
 
+    /// Combines the given filters with a logical OR.
+    ///
+    /// The returned [`Filter`] matches a document when it matches *at least
+    /// one* filter in `filters`. The arguments are typically field
+    /// conditions built with [`Filter::where`](Self::r#where), but may also
+    /// be nested [`and`](Self::and)/[`or`](Self::or) filters. See
+    /// [`Filter::and`] for the conjunction.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::FieldPath;
+    /// use bouzuya_firestore_client::Filter;
+    ///
+    /// let f1 = Filter::r#where(FieldPath::new(["age"])?, "==", 30_i64)?;
+    /// let f2 = Filter::r#where(FieldPath::new(["name"])?, "==", "Alice")?;
+    /// let _: Filter = Filter::or([f1, f2]);
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     pub fn or<I>(filters: I) -> Self
     where
         I: IntoIterator<Item = Filter>,
