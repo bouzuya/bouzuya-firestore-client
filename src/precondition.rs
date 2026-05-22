@@ -12,5 +12,15 @@ pub struct Precondition {
     /// [`last_update_time`](Self::last_update_time): setting both is an
     /// error.
     pub exists: Option<bool>,
+    /// Requires the target document's last update time to match.
+    ///
+    /// `Some(timestamp)` makes the operation succeed only if the
+    /// document's current update time equals `timestamp` — typically the
+    /// [`update_time`](crate::DocumentSnapshot::update_time) of a snapshot
+    /// read earlier, used to detect a concurrent modification. `None`
+    /// imposes no update-time constraint.
+    ///
+    /// This field is mutually exclusive with [`exists`](Self::exists):
+    /// setting both is an error.
     pub last_update_time: Option<Timestamp>,
 }
