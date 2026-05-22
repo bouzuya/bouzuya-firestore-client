@@ -1,5 +1,32 @@
 use crate::Timestamp;
 
+/// A condition that a document must satisfy for a write to be applied.
+///
+/// A `Precondition` is passed to write operations (such as
+/// [`DocumentReference::delete`](crate::DocumentReference::delete)) to make
+/// them conditional: the write is applied only if the target document
+/// currently meets the condition, and otherwise fails. It carries at most
+/// one condition — either an existence check ([`exists`](Self::exists)) or
+/// an update-time check ([`last_update_time`](Self::last_update_time));
+/// setting both is an error.
+///
+/// [`Precondition::default`] leaves both fields `None`, which imposes no
+/// condition and applies the write unconditionally.
+///
+/// # Examples
+///
+/// ```
+/// use bouzuya_firestore_client::Precondition;
+///
+/// // Require that the document already exists.
+/// let _ = Precondition {
+///     exists: Some(true),
+///     ..Precondition::default()
+/// };
+///
+/// // Apply the write unconditionally.
+/// let _ = Precondition::default();
+/// ```
 #[derive(Default)]
 pub struct Precondition {
     /// Requires the target document to exist, or not to exist.
