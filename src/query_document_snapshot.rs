@@ -3,6 +3,43 @@ use crate::DocumentSnapshot;
 use crate::Error;
 use crate::Timestamp;
 
+/// A snapshot of a single document from a query result.
+///
+/// `QueryDocumentSnapshot` wraps a [`DocumentSnapshot`] of a document that
+/// is *guaranteed to exist* — query results never include nonexistent
+/// documents. Obtain one by iterating a [`QuerySnapshot`](crate::QuerySnapshot)
+/// or via [`QuerySnapshot::docs`](crate::QuerySnapshot::docs).
+///
+/// Because the document always exists, the accessors that return
+/// [`Option`] on a [`DocumentSnapshot`] return the value directly here:
+/// [`data`](Self::data) returns `Result<T, Error>`, and
+/// [`create_time`](Self::create_time) /
+/// [`update_time`](Self::update_time) return a [`Timestamp`].
+/// [`exists`](Self::exists) is always `true` and is provided only for
+/// parity with [`DocumentSnapshot`].
+///
+/// [`Clone`] performs a deep copy of the underlying document payload, so
+/// the same cost considerations as [`DocumentSnapshot`] apply: prefer
+/// borrowing or extracting only what you need from large documents.
+///
+/// # Examples
+///
+/// ```no_run
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use bouzuya_firestore_client::Firestore;
+/// use bouzuya_firestore_client::FirestoreOptions;
+/// use std::collections::HashMap;
+///
+/// let firestore = Firestore::new(FirestoreOptions::default())?;
+/// let query_snapshot = firestore.collection("rooms")?.get().await?;
+/// for query_document_snapshot in query_snapshot {
+///     let _id = query_document_snapshot.id();
+///     let _data: HashMap<String, String> = query_document_snapshot.data()?;
+/// }
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Clone)]
 pub struct QueryDocumentSnapshot(DocumentSnapshot);
 
