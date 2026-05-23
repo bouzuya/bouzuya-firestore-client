@@ -44,6 +44,37 @@ impl QueryDocumentSnapshot {
         self.0.create_time().expect("document exists")
     }
 
+    /// Deserializes this document's fields into `T`.
+    ///
+    /// A [`QueryDocumentSnapshot`] always represents a document that
+    /// exists, so unlike [`DocumentSnapshot::data`] this returns
+    /// `Result<T, Error>` directly rather than wrapping it in an
+    /// [`Option`]. The document's fields are deserialized with [`serde`]
+    /// as a map into `T`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when the document's fields cannot be
+    /// deserialized as `T` — for example, because `T`'s shape does not
+    /// match the document's.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use std::collections::HashMap;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// for query_document_snapshot in query_snapshot {
+    ///     let _data: HashMap<String, String> = query_document_snapshot.data()?;
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn data<T: serde::de::DeserializeOwned>(&self) -> Result<T, Error> {
         self.0.data().expect("document exists")
     }
