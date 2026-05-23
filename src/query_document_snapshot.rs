@@ -14,6 +14,32 @@ impl QueryDocumentSnapshot {
 }
 
 impl QueryDocumentSnapshot {
+    /// Returns the server-side time at which this document was created.
+    ///
+    /// A [`QueryDocumentSnapshot`] always represents a document that
+    /// exists, so unlike [`DocumentSnapshot::create_time`] this returns a
+    /// [`Timestamp`] directly rather than an [`Option`]. The returned
+    /// timestamp is the commit time of the original
+    /// [`DocumentReference::create`] or [`DocumentReference::set`] that
+    /// brought the document into being, not the time of the most recent
+    /// write — use [`update_time`](Self::update_time) for that.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// for query_document_snapshot in query_snapshot {
+    ///     let _create_time = query_document_snapshot.create_time();
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn create_time(&self) -> Timestamp {
         self.0.create_time().expect("document exists")
     }
