@@ -133,6 +133,31 @@ impl QueryDocumentSnapshot {
         self.0.id()
     }
 
+    /// Returns the time at which this document was read from the server.
+    ///
+    /// As with [`DocumentSnapshot::read_time`], this describes the read
+    /// itself, not the document, so it differs from
+    /// [`create_time`](Self::create_time) and
+    /// [`update_time`](Self::update_time) and will change between
+    /// successive reads of the same document even when no write has
+    /// intervened.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// for query_document_snapshot in query_snapshot {
+    ///     let _read_time = query_document_snapshot.read_time();
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn read_time(&self) -> Timestamp {
         self.0.read_time()
     }
