@@ -79,6 +79,30 @@ impl QueryDocumentSnapshot {
         self.0.data().expect("document exists")
     }
 
+    /// Returns whether the document exists.
+    ///
+    /// On a [`QueryDocumentSnapshot`] this is always `true`: query results
+    /// only contain existing documents, so this type only ever wraps a
+    /// [`DocumentSnapshot`] whose [`exists`](DocumentSnapshot::exists) is
+    /// `true`. The method is provided for parity with
+    /// [`DocumentSnapshot::exists`].
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// for query_document_snapshot in query_snapshot {
+    ///     assert!(query_document_snapshot.exists());
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn exists(&self) -> bool {
         self.0.exists()
     }
