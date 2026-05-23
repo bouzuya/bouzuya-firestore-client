@@ -162,6 +162,28 @@ impl QueryDocumentSnapshot {
         self.0.read_time()
     }
 
+    /// Returns the [`DocumentReference`] for this document.
+    ///
+    /// The reference is reconstructed from the document's full path in the
+    /// query response. Use it to re-read the document, write it, or
+    /// navigate to a subcollection.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// for query_document_snapshot in query_snapshot {
+    ///     let _document_reference = query_document_snapshot.r#ref();
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn r#ref(&self) -> DocumentReference {
         self.0.r#ref()
     }
