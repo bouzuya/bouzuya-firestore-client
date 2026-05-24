@@ -24,6 +24,33 @@ impl QuerySnapshot {
 }
 
 impl QuerySnapshot {
+    /// Returns the result documents as a [`Vec`], in the order produced by
+    /// the query.
+    ///
+    /// Each call clones the underlying vector and every contained
+    /// [`QueryDocumentSnapshot`], so the cost grows with both the number
+    /// of documents and the size of each document. When you only need to
+    /// walk the results once, prefer iterating the [`QuerySnapshot`]
+    /// directly via its [`IntoIterator`] impl, which moves the documents
+    /// out without cloning.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// let docs = query_snapshot.docs();
+    /// for doc in &docs {
+    ///     let _id = doc.id();
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn docs(&self) -> Vec<QueryDocumentSnapshot> {
         self.query_document_snapshots.clone()
     }
