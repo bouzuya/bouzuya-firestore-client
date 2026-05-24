@@ -55,6 +55,27 @@ impl QuerySnapshot {
         self.query_document_snapshots.clone()
     }
 
+    /// Returns `true` if this snapshot contains no documents.
+    ///
+    /// Equivalent to `self.size() == 0`. A `true` result simply means the
+    /// query matched nothing; it is not an error.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// if query_snapshot.empty() {
+    ///     // no results
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn empty(&self) -> bool {
         self.query_document_snapshots.is_empty()
     }
