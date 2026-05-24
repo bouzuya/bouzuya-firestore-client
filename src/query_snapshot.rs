@@ -103,6 +103,30 @@ impl QuerySnapshot {
         self.query.clone()
     }
 
+    /// Returns the time at which this query result was read from the
+    /// server.
+    ///
+    /// This describes the read itself, not any particular document, and so
+    /// is meaningful even when [`empty`](Self::empty) is `true`. Two
+    /// successive reads of the same query yield different read times even
+    /// when the matching documents have not changed. Each contained
+    /// [`QueryDocumentSnapshot`] also carries its own
+    /// [`read_time`](QueryDocumentSnapshot::read_time).
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// let _read_time = query_snapshot.read_time();
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn read_time(&self) -> Timestamp {
         self.read_time
     }
