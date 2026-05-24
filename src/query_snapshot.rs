@@ -159,6 +159,33 @@ impl IntoIterator for QuerySnapshot {
     type Item = QueryDocumentSnapshot;
     type IntoIter = std::vec::IntoIter<QueryDocumentSnapshot>;
 
+    /// Consumes the snapshot, yielding each [`QueryDocumentSnapshot`] in
+    /// query order.
+    ///
+    /// This is the move-based counterpart to [`docs`](Self::docs): it
+    /// hands the documents out without cloning, but the [`QuerySnapshot`]
+    /// is no longer available afterwards. If you also need
+    /// [`query`](Self::query), [`read_time`](Self::read_time),
+    /// [`size`](Self::size), or [`empty`](Self::empty), call them before
+    /// iterating — or use [`docs`](Self::docs) to keep the snapshot
+    /// around.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// for query_document_snapshot in query_snapshot {
+    ///     let _id = query_document_snapshot.id();
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     fn into_iter(self) -> Self::IntoIter {
         self.query_document_snapshots.into_iter()
     }
