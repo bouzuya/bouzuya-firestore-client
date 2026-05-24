@@ -80,6 +80,25 @@ impl QuerySnapshot {
         self.query_document_snapshots.is_empty()
     }
 
+    /// Returns the [`Query`] that produced this snapshot.
+    ///
+    /// Use the returned value to re-run the query — for example to obtain
+    /// a fresher snapshot — without rebuilding it.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// let _query = query_snapshot.query();
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn query(&self) -> Query {
         self.query.clone()
     }
