@@ -2,6 +2,42 @@ use crate::Query;
 use crate::QueryDocumentSnapshot;
 use crate::Timestamp;
 
+/// The result of executing a [`Query`].
+///
+/// A `QuerySnapshot` carries the documents that matched the query, the
+/// [`Query`] that produced them, and the time at which the result was
+/// read from the server. Obtain one by calling `get` on a
+/// [`CollectionReference`](crate::CollectionReference), a
+/// [`CollectionGroup`](crate::CollectionGroup), or any other
+/// [`Query`]-shaped value.
+///
+/// The matching documents are exposed in two ways: iterate the snapshot
+/// directly with its [`IntoIterator`] impl to move the documents out
+/// without cloning, or call [`docs`](Self::docs) to clone them into a
+/// [`Vec`]. [`empty`](Self::empty) and [`size`](Self::size) report the
+/// cardinality without touching the documents.
+///
+/// [`Clone`] copies the contained [`QueryDocumentSnapshot`]s, each of
+/// which deep-clones its document payload, so cloning a large result set
+/// is not free. Prefer iterating once when you can.
+///
+/// # Examples
+///
+/// ```no_run
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use bouzuya_firestore_client::Firestore;
+/// use bouzuya_firestore_client::FirestoreOptions;
+///
+/// let firestore = Firestore::new(FirestoreOptions::default())?;
+/// let query_snapshot = firestore.collection("rooms")?.get().await?;
+/// let _n = query_snapshot.size();
+/// for query_document_snapshot in query_snapshot {
+///     let _id = query_document_snapshot.id();
+/// }
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Clone)]
 pub struct QuerySnapshot {
     query: Query,
