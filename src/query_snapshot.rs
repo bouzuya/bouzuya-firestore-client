@@ -131,6 +131,25 @@ impl QuerySnapshot {
         self.read_time
     }
 
+    /// Returns the number of documents in this snapshot.
+    ///
+    /// A return value of `0` is equivalent to [`empty`](Self::empty)
+    /// returning `true`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore.collection("rooms")?.get().await?;
+    /// let _n = query_snapshot.size();
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn size(&self) -> usize {
         self.query_document_snapshots.len()
     }
