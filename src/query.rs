@@ -158,6 +158,24 @@ impl Query {
         })
     }
 
+    /// Returns the [`Firestore`] this query belongs to.
+    ///
+    /// This is the same instance from which the [`Query`] was derived via a
+    /// [`CollectionReference`] or [`CollectionGroup`].
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query = firestore.collection("rooms")?.limit(1)?;
+    /// assert_eq!(query.firestore(), &firestore);
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn firestore(&self) -> &Firestore {
         &self.firestore
     }
