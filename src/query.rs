@@ -75,7 +75,6 @@ impl Query {
         }
     }
 
-    #[allow(dead_code)]
     pub(crate) fn collection_group(collection_group: CollectionGroup) -> Self {
         let firestore = collection_group.firestore().clone();
         let collection_id = collection_group.collection_id();
