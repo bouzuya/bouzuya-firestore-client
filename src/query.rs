@@ -180,6 +180,28 @@ impl Query {
         &self.firestore
     }
 
+    /// Executes the query and returns the results as a [`QuerySnapshot`].
+    ///
+    /// Without further filtering (e.g. [`r#where`](Self::r#where) or
+    /// [`limit`](Self::limit)) this can return a large number of documents.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore
+    ///     .collection("rooms")?
+    ///     .limit(10)?
+    ///     .get()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn get(&self) -> Result<QuerySnapshot, Error> {
         use std::str::FromStr as _;
         let firestore_client = self.firestore.firestore_client();
