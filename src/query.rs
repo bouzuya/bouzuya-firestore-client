@@ -246,6 +246,27 @@ impl Query {
         ))
     }
 
+    /// Returns a new [`Query`] that returns at most `n` matching documents.
+    ///
+    /// Returns an error if `n` is negative.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore
+    ///     .collection("rooms")?
+    ///     .limit(2)?
+    ///     .get()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn limit(&self, n: i32) -> Result<Query, Error> {
         if n < 0 {
             return Err(Error::custom("limit must be non-negative"));
