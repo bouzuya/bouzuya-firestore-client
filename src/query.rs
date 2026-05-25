@@ -513,6 +513,33 @@ impl Query {
         })
     }
 
+    /// Returns a new [`Query`] filtered by the given `filter`.
+    ///
+    /// `filter` can be any value that implements [`IntoFilter`], e.g. a
+    /// [`Filter`] built with [`Filter::r#where`] or a `(field, op, value)`
+    /// tuple such as `("k", "==", "target")`. Chain multiple `r#where` calls
+    /// to combine conditions with AND.
+    ///
+    /// [`Filter`]: crate::Filter
+    /// [`Filter::r#where`]: crate::Filter::r#where
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore
+    ///     .collection("rooms")?
+    ///     .r#where(("k", "==", "target".to_string()))?
+    ///     .get()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn r#where(&self, filter: impl IntoFilter) -> Result<Query, Error> {
         let filter = filter.into_filter()?;
         let mut where_ = self.where_.clone();
