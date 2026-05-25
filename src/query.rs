@@ -368,6 +368,29 @@ impl Query {
         })
     }
 
+    /// Returns a new [`Query`] that applies a field mask and returns only the
+    /// specified subset of fields from each document.
+    ///
+    /// Use this to reduce the amount of data transferred when the rest of the
+    /// document is not needed.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let query_snapshot = firestore
+    ///     .collection("rooms")?
+    ///     .select(["a"])?
+    ///     .get()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn select<I>(&self, fields: I) -> Result<Query, Error>
     where
         I: IntoIterator,
