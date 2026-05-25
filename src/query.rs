@@ -11,6 +11,43 @@ use crate::QuerySnapshot;
 use crate::Timestamp;
 use crate::google;
 
+/// A query you can read from, optionally refined with filters, ordering, and
+/// cursors.
+///
+/// A `Query` targets either a single collection or every collection sharing a
+/// given ID. Obtain one from a [`CollectionReference`] (e.g. via
+/// [`CollectionReference::limit`]) or a [`CollectionGroup`] (e.g. via
+/// [`CollectionGroup::limit`]); the query-builder methods on those types
+/// resolve to `Query` internally.
+///
+/// Builder methods such as [`r#where`](Self::r#where),
+/// [`order_by`](Self::order_by), [`limit`](Self::limit),
+/// [`start_at`](Self::start_at), and [`end_at`](Self::end_at) each return a
+/// new `Query`, leaving the original unchanged. Execute the query with
+/// [`get`](Self::get) to obtain a [`QuerySnapshot`].
+///
+/// `Query` is cheap to [`Clone`]; the underlying [`Firestore`] is shared
+/// between clones.
+///
+/// # Examples
+///
+/// ```no_run
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use bouzuya_firestore_client::Firestore;
+/// use bouzuya_firestore_client::FirestoreOptions;
+///
+/// let firestore = Firestore::new(FirestoreOptions::default())?;
+/// let query_snapshot = firestore
+///     .collection("rooms")?
+///     .r#where(("k", "==", "target".to_string()))?
+///     .order_by("k", "asc")?
+///     .limit(10)?
+///     .get()
+///     .await?;
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct Query {
     /// collection_path is None for collection group query
