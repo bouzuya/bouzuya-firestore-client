@@ -127,6 +127,21 @@ impl Timestamp {
         self.0.nanos
     }
 
+    /// Returns the number of seconds of UTC time since the Unix epoch
+    /// 1970-01-01T00:00:00Z.
+    ///
+    /// The value is in the range corresponding to 0001-01-01T00:00:00Z
+    /// through 9999-12-31T23:59:59Z inclusive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::Timestamp;
+    ///
+    /// assert_eq!(Timestamp::new(1, 500_000_000)?.seconds(), 1);
+    /// assert_eq!(Timestamp::from_millis(-1_500)?.seconds(), -2);
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     pub fn seconds(&self) -> i64 {
         self.0.seconds
     }
