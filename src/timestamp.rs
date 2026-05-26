@@ -5,6 +5,33 @@ const MIN_SECONDS: i64 = -62_135_596_800;
 /// 9999-12-31T23:59:59Z as seconds since UNIX epoch.
 const MAX_SECONDS: i64 = 253_402_300_799;
 
+/// A point in time independent of any time zone or calendar, represented as
+/// seconds and fractions of seconds at nanosecond resolution in UTC Epoch
+/// time.
+///
+/// Encoded using the Proleptic Gregorian Calendar which extends the Gregorian
+/// calendar backwards to year one. Encoded assuming all minutes are 60 seconds
+/// long, i.e. leap seconds are "smeared" so that no leap second table is
+/// needed for interpretation. The valid range is from 0001-01-01T00:00:00Z to
+/// 9999-12-31T23:59:59.999999999Z.
+///
+/// Construct a `Timestamp` with [`new`](Self::new),
+/// [`from_millis`](Self::from_millis), or [`now`](Self::now). Read its
+/// components with [`seconds`](Self::seconds) and
+/// [`nanoseconds`](Self::nanoseconds), or convert to milliseconds with
+/// [`to_millis`](Self::to_millis).
+///
+/// # Examples
+///
+/// ```
+/// use bouzuya_firestore_client::Timestamp;
+///
+/// let timestamp = Timestamp::new(1, 500_000_000)?;
+/// assert_eq!(timestamp.seconds(), 1);
+/// assert_eq!(timestamp.nanoseconds(), 500_000_000);
+/// assert_eq!(timestamp.to_millis(), 1_500);
+/// # Ok::<(), bouzuya_firestore_client::Error>(())
+/// ```
 #[derive(Clone, Copy, Eq, Hash, PartialEq)]
 pub struct Timestamp(prost_types::Timestamp);
 
