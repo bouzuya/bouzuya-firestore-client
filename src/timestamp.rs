@@ -9,6 +9,26 @@ const MAX_SECONDS: i64 = 253_402_300_799;
 pub struct Timestamp(prost_types::Timestamp);
 
 impl Timestamp {
+    /// Creates a new [`Timestamp`] from the given number of milliseconds.
+    ///
+    /// `millis` is the number of milliseconds since the Unix epoch
+    /// 1970-01-01T00:00:00Z.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when `millis` falls outside the supported range,
+    /// i.e. before 0001-01-01T00:00:00Z or after 9999-12-31T23:59:59.999Z.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::Timestamp;
+    ///
+    /// let timestamp = Timestamp::from_millis(1_500)?;
+    /// assert_eq!(timestamp.seconds(), 1);
+    /// assert_eq!(timestamp.nanoseconds(), 500_000_000);
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     pub fn from_millis(millis: i64) -> Result<Self, Error> {
         let seconds = millis.div_euclid(1_000);
         let nanos = (millis.rem_euclid(1_000) * 1_000_000) as i32;
