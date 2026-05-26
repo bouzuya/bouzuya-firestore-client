@@ -146,6 +146,25 @@ impl Timestamp {
         self.0.seconds
     }
 
+    /// Returns the point in time corresponding to this timestamp,
+    /// represented as the number of milliseconds since the Unix epoch
+    /// 1970-01-01T00:00:00Z.
+    ///
+    /// Sub-millisecond fractions are truncated toward zero relative to
+    /// [`nanoseconds`](Self::nanoseconds), which always counts forward in
+    /// time. As a result, round-tripping through [`from_millis`](Self::from_millis)
+    /// is lossless only for timestamps whose `nanoseconds` is an exact
+    /// multiple of 1,000,000.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::Timestamp;
+    ///
+    /// assert_eq!(Timestamp::from_millis(1_500)?.to_millis(), 1_500);
+    /// assert_eq!(Timestamp::from_millis(-1_500)?.to_millis(), -1_500);
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     pub fn to_millis(&self) -> i64 {
         (self.0.seconds * 1_000) + (i64::from(self.0.nanos) / 1_000_000)
     }
