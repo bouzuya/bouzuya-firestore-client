@@ -39,6 +39,32 @@ impl Timestamp {
         Self(timestamp)
     }
 
+    /// Creates a new [`Timestamp`].
+    ///
+    /// `seconds` is the number of seconds of UTC time since the Unix epoch
+    /// 1970-01-01T00:00:00Z, and must be from 0001-01-01T00:00:00Z to
+    /// 9999-12-31T23:59:59Z inclusive.
+    ///
+    /// `nanoseconds` is the non-negative fractions of a second at nanosecond
+    /// resolution, and must be from 0 to 999,999,999 inclusive. Negative
+    /// `seconds` values with fractions must still have non-negative
+    /// `nanoseconds` values that count forward in time.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when `seconds` or `nanoseconds` falls outside
+    /// the ranges above.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::Timestamp;
+    ///
+    /// let timestamp = Timestamp::new(1, 500_000_000)?;
+    /// assert_eq!(timestamp.seconds(), 1);
+    /// assert_eq!(timestamp.nanoseconds(), 500_000_000);
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     pub fn new(seconds: i64, nanoseconds: i32) -> Result<Self, Error> {
         if !(MIN_SECONDS..=MAX_SECONDS).contains(&seconds) {
             return Err(Error::custom(format!("seconds out of range: {}", seconds)));
