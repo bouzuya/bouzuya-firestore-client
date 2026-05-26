@@ -107,6 +107,22 @@ impl Timestamp {
 }
 
 impl Timestamp {
+    /// Returns the non-negative fractions of a second at nanosecond
+    /// resolution.
+    ///
+    /// The value is in the range 0 to 999,999,999 inclusive. Even when
+    /// [`seconds`](Self::seconds) is negative, the returned value remains
+    /// non-negative and counts forward in time.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::Timestamp;
+    ///
+    /// assert_eq!(Timestamp::new(1, 500_000_000)?.nanoseconds(), 500_000_000);
+    /// assert_eq!(Timestamp::from_millis(-1_500)?.nanoseconds(), 500_000_000);
+    /// # Ok::<(), bouzuya_firestore_client::Error>(())
+    /// ```
     pub fn nanoseconds(&self) -> i32 {
         self.0.nanos
     }
