@@ -81,6 +81,17 @@ impl Timestamp {
         }))
     }
 
+    /// Creates a new [`Timestamp`] with the current date, with millisecond
+    /// precision.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bouzuya_firestore_client::Timestamp;
+    ///
+    /// let timestamp = Timestamp::now();
+    /// assert_eq!(timestamp.nanoseconds() % 1_000_000, 0);
+    /// ```
     pub fn now() -> Self {
         Self::from_millis(
             i64::try_from(
