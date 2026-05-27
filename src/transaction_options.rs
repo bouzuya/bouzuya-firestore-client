@@ -13,6 +13,14 @@ pub struct TransactionOptions {
     /// are not implemented, and the value is ignored by
     /// [`Firestore::run_transaction`](crate::Firestore::run_transaction).
     pub max_attempts: Option<usize>,
+    /// Whether the transaction is read-only.
+    ///
+    /// Set to `Some(true)` to indicate a read-only transaction. `Some(false)`
+    /// or `None` indicates a read-write transaction.
+    ///
+    /// [`read_time`](Self::read_time) is only meaningful for read-only
+    /// transactions, and [`max_attempts`](Self::max_attempts) is only
+    /// meaningful for read-write transactions.
     pub read_only: Option<bool>,
     pub read_time: Option<Timestamp>,
 }
