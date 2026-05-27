@@ -1,5 +1,31 @@
 use crate::Timestamp;
 
+/// Options for [`Firestore::run_transaction`](crate::Firestore::run_transaction)
+/// to configure a read-write or read-only transaction.
+///
+/// [`read_only`](Self::read_only) selects the mode: `Some(true)` for
+/// read-only, `Some(false)` or `None` for read-write. The remaining fields
+/// only apply to one of the two modes — [`read_time`](Self::read_time) to
+/// read-only, [`max_attempts`](Self::max_attempts) to read-write — and are
+/// ignored in the other.
+///
+/// [`TransactionOptions::default`] leaves every field `None`, which selects
+/// a read-write transaction with default settings.
+///
+/// # Examples
+///
+/// ```
+/// use bouzuya_firestore_client::TransactionOptions;
+///
+/// // Read-write transaction with defaults.
+/// let _ = TransactionOptions::default();
+///
+/// // Read-only transaction.
+/// let _ = TransactionOptions {
+///     read_only: Some(true),
+///     ..TransactionOptions::default()
+/// };
+/// ```
 #[derive(Default)]
 pub struct TransactionOptions {
     /// The maximum number of attempts for this transaction. Defaults to `5`
