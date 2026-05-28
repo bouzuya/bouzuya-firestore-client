@@ -11,6 +11,51 @@ pub struct Transaction {
 }
 
 impl Transaction {
+    /// Creates the document referred to by the provided `document_reference`
+    /// within this transaction.
+    ///
+    /// `data` is serialized with [`serde`] and must serialize to a map. The
+    /// write is staged on this transaction and applied when the surrounding
+    /// [`Firestore::run_transaction`](crate::Firestore::run_transaction)
+    /// commits; the transaction fails if a document already exists at the
+    /// specified location. Use [`set`](Self::set) to write unconditionally or
+    /// [`update`](Self::update) to modify an existing document.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when `data` fails to serialize or does not
+    /// serialize to a map.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use bouzuya_firestore_client::TransactionOptions;
+    /// use std::collections::HashMap;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// firestore
+    ///     .run_transaction(
+    ///         |transaction| {
+    ///             let document_reference = document_reference.clone();
+    ///             Box::pin(async move {
+    ///                 transaction.create(
+    ///                     &document_reference,
+    ///                     &HashMap::<String, String>::new(),
+    ///                 )?;
+    ///                 Ok(())
+    ///             })
+    ///         },
+    ///         TransactionOptions::default(),
+    ///     )
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn create(
         &mut self,
         document_reference: &DocumentReference,
