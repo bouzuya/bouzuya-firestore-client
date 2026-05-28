@@ -172,6 +172,45 @@ impl Transaction {
     }
 
     // TODO: Query support
+    /// Reads the document referenced by the provided `document_reference`
+    /// within this transaction. Holds a pessimistic lock on the returned
+    /// document.
+    ///
+    /// In a read-write transaction, all reads must precede any writes; call
+    /// [`create`](Self::create), [`set`](Self::set), [`update`](Self::update),
+    /// or [`delete`](Self::delete) only after every `get` has completed.
+    ///
+    /// The returned [`DocumentSnapshot`] is empty if the document does not
+    /// exist; check with [`DocumentSnapshot::exists`].
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when the read RPC fails.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use bouzuya_firestore_client::TransactionOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// let snapshot = firestore
+    ///     .run_transaction(
+    ///         |transaction| {
+    ///             let document_reference = document_reference.clone();
+    ///             Box::pin(async move { transaction.get(&document_reference).await })
+    ///         },
+    ///         TransactionOptions::default(),
+    ///     )
+    ///     .await?;
+    /// let _ = snapshot.exists();
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn get(
         &self,
         document_reference: &DocumentReference,
