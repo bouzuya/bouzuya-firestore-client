@@ -87,6 +87,51 @@ impl Transaction {
         Ok(())
     }
 
+    /// Deletes the document referred to by the provided `document_reference`
+    /// within this transaction, subject to the given `precondition`.
+    ///
+    /// `precondition` lets the caller require that the document exist
+    /// (`exists`) or that its last update time match (`last_update_time`);
+    /// pass [`Precondition::default`] to delete unconditionally. The delete
+    /// is staged on this transaction and applied when the surrounding
+    /// [`Firestore::run_transaction`](crate::Firestore::run_transaction)
+    /// commits.
+    ///
+    /// Subcollections of the deleted document are not deleted automatically
+    /// and continue to exist independently.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when `precondition` sets both `exists` and
+    /// `last_update_time`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use bouzuya_firestore_client::Precondition;
+    /// use bouzuya_firestore_client::TransactionOptions;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// firestore
+    ///     .run_transaction(
+    ///         |transaction| {
+    ///             let document_reference = document_reference.clone();
+    ///             Box::pin(async move {
+    ///                 transaction.delete(&document_reference, Precondition::default())?;
+    ///                 Ok(())
+    ///             })
+    ///         },
+    ///         TransactionOptions::default(),
+    ///     )
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn delete(
         &mut self,
         document_reference: &DocumentReference,
