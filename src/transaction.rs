@@ -233,6 +233,54 @@ impl Transaction {
         ))
     }
 
+    /// Writes to the document referred to by the provided
+    /// `document_reference` within this transaction. If the document does
+    /// not exist yet, it will be created.
+    ///
+    /// `data` is serialized with [`serde`] and must serialize to a map. The
+    /// write replaces the whole document — fields that exist on the previous
+    /// document but not in `data` are removed. The write is staged on this
+    /// transaction and applied when the surrounding
+    /// [`Firestore::run_transaction`](crate::Firestore::run_transaction)
+    /// commits. Use [`create`](Self::create) to fail when the document
+    /// already exists, or [`update`](Self::update) to modify only the fields
+    /// you pass.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when `data` fails to serialize or does not
+    /// serialize to a map.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use bouzuya_firestore_client::TransactionOptions;
+    /// use std::collections::HashMap;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// firestore
+    ///     .run_transaction(
+    ///         |transaction| {
+    ///             let document_reference = document_reference.clone();
+    ///             Box::pin(async move {
+    ///                 transaction.set(
+    ///                     &document_reference,
+    ///                     &HashMap::from([("a".to_string(), "1".to_string())]),
+    ///                 )?;
+    ///                 Ok(())
+    ///             })
+    ///         },
+    ///         TransactionOptions::default(),
+    ///     )
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn set(
         &mut self,
         document_reference: &DocumentReference,
