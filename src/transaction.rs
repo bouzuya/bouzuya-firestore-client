@@ -308,6 +308,71 @@ impl Transaction {
         Ok(())
     }
 
+    /// Updates fields in the document referred to by the provided
+    /// `document_reference` within this transaction, subject to the given
+    /// `precondition`.
+    ///
+    /// `precondition` lets the caller require that the document exist
+    /// (`exists`) or that its last update time match (`last_update_time`);
+    /// pass [`Precondition::default`] to default to "document must exist",
+    /// matching the Node.js Admin SDK's `Transaction.update` behavior. The
+    /// write is staged on this transaction and applied when the surrounding
+    /// [`Firestore::run_transaction`](crate::Firestore::run_transaction)
+    /// commits.
+    ///
+    /// # Behavior in v4.0 (known bug)
+    ///
+    /// In the current implementation, `data` is serialized with [`serde`]
+    /// and the whole document is overwritten — fields that exist on the
+    /// previous document but not in `data` are removed. This makes `update`
+    /// equivalent to [`set`](Self::set) with an added [`Precondition`].
+    ///
+    /// The intended behavior is partial update (merge), matching the
+    /// `Transaction.update` method in the Firebase Admin SDK for Node.js:
+    /// only fields present in `data` should be written, and other fields
+    /// should be left untouched. The current behavior is a bug and will be
+    /// fixed in a future release; until then, callers that need merge
+    /// semantics should [`get`](Self::get) the document inside the
+    /// transaction and merge client-side before calling this method.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] when `data` fails to serialize, does not
+    /// serialize to a map, or when `precondition` sets both `exists` and
+    /// `last_update_time`.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use bouzuya_firestore_client::Precondition;
+    /// use bouzuya_firestore_client::TransactionOptions;
+    /// use std::collections::HashMap;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// firestore
+    ///     .run_transaction(
+    ///         |transaction| {
+    ///             let document_reference = document_reference.clone();
+    ///             Box::pin(async move {
+    ///                 transaction.update(
+    ///                     &document_reference,
+    ///                     &HashMap::from([("a".to_string(), "updated".to_string())]),
+    ///                     Precondition::default(),
+    ///                 )?;
+    ///                 Ok(())
+    ///             })
+    ///         },
+    ///         TransactionOptions::default(),
+    ///     )
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn update(
         &mut self,
         document_reference: &DocumentReference,
