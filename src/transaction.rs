@@ -5,6 +5,47 @@ use crate::Precondition;
 use crate::Timestamp;
 use crate::google;
 
+/// A reference to a transaction.
+///
+/// The `Transaction` object passed to a transaction's update function provides
+/// the methods to read and write data within the transaction context. See
+/// [`Firestore::run_transaction`](crate::Firestore::run_transaction).
+///
+/// Reads ([`get`](Self::get)) execute immediately against the server and hold
+/// a pessimistic lock on the returned documents. Writes
+/// ([`create`](Self::create), [`set`](Self::set), [`update`](Self::update),
+/// [`delete`](Self::delete)) are staged on the transaction and applied
+/// atomically when the surrounding `run_transaction` commits; if the update
+/// function returns an error, the transaction is rolled back instead. In a
+/// read-write transaction, all reads must precede any writes.
+///
+/// # Examples
+///
+/// ```no_run
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use bouzuya_firestore_client::Firestore;
+/// use bouzuya_firestore_client::FirestoreOptions;
+/// use bouzuya_firestore_client::TransactionOptions;
+///
+/// let firestore = Firestore::new(FirestoreOptions::default())?;
+/// let document_reference = firestore.doc("rooms/roomA")?;
+/// let exists = firestore
+///     .run_transaction(
+///         |transaction| {
+///             let document_reference = document_reference.clone();
+///             Box::pin(async move {
+///                 let snapshot = transaction.get(&document_reference).await?;
+///                 Ok::<_, bouzuya_firestore_client::Error>(snapshot.exists())
+///             })
+///         },
+///         TransactionOptions::default(),
+///     )
+///     .await?;
+/// let _ = exists;
+/// # Ok(())
+/// # }
+/// ```
 pub struct Transaction {
     pub(crate) transaction: Vec<u8>,
     pub(crate) writes: Vec<google::firestore::v1::Write>,
