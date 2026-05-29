@@ -8,7 +8,9 @@ impl WriteResult {
     pub(crate) fn new(write_time: Timestamp) -> Self {
         Self { write_time }
     }
+}
 
+impl WriteResult {
     pub fn write_time(&self) -> Timestamp {
         self.write_time
     }
