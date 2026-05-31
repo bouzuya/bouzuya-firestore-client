@@ -1,5 +1,33 @@
+#[cfg(doc)]
+use crate::DocumentReference;
 use crate::Timestamp;
 
+/// The result of a single write operation.
+///
+/// A `WriteResult` wraps the write time set by the Firestore servers on a
+/// successful write. Obtain one from [`DocumentReference::create`],
+/// [`DocumentReference::set`], [`DocumentReference::update`], or
+/// [`DocumentReference::delete`]; read the server-side commit time via
+/// [`write_time`](Self::write_time).
+///
+/// # Examples
+///
+/// ```no_run
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// use bouzuya_firestore_client::Firestore;
+/// use bouzuya_firestore_client::FirestoreOptions;
+/// use std::collections::HashMap;
+///
+/// let firestore = Firestore::new(FirestoreOptions::default())?;
+/// let document_reference = firestore.doc("rooms/roomA")?;
+/// let write_result = document_reference
+///     .create(HashMap::<String, String>::new())
+///     .await?;
+/// let _write_time = write_result.write_time();
+/// # Ok(())
+/// # }
+/// ```
 pub struct WriteResult {
     write_time: Timestamp,
 }
