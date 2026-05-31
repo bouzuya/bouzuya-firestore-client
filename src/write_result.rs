@@ -11,6 +11,26 @@ impl WriteResult {
 }
 
 impl WriteResult {
+    /// Returns the write time as set by the Firestore servers.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # #[tokio::main]
+    /// # async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// use bouzuya_firestore_client::Firestore;
+    /// use bouzuya_firestore_client::FirestoreOptions;
+    /// use std::collections::HashMap;
+    ///
+    /// let firestore = Firestore::new(FirestoreOptions::default())?;
+    /// let document_reference = firestore.doc("rooms/roomA")?;
+    /// let write_result = document_reference
+    ///     .create(HashMap::<String, String>::new())
+    ///     .await?;
+    /// let _write_time = write_result.write_time();
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn write_time(&self) -> Timestamp {
         self.write_time
     }
