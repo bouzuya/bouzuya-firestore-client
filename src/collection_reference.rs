@@ -19,7 +19,7 @@ use crate::QuerySnapshot;
 /// navigate to a specific child document ([`doc`](Self::doc)), and read the
 /// whole collection ([`get`](Self::get), [`list_documents`](Self::list_documents)).
 /// It also exposes query-builder methods that mirror [`Query`] (e.g.
-/// [`r#where`](Self::r#where), [`order_by`](Self::order_by),
+/// [`r#where`](Self::where), [`order_by`](Self::order_by),
 /// [`limit`](Self::limit)) and resolve to a [`Query`] internally.
 ///
 /// `CollectionReference` is cheap to [`Clone`]; the underlying [`Firestore`]
@@ -149,7 +149,7 @@ impl CollectionReference {
     /// resulting query includes the document whose order-by fields equal
     /// `values`.
     ///
-    /// This is a convenience for [`Query::collection`] followed by
+    /// Equivalent to building a [`Query`] over this collection and calling
     /// [`Query::end_at`]; it returns an error if `values` is empty.
     ///
     /// [`order_by`]: Query::order_by
@@ -187,7 +187,7 @@ impl CollectionReference {
     /// resulting query excludes the document whose order-by fields equal
     /// `values`.
     ///
-    /// This is a convenience for [`Query::collection`] followed by
+    /// Equivalent to building a [`Query`] over this collection and calling
     /// [`Query::end_before`]; it returns an error if `values` is empty.
     ///
     /// [`order_by`]: Query::order_by
@@ -246,10 +246,10 @@ impl CollectionReference {
     ///
     /// Only documents directly under this collection are returned; documents
     /// in subcollections are not. Without further filtering (e.g.
-    /// [`Query::r#where`] or [`Query::limit`]) this can return a large number
+    /// [`Query::r#where`](Query::where) or [`Query::limit`]) this can return a large number
     /// of documents.
     ///
-    /// This is a convenience for [`Query::collection`] followed by
+    /// Equivalent to building a [`Query`] over this collection and calling
     /// [`Query::get`].
     ///
     /// # Examples
@@ -294,7 +294,7 @@ impl CollectionReference {
 
     /// Returns a [`Query`] that returns at most `n` documents.
     ///
-    /// This is a convenience for [`Query::collection`] followed by
+    /// Equivalent to building a [`Query`] over this collection and calling
     /// [`Query::limit`]; it returns an error if `n` is negative.
     ///
     /// # Examples
@@ -356,7 +356,7 @@ impl CollectionReference {
 
     /// Returns a [`Query`] that skips the first `n` documents.
     ///
-    /// This is a convenience for [`Query::collection`] followed by
+    /// Equivalent to building a [`Query`] over this collection and calling
     /// [`Query::offset`]; it returns an error if `n` is negative.
     ///
     /// # Examples
@@ -386,7 +386,7 @@ impl CollectionReference {
     /// error. Chain multiple `order_by` calls to build a compound ordering;
     /// later calls become secondary sort keys.
     ///
-    /// This is a convenience for [`Query::collection`] followed by
+    /// Equivalent to building a [`Query`] over this collection and calling
     /// [`Query::order_by`].
     ///
     /// # Examples
@@ -480,7 +480,7 @@ impl CollectionReference {
     /// the amount of data transferred when the rest of the document is not
     /// needed.
     ///
-    /// This is a convenience for [`Query::collection`] followed by
+    /// Equivalent to building a [`Query`] over this collection and calling
     /// [`Query::select`].
     ///
     /// # Examples
@@ -515,7 +515,7 @@ impl CollectionReference {
     /// resulting query excludes the document whose order-by fields equal
     /// `values`.
     ///
-    /// This is a convenience for [`Query::collection`] followed by
+    /// Equivalent to building a [`Query`] over this collection and calling
     /// [`Query::start_after`]; it returns an error if `values` is empty.
     ///
     /// [`order_by`]: Query::order_by
@@ -553,7 +553,7 @@ impl CollectionReference {
     /// resulting query includes the document whose order-by fields equal
     /// `values`.
     ///
-    /// This is a convenience for [`Query::collection`] followed by
+    /// Equivalent to building a [`Query`] over this collection and calling
     /// [`Query::start_at`]; it returns an error if `values` is empty.
     ///
     /// [`order_by`]: Query::order_by
@@ -591,11 +591,11 @@ impl CollectionReference {
     /// tuple such as `("k", "==", "target")`. Chain multiple `r#where` calls
     /// to combine conditions with AND.
     ///
-    /// This is a convenience for [`Query::collection`] followed by
-    /// [`Query::r#where`].
+    /// Equivalent to building a [`Query`] over this collection and calling
+    /// [`Query::r#where`](Query::where).
     ///
     /// [`Filter`]: crate::Filter
-    /// [`Filter::r#where`]: crate::Filter::r#where
+    /// [`Filter::r#where`]: crate::Filter::where
     ///
     /// # Examples
     ///

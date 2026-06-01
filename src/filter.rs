@@ -4,7 +4,7 @@ use crate::IntoFieldPath;
 /// A condition used to constrain the documents a query returns.
 ///
 /// A `Filter` is either a single field condition — built with
-/// [`where`](Self::r#where), which tests a field against a value using an
+/// [`where`](Self::where), which tests a field against a value using an
 /// operator — or a composite of other filters joined by
 /// [`and`](Self::and) (conjunction) or [`or`](Self::or) (disjunction).
 /// Composites nest arbitrarily, so any boolean combination of conditions
@@ -30,7 +30,7 @@ impl Filter {
     ///
     /// The returned [`Filter`] matches a document only when it matches
     /// *every* filter in `filters`. The arguments are typically field
-    /// conditions built with [`Filter::where`](Self::r#where), but may also
+    /// conditions built with [`Filter::where`](Self::where), but may also
     /// be nested [`and`](Self::and)/[`or`](Self::or) filters. See
     /// [`Filter::or`] for the disjunction.
     ///
@@ -58,7 +58,7 @@ impl Filter {
     ///
     /// The returned [`Filter`] matches a document when it matches *at least
     /// one* filter in `filters`. The arguments are typically field
-    /// conditions built with [`Filter::where`](Self::r#where), but may also
+    /// conditions built with [`Filter::where`](Self::where), but may also
     /// be nested [`and`](Self::and)/[`or`](Self::or) filters. See
     /// [`Filter::and`] for the conjunction.
     ///

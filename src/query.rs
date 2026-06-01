@@ -20,7 +20,7 @@ use crate::google;
 /// [`CollectionGroup::limit`]); the query-builder methods on those types
 /// resolve to `Query` internally.
 ///
-/// Builder methods such as [`r#where`](Self::r#where),
+/// Builder methods such as [`r#where`](Self::where),
 /// [`order_by`](Self::order_by), [`limit`](Self::limit),
 /// [`start_at`](Self::start_at), and [`end_at`](Self::end_at) each return a
 /// new `Query`, leaving the original unchanged. Execute the query with
@@ -218,7 +218,7 @@ impl Query {
 
     /// Executes the query and returns the results as a [`QuerySnapshot`].
     ///
-    /// Without further filtering (e.g. [`r#where`](Self::r#where) or
+    /// Without further filtering (e.g. [`r#where`](Self::where) or
     /// [`limit`](Self::limit)) this can return a large number of documents.
     ///
     /// # Examples
@@ -557,7 +557,7 @@ impl Query {
     /// to combine conditions with AND.
     ///
     /// [`Filter`]: crate::Filter
-    /// [`Filter::r#where`]: crate::Filter::r#where
+    /// [`Filter::r#where`]: crate::Filter::where
     ///
     /// # Examples
     ///

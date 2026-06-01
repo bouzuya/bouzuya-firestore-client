@@ -7,7 +7,7 @@ use crate::IntoFieldPath;
 /// This trait is used as a bound on APIs that accept a query condition
 /// — such as the `where` method of a query — so callers can pass a
 /// [`Filter`] directly or a `(field_path, op, value)` tuple as shorthand
-/// for a single [`Filter::where`](crate::Filter::r#where) condition. It is
+/// for a single [`Filter::where`](crate::Filter::where) condition. It is
 /// implemented for [`Filter`] and for 3-tuples `(P, &str, V)` where
 /// `P: IntoFieldPath` and `V: serde::Serialize`.
 ///
@@ -22,12 +22,12 @@ pub trait IntoFilter: crate::private::Sealed {
     /// shorthand. It is implemented for [`Filter`] (returned as-is) and for
     /// 3-tuples `(P, &str, V)` where `P: IntoFieldPath` and
     /// `V: serde::Serialize`; a tuple is forwarded to
-    /// [`Filter::where`](crate::Filter::r#where).
+    /// [`Filter::where`](crate::Filter::where).
     ///
     /// # Errors
     ///
     /// Returns an [`Error`] when converting a tuple fails for any of the
-    /// reasons [`Filter::where`](crate::Filter::r#where) can fail (invalid
+    /// reasons [`Filter::where`](crate::Filter::where) can fail (invalid
     /// field path, unsupported operator, or unserializable value);
     /// converting a [`Filter`] never fails.
     fn into_filter(self) -> Result<Filter, Error>;

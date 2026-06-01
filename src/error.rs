@@ -25,7 +25,7 @@ enum E {
 ///
 /// The underlying cause is exposed through
 /// [`source`](std::error::Error::source); walk the source chain (for
-/// example with [`anyhow`] or [`std::error::Error::sources`]) to recover
+/// example with [`anyhow`] or `std::error::Error::sources`) to recover
 /// detail.
 ///
 /// Callers can construct an `Error` themselves with [`Error::custom`],

@@ -27,7 +27,7 @@ impl From<E> for Error {
 /// whose [`exists`](Self::exists) is `false`. Such a snapshot has no
 /// [`data`](Self::data), no [`create_time`](Self::create_time), and no
 /// [`update_time`](Self::update_time); only [`id`](Self::id),
-/// [`ref`](Self::r#ref), and [`read_time`](Self::read_time) are meaningful.
+/// [`ref`](Self::ref), and [`read_time`](Self::read_time) are meaningful.
 /// When the document does exist, [`data`](Self::data) deserializes its
 /// fields into a user type.
 ///
@@ -36,6 +36,11 @@ impl From<E> for Error {
 /// be up to ~1 MiB). Prefer borrowing the snapshot, or extracting only the
 /// pieces you need (e.g. via [`data`](Self::data)), when working with
 /// large documents.
+///
+/// [`Firestore::get_all`]: crate::Firestore::get_all
+/// [`QueryDocumentSnapshot`]: crate::QueryDocumentSnapshot
+/// [`QuerySnapshot`]: crate::QuerySnapshot
+/// [`Transaction::get`]: crate::Transaction::get
 ///
 /// # Examples
 ///

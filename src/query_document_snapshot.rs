@@ -147,7 +147,7 @@ impl QueryDocumentSnapshot {
     /// Returns the ID of this document (the last segment of its path).
     ///
     /// This is the same as the ID of the [`DocumentReference`] returned by
-    /// [`r#ref`](Self::r#ref); for a nested document such as
+    /// [`r#ref`](Self::ref); for a nested document such as
     /// `rooms/roomA/messages/msg1` it returns `"msg1"`, not the full path.
     ///
     /// # Examples

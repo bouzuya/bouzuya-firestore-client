@@ -6,7 +6,7 @@ use crate::FieldPath;
 /// A conversion into a [`FieldPath`].
 ///
 /// This trait is used as a bound on APIs that accept a field reference
-/// — such as [`Filter::where`](crate::Filter::r#where) — so callers can
+/// — such as [`Filter::where`](crate::Filter::where) — so callers can
 /// pass a [`FieldPath`] directly or a string to be parsed into one. It is
 /// implemented for [`FieldPath`], `&str`, and `String`.
 ///
@@ -17,7 +17,7 @@ pub trait IntoFieldPath: crate::private::Sealed {
     ///
     /// This is the conversion behind APIs that accept
     /// `impl IntoFieldPath` (such as
-    /// [`Filter::where`](crate::Filter::r#where)), letting callers pass a
+    /// [`Filter::where`](crate::Filter::where)), letting callers pass a
     /// [`FieldPath`] directly or a string to be parsed. It is implemented
     /// for [`FieldPath`] (returned as-is), `&str`, and `String` (each
     /// parsed via [`FieldPath`]'s [`FromStr`](std::str::FromStr)).

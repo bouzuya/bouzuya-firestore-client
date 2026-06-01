@@ -6,7 +6,7 @@ use crate::Error;
 /// top-level field; multiple segments descend into nested map fields (e.g.
 /// `["user", "name"]` is the `name` field of the `user` map). Use it
 /// wherever a query refers to a field — for example, to filter with
-/// [`Filter::where`](crate::Filter::r#where) or to sort or select results.
+/// [`Filter::where`](crate::Filter::where) or to sort or select results.
 ///
 /// Construct one with [`new`](Self::new) from segment strings, parse one
 /// from its textual form with [`FromStr`](std::str::FromStr), or obtain
