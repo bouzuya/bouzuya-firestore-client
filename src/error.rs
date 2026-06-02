@@ -25,8 +25,8 @@ enum E {
 ///
 /// The underlying cause is exposed through
 /// [`source`](std::error::Error::source); walk the source chain (for
-/// example with [`anyhow`] or `std::error::Error::sources`) to recover
-/// detail.
+/// example with [`anyhow`](https://docs.rs/anyhow) or
+/// `std::error::Error::sources`) to recover detail.
 ///
 /// Callers can construct an `Error` themselves with [`Error::custom`],
 /// typically to plumb their own failures through an API that returns
@@ -41,8 +41,6 @@ enum E {
 /// let error = Error::custom("something went wrong");
 /// assert!(error.source().is_some());
 /// ```
-///
-/// [`anyhow`]: https://docs.rs/anyhow
 #[derive(Debug, thiserror::Error)]
 #[error("firestore error: {0}")]
 pub struct Error(#[source] E);

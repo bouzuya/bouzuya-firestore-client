@@ -18,10 +18,11 @@ impl From<E> for Error {
 ///
 /// A `DocumentSnapshot` captures the state of one document at the moment it
 /// was read from the server (see [`read_time`](Self::read_time)). Obtain one
-/// with [`DocumentReference::get`], [`Transaction::get`], or
-/// [`Firestore::get_all`]; a [`QuerySnapshot`] is made up of
-/// [`QueryDocumentSnapshot`]s, each of which carries a `DocumentSnapshot`'s
-/// view of its document.
+/// with [`DocumentReference::get`], [`Transaction::get`](crate::Transaction::get), or
+/// [`Firestore::get_all`](crate::Firestore::get_all); a
+/// [`QuerySnapshot`](crate::QuerySnapshot) is made up of
+/// [`QueryDocumentSnapshot`](crate::QueryDocumentSnapshot)s, each of which
+/// carries a `DocumentSnapshot`'s view of its document.
 ///
 /// Reading a nonexistent document is not an error — it produces a snapshot
 /// whose [`exists`](Self::exists) is `false`. Such a snapshot has no
@@ -36,11 +37,6 @@ impl From<E> for Error {
 /// be up to ~1 MiB). Prefer borrowing the snapshot, or extracting only the
 /// pieces you need (e.g. via [`data`](Self::data)), when working with
 /// large documents.
-///
-/// [`Firestore::get_all`]: crate::Firestore::get_all
-/// [`QueryDocumentSnapshot`]: crate::QueryDocumentSnapshot
-/// [`QuerySnapshot`]: crate::QuerySnapshot
-/// [`Transaction::get`]: crate::Transaction::get
 ///
 /// # Examples
 ///

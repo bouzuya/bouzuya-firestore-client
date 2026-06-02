@@ -92,14 +92,13 @@ impl Query {
 impl Query {
     /// Returns a new [`Query`] that ends at the given cursor (inclusive).
     ///
-    /// `values` is matched positionally against the query's [`order_by`]
-    /// clauses, so the call is typically chained with [`order_by`]. The
+    /// `values` is matched positionally against the query's
+    /// [`order_by`](Query::order_by) clauses, so the call is typically chained
+    /// with [`order_by`](Query::order_by). The
     /// resulting query includes the document whose order-by fields equal
     /// `values`.
     ///
     /// Returns an error if `values` is empty.
-    ///
-    /// [`order_by`]: Query::order_by
     ///
     /// # Examples
     ///
@@ -144,14 +143,13 @@ impl Query {
 
     /// Returns a new [`Query`] that ends before the given cursor (exclusive).
     ///
-    /// `values` is matched positionally against the query's [`order_by`]
-    /// clauses, so the call is typically chained with [`order_by`]. The
+    /// `values` is matched positionally against the query's
+    /// [`order_by`](Query::order_by) clauses, so the call is typically chained
+    /// with [`order_by`](Query::order_by). The
     /// resulting query excludes the document whose order-by fields equal
     /// `values`.
     ///
     /// Returns an error if `values` is empty.
-    ///
-    /// [`order_by`]: Query::order_by
     ///
     /// # Examples
     ///
@@ -447,14 +445,13 @@ impl Query {
 
     /// Returns a new [`Query`] that starts after the given cursor (exclusive).
     ///
-    /// `values` is matched positionally against the query's [`order_by`]
-    /// clauses, so the call is typically chained with [`order_by`]. The
+    /// `values` is matched positionally against the query's
+    /// [`order_by`](Query::order_by) clauses, so the call is typically chained
+    /// with [`order_by`](Query::order_by). The
     /// resulting query excludes the document whose order-by fields equal
     /// `values`.
     ///
     /// Returns an error if `values` is empty.
-    ///
-    /// [`order_by`]: Query::order_by
     ///
     /// # Examples
     ///
@@ -499,14 +496,13 @@ impl Query {
 
     /// Returns a new [`Query`] that starts at the given cursor (inclusive).
     ///
-    /// `values` is matched positionally against the query's [`order_by`]
-    /// clauses, so the call is typically chained with [`order_by`]. The
+    /// `values` is matched positionally against the query's
+    /// [`order_by`](Query::order_by) clauses, so the call is typically chained
+    /// with [`order_by`](Query::order_by). The
     /// resulting query includes the document whose order-by fields equal
     /// `values`.
     ///
     /// Returns an error if `values` is empty.
-    ///
-    /// [`order_by`]: Query::order_by
     ///
     /// # Examples
     ///
@@ -552,12 +548,10 @@ impl Query {
     /// Returns a new [`Query`] filtered by the given `filter`.
     ///
     /// `filter` can be any value that implements [`IntoFilter`], e.g. a
-    /// [`Filter`] built with [`Filter::r#where`] or a `(field, op, value)`
+    /// [`Filter`](crate::Filter) built with
+    /// [`Filter::r#where`](crate::Filter::where) or a `(field, op, value)`
     /// tuple such as `("k", "==", "target")`. Chain multiple `r#where` calls
     /// to combine conditions with AND.
-    ///
-    /// [`Filter`]: crate::Filter
-    /// [`Filter::r#where`]: crate::Filter::where
     ///
     /// # Examples
     ///

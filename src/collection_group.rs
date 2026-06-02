@@ -7,10 +7,10 @@ use crate::QuerySnapshot;
 
 /// A query target that spans every collection with a given ID.
 ///
-/// Unlike a [`CollectionReference`], which points at one collection under a
-/// specific parent, a `CollectionGroup` matches every collection named
-/// `collection_id` anywhere in the database, regardless of its parent
-/// document. Obtain one with [`Firestore::collection_group`].
+/// Unlike a [`CollectionReference`](crate::CollectionReference), which points
+/// at one collection under a specific parent, a `CollectionGroup` matches
+/// every collection named `collection_id` anywhere in the database, regardless
+/// of its parent document. Obtain one with [`Firestore::collection_group`].
 ///
 /// `CollectionGroup` exposes query-builder methods that mirror [`Query`]
 /// (e.g. [`r#where`](Self::where), [`order_by`](Self::order_by),
@@ -18,8 +18,6 @@ use crate::QuerySnapshot;
 ///
 /// `CollectionGroup` is cheap to [`Clone`]; the underlying [`Firestore`] is
 /// shared between clones.
-///
-/// [`CollectionReference`]: crate::CollectionReference
 ///
 /// # Examples
 ///
@@ -60,15 +58,14 @@ impl CollectionGroup {
 
     /// Returns a [`Query`] that ends at the given cursor (inclusive).
     ///
-    /// `values` is matched positionally against the query's [`order_by`]
+    /// `values` is matched positionally against the query's
+    /// [`order_by`](Query::order_by)
     /// clauses, so the call is typically chained with [`Query::order_by`]. The
     /// resulting query includes the document whose order-by fields equal
     /// `values`.
     ///
     /// Equivalent to building a [`Query`] over this collection group and calling
     /// [`Query::end_at`]; it returns an error if `values` is empty.
-    ///
-    /// [`order_by`]: Query::order_by
     ///
     /// # Examples
     ///
@@ -98,15 +95,14 @@ impl CollectionGroup {
 
     /// Returns a [`Query`] that ends before the given cursor (exclusive).
     ///
-    /// `values` is matched positionally against the query's [`order_by`]
+    /// `values` is matched positionally against the query's
+    /// [`order_by`](Query::order_by)
     /// clauses, so the call is typically chained with [`Query::order_by`]. The
     /// resulting query excludes the document whose order-by fields equal
     /// `values`.
     ///
     /// Equivalent to building a [`Query`] over this collection group and calling
     /// [`Query::end_before`]; it returns an error if `values` is empty.
-    ///
-    /// [`order_by`]: Query::order_by
     ///
     /// # Examples
     ///
@@ -307,15 +303,14 @@ impl CollectionGroup {
 
     /// Returns a [`Query`] that starts after the given cursor (exclusive).
     ///
-    /// `values` is matched positionally against the query's [`order_by`]
+    /// `values` is matched positionally against the query's
+    /// [`order_by`](Query::order_by)
     /// clauses, so the call is typically chained with [`Query::order_by`]. The
     /// resulting query excludes the document whose order-by fields equal
     /// `values`.
     ///
     /// Equivalent to building a [`Query`] over this collection group and calling
     /// [`Query::start_after`]; it returns an error if `values` is empty.
-    ///
-    /// [`order_by`]: Query::order_by
     ///
     /// # Examples
     ///
@@ -345,15 +340,14 @@ impl CollectionGroup {
 
     /// Returns a [`Query`] that starts at the given cursor (inclusive).
     ///
-    /// `values` is matched positionally against the query's [`order_by`]
+    /// `values` is matched positionally against the query's
+    /// [`order_by`](Query::order_by)
     /// clauses, so the call is typically chained with [`Query::order_by`]. The
     /// resulting query includes the document whose order-by fields equal
     /// `values`.
     ///
     /// Equivalent to building a [`Query`] over this collection group and calling
     /// [`Query::start_at`]; it returns an error if `values` is empty.
-    ///
-    /// [`order_by`]: Query::order_by
     ///
     /// # Examples
     ///
@@ -384,15 +378,13 @@ impl CollectionGroup {
     /// Returns a [`Query`] filtered by the given `filter`.
     ///
     /// `filter` can be any value that implements [`IntoFilter`], e.g. a
-    /// [`Filter`] built with [`Filter::r#where`] or a `(field, op, value)`
+    /// [`Filter`](crate::Filter) built with
+    /// [`Filter::r#where`](crate::Filter::where) or a `(field, op, value)`
     /// tuple such as `("k", "==", "target")`. Chain multiple `r#where` calls
     /// to combine conditions with AND.
     ///
     /// Equivalent to building a [`Query`] over this collection group and calling
     /// [`Query::r#where`](Query::where).
-    ///
-    /// [`Filter`]: crate::Filter
-    /// [`Filter::r#where`]: crate::Filter::where
     ///
     /// # Examples
     ///

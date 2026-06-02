@@ -216,11 +216,10 @@ impl Firestore {
     /// document does not exist; check [`DocumentSnapshot::exists`] to tell the
     /// two cases apart.
     ///
-    /// Unlike the Node.js Firestore client's [`getAll`], this method does not
-    /// accept a `ReadOptions` argument (e.g. for specifying a field mask). All
-    /// fields of each document are always returned.
-    ///
-    /// [`getAll`]: https://docs.cloud.google.com/nodejs/docs/reference/firestore/latest/firestore/firestore#_google_cloud_firestore_Firestore_getAll_member_1_
+    /// Unlike the Node.js Firestore client's
+    /// [`getAll`](https://docs.cloud.google.com/nodejs/docs/reference/firestore/latest/firestore/firestore#_google_cloud_firestore_Firestore_getAll_member_1_),
+    /// this method does not accept a `ReadOptions` argument (e.g. for specifying
+    /// a field mask). All fields of each document are always returned.
     ///
     /// # Examples
     ///
