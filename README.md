@@ -1,5 +1,78 @@
 # bouzuya-firestore-client
 
+A [Cloud Firestore](https://firebase.google.com/docs/firestore) client written
+in Rust, with an interface close to the
+[Node.js Admin SDK](https://docs.cloud.google.com/nodejs/docs/reference/firestore/latest/overview).
+
+## Installation
+
+This crate is not published to [crates.io](https://crates.io). Add it as a Git
+dependency instead:
+
+```toml
+[dependencies]
+bouzuya-firestore-client = { git = "https://github.com/bouzuya/bouzuya-firestore-client.git", tag = "3.2.0" }
+```
+
+## Documentation
+
+This crate is not published to [crates.io](https://crates.io), so it is not
+available on [docs.rs](https://docs.rs). Build and open the documentation
+locally with `cargo doc` instead:
+
+```console
+cargo doc --open
+```
+
+## Usage
+
+A simple CRUD example:
+
+```rust,no_run
+use bouzuya_firestore_client::Firestore;
+use bouzuya_firestore_client::FirestoreOptions;
+use bouzuya_firestore_client::Precondition;
+
+#[derive(serde::Deserialize, serde::Serialize)]
+struct User {
+    name: String,
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let firestore = Firestore::new(FirestoreOptions::default())?;
+    let document_reference = firestore.doc("users/alice")?;
+
+    // Create
+    document_reference
+        .create(User {
+            name: "Alice".to_owned(),
+        })
+        .await?;
+
+    // Read
+    let document_snapshot = document_reference.get().await?;
+    if let Some(user) = document_snapshot.data::<User>() {
+        println!("{}", user?.name);
+    }
+
+    // Update
+    document_reference
+        .update(
+            User {
+                name: "Alice Smith".to_owned(),
+            },
+            Precondition::default(),
+        )
+        .await?;
+
+    // Delete
+    document_reference.delete(Precondition::default()).await?;
+
+    Ok(())
+}
+```
+
 ## References
 
 - <https://googleapis.dev/nodejs/firestore/latest/index.html>
@@ -275,3 +348,14 @@
 - [x] WriteResult
   - [x] writeTime
   - [x] <del>isEqual</del>
+
+## License
+
+Licensed under either of
+
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
+  <http://www.apache.org/licenses/LICENSE-2.0>)
+- MIT License ([LICENSE-MIT](LICENSE-MIT) or
+  <http://opensource.org/licenses/MIT>)
+
+at your option.
