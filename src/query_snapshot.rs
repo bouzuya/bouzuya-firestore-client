@@ -13,8 +13,8 @@ use crate::Timestamp;
 ///
 /// The matching documents are exposed in two ways: iterate the snapshot
 /// directly with its [`IntoIterator`] impl to move the documents out
-/// without cloning, or call [`docs`](Self::docs) to clone them into a
-/// [`Vec`]. [`empty`](Self::empty) and [`size`](Self::size) report the
+/// without cloning, or call [`docs`](Self::docs) to borrow them as a
+/// slice. [`empty`](Self::empty) and [`size`](Self::size) report the
 /// cardinality without touching the documents.
 ///
 /// [`Clone`] copies the contained [`QueryDocumentSnapshot`]s, each of
@@ -60,15 +60,13 @@ impl QuerySnapshot {
 }
 
 impl QuerySnapshot {
-    /// Returns the result documents as a [`Vec`], in the order produced by
+    /// Returns the result documents as a slice, in the order produced by
     /// the query.
     ///
-    /// Each call clones the underlying vector and every contained
-    /// [`QueryDocumentSnapshot`], so the cost grows with both the number
-    /// of documents and the size of each document. When you only need to
-    /// walk the results once, prefer iterating the [`QuerySnapshot`]
-    /// directly via its [`IntoIterator`] impl, which moves the documents
-    /// out without cloning.
+    /// The returned slice borrows from the snapshot, so no documents are
+    /// cloned. When you need to take ownership of the documents instead,
+    /// iterate the [`QuerySnapshot`] directly via its [`IntoIterator`]
+    /// impl, which moves them out without cloning.
     ///
     /// # Examples
     ///
@@ -81,14 +79,14 @@ impl QuerySnapshot {
     /// let firestore = Firestore::new(FirestoreOptions::default())?;
     /// let query_snapshot = firestore.collection("rooms")?.get().await?;
     /// let docs = query_snapshot.docs();
-    /// for doc in &docs {
+    /// for doc in docs {
     ///     let _id = doc.id();
     /// }
     /// # Ok(())
     /// # }
     /// ```
-    pub fn docs(&self) -> Vec<QueryDocumentSnapshot> {
-        self.query_document_snapshots.clone()
+    pub fn docs(&self) -> &[QueryDocumentSnapshot] {
+        &self.query_document_snapshots
     }
 
     /// Returns `true` if this snapshot contains no documents.
@@ -198,9 +196,10 @@ impl IntoIterator for QuerySnapshot {
     /// Consumes the snapshot, yielding each [`QueryDocumentSnapshot`] in
     /// query order.
     ///
-    /// This is the move-based counterpart to [`docs`](Self::docs): it
-    /// hands the documents out without cloning, but the [`QuerySnapshot`]
-    /// is no longer available afterwards. If you also need
+    /// This is the move-based counterpart to [`docs`](Self::docs): where
+    /// [`docs`](Self::docs) borrows the documents as a slice, this hands
+    /// them out by value, but the [`QuerySnapshot`] is no longer
+    /// available afterwards. If you also need
     /// [`query`](Self::query), [`read_time`](Self::read_time),
     /// [`size`](Self::size), or [`empty`](Self::empty), call them before
     /// iterating — or use [`docs`](Self::docs) to keep the snapshot
