@@ -57,9 +57,11 @@ impl From<E> for Error {
 /// ```
 #[derive(Clone)]
 pub struct DocumentSnapshot {
-    document: Option<serde_firestore_value::google::firestore::v1::Document>,
+    create_time: Option<Timestamp>,
     document_reference: DocumentReference,
     read_time: Timestamp,
+    update_time: Option<Timestamp>,
+    value: Option<serde_firestore_value::google::firestore::v1::Value>,
 }
 
 impl DocumentSnapshot {
@@ -68,10 +70,31 @@ impl DocumentSnapshot {
         document_reference: DocumentReference,
         read_time: Timestamp,
     ) -> Self {
+        let create_time = document
+            .as_ref()
+            .and_then(|document| document.create_time)
+            .map(Timestamp::from_prost_timestamp);
+        let update_time = document
+            .as_ref()
+            .and_then(|document| document.update_time)
+            .map(Timestamp::from_prost_timestamp);
+        let value = document.map(
+            |document| serde_firestore_value::google::firestore::v1::Value {
+                value_type: Some(
+                    serde_firestore_value::google::firestore::v1::value::ValueType::MapValue(
+                        serde_firestore_value::google::firestore::v1::MapValue {
+                            fields: document.fields,
+                        },
+                    ),
+                ),
+            },
+        );
         Self {
-            document,
+            create_time,
             document_reference,
             read_time,
+            update_time,
+            value,
         }
     }
 
@@ -102,10 +125,7 @@ impl DocumentSnapshot {
     /// # }
     /// ```
     pub fn create_time(&self) -> Option<Timestamp> {
-        self.document
-            .as_ref()
-            .and_then(|document| document.create_time)
-            .map(Timestamp::from_prost_timestamp)
+        self.create_time
     }
 
     /// Deserializes this document's fields into `T`, or returns [`None`] if
@@ -135,20 +155,10 @@ impl DocumentSnapshot {
     /// # }
     /// ```
     pub fn data<T: serde::de::DeserializeOwned>(&self) -> Option<Result<T, Error>> {
-        self.document.as_ref().map(|document| {
-            serde_firestore_value::from_value::<T>(
-                &serde_firestore_value::google::firestore::v1::Value {
-                    value_type: Some(
-                        serde_firestore_value::google::firestore::v1::value::ValueType::MapValue(
-                            serde_firestore_value::google::firestore::v1::MapValue {
-                                fields: document.fields.clone(),
-                            },
-                        ),
-                    ),
-                },
-            )
-            .map_err(E::Deserialize)
-            .map_err(Error::from)
+        self.value.as_ref().map(|value| {
+            serde_firestore_value::from_value::<T>(value)
+                .map_err(E::Deserialize)
+                .map_err(Error::from)
         })
     }
 
@@ -178,7 +188,7 @@ impl DocumentSnapshot {
     /// # }
     /// ```
     pub fn exists(&self) -> bool {
-        self.document.is_some()
+        self.value.is_some()
     }
 
     // pub fn get(&self, field_path: FieldPath) -> Option<Value> {
@@ -296,10 +306,7 @@ impl DocumentSnapshot {
     /// # }
     /// ```
     pub fn update_time(&self) -> Option<Timestamp> {
-        self.document
-            .as_ref()
-            .and_then(|document| document.update_time)
-            .map(Timestamp::from_prost_timestamp)
+        self.update_time
     }
 }
 
