@@ -144,12 +144,12 @@ impl CollectionGroup {
     ///
     /// let firestore = Firestore::new(FirestoreOptions::default())?;
     /// let collection_group = firestore.collection_group("rooms")?;
-    /// assert_eq!(collection_group.firestore(), &firestore);
+    /// assert_eq!(collection_group.firestore(), firestore);
     /// # Ok(())
     /// # }
     /// ```
-    pub fn firestore(&self) -> &Firestore {
-        &self.firestore
+    pub fn firestore(&self) -> Firestore {
+        self.firestore.clone()
     }
 
     /// Executes the collection-group query and returns its [`QuerySnapshot`].

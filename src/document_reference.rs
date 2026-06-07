@@ -204,12 +204,12 @@ impl DocumentReference {
     ///
     /// let firestore = Firestore::new(FirestoreOptions::default())?;
     /// let document_reference = firestore.doc("rooms/roomA")?;
-    /// assert_eq!(document_reference.firestore(), &firestore);
+    /// assert_eq!(document_reference.firestore(), firestore);
     /// # Ok(())
     /// # }
     /// ```
-    pub fn firestore(&self) -> &Firestore {
-        &self.firestore
+    pub fn firestore(&self) -> Firestore {
+        self.firestore.clone()
     }
 
     /// Fetches this document and returns its [`DocumentSnapshot`].

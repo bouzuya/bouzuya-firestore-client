@@ -229,12 +229,12 @@ impl CollectionReference {
     ///
     /// let firestore = Firestore::new(FirestoreOptions::default())?;
     /// let collection_reference = firestore.collection("rooms")?;
-    /// assert_eq!(collection_reference.firestore(), &firestore);
+    /// assert_eq!(collection_reference.firestore(), firestore);
     /// # Ok(())
     /// # }
     /// ```
-    pub fn firestore(&self) -> &Firestore {
-        &self.firestore
+    pub fn firestore(&self) -> Firestore {
+        self.firestore.clone()
     }
 
     /// Fetches every document in this collection and returns the

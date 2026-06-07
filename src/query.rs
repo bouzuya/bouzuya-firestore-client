@@ -61,7 +61,7 @@ pub struct Query {
 impl Query {
     pub(crate) fn collection(collection_reference: CollectionReference) -> Self {
         use std::str::FromStr as _;
-        let firestore = collection_reference.firestore().clone();
+        let firestore = collection_reference.firestore();
         let collection_path =
             firestore_path::CollectionPath::from_str(&collection_reference.path())
                 .expect("collection_reference has valid path");
@@ -76,7 +76,7 @@ impl Query {
     }
 
     pub(crate) fn collection_group(collection_group: CollectionGroup) -> Self {
-        let firestore = collection_group.firestore().clone();
+        let firestore = collection_group.firestore();
         let collection_id = collection_group.collection_id();
         let query = firestore_structured_query::Query::collection_group(collection_id.to_string());
         Self {
@@ -206,12 +206,12 @@ impl Query {
     ///
     /// let firestore = Firestore::new(FirestoreOptions::default())?;
     /// let query = firestore.collection("rooms")?.limit(1)?;
-    /// assert_eq!(query.firestore(), &firestore);
+    /// assert_eq!(query.firestore(), firestore);
     /// # Ok(())
     /// # }
     /// ```
-    pub fn firestore(&self) -> &Firestore {
-        &self.firestore
+    pub fn firestore(&self) -> Firestore {
+        self.firestore.clone()
     }
 
     /// Executes the query and returns the results as a [`QuerySnapshot`].
