@@ -11,7 +11,7 @@ dependency instead:
 
 ```toml
 [dependencies]
-bouzuya-firestore-client = { git = "https://github.com/bouzuya/bouzuya-firestore-client.git", tag = "3.2.0" }
+bouzuya-firestore-client = { git = "https://github.com/bouzuya/bouzuya-firestore-client.git", tag = "4.0.0" }
 ```
 
 ## Documentation
